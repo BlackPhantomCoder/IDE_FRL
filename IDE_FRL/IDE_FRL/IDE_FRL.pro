@@ -10,16 +10,34 @@ CONFIG += qscintilla2
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Interpretator.cpp \
+    InterpretatorWidget.cpp \
     LexerLisp.cpp \
     MainWindow.cpp \
-    main.cpp
+    Project/Project.cpp \
+    Project/ProjectWidget.cpp \
+    Project/filetreeitem.cpp \
+    Project/treemodel.cpp \
+    Settings/GlobalSettings.cpp \
+    Settings/SettringJson.cpp \
+    main.cpp \
 
 HEADERS += \
+    Interpretator.h \
+    InterpretatorWidget.h \
     LexerLisp.h \
-    MainWindow.h
+    MainWindow.h \
+    Project/Project.h \
+    Project/ProjectWidget.h \
+    Project/filetreeitem.h \
+    Project/treemodel.h \
+    Settings/GlobalSettings.h \
+    Settings/SettringJson.h \
 
 FORMS += \
-    MainWindow.ui
+    InterpretatorWidget.ui \
+    MainWindow.ui \
+    Project/ProjectWidget.ui \
 
 TRANSLATIONS += \
     IDE_FRL_ru_RU.ts

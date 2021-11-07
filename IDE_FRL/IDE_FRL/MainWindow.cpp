@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "LexerLisp.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
