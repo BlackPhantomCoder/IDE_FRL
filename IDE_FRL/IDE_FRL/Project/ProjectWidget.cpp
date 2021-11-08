@@ -184,6 +184,7 @@ QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
     if(t_model->is_file(index)){
         if(t_model->is_exists(index)){
             t_add_btn(menu, "Удалить файл", [this, index](){remove_file(index);});
+            t_add_btn(menu, "Исключить файл", [this, index](){exclude_file(index);});
         }
         else{
             t_add_btn(menu, "Исключить файл", [this, index](){exclude_file(index);});
@@ -194,6 +195,7 @@ QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
             t_add_btn(menu, "Добавить папку",[this, index](){create_and_add_dir(index);});
             t_add_btn(menu, "Добавить файл",[this, index](){create_and_add_file(index);});
             t_add_btn(menu, "Удалить папку",[this, index](){remove_dir(index);});
+            t_add_btn(menu, "Иксключить папку",[this, index](){exclude_dir(index);});
         }
         else{
             t_add_btn(menu, "Иксключить папку",[this, index](){exclude_dir(index);});
