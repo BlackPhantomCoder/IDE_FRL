@@ -147,13 +147,13 @@ pair<FileTreeItem*, QStringList::const_iterator> find_by_path(FileTreeItem *root
     return {found_child, b};
 }
 
-void path_into_tree(FileTreeItem *root, const QString &path, bool file, bool exists)
+bool path_into_tree(FileTreeItem *root, const QString &path, bool file, bool exists)
 {
     if(root == nullptr) throw "root is empty";
-    if(path.isEmpty()) return;
+    if(path.isEmpty()) return false;
     QStringList data = path.split('/');
     auto [found_child, it] = find_by_path(root, begin(data), end(data), file);
-    if(it == end(data)) return;
+    if(it == end(data)) return false;
 
     if(found_child == nullptr){
         found_child = root;
@@ -165,6 +165,7 @@ void path_into_tree(FileTreeItem *root, const QString &path, bool file, bool exi
         ++it;
     }
     found_child->appendChild( new FileTreeItem(*it, file, exists));
+    return true;
 }
 
 bool rem_by_path(FileTreeItem *root, const QString &path, bool file)

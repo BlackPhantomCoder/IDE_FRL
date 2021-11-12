@@ -90,7 +90,7 @@ private:
 };
 //! [0]
 
-void path_into_tree(FileTreeItem* root, const QString& path, bool file, bool exists);
+bool path_into_tree(FileTreeItem* root, const QString& path, bool file, bool exists);
 bool rem_by_path(FileTreeItem* root, const QString& path, bool file);
 
 //<Name, is_file>

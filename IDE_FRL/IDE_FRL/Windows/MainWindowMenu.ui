@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>MainWindowMenu</class>
+ <widget class="QMainWindow" name="MainWindowMenu">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -16,10 +16,6 @@
   <property name="windowTitle">
    <string>RofloLisp</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../Downloads/ico(1).ico</normaloff>../../../Downloads/ico(1).ico</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
     <bool>false</bool>
@@ -30,108 +26,6 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>10</y>
-      <width>911</width>
-      <height>591</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>240</y>
-       <width>151</width>
-       <height>101</height>
-      </rect>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Tab 1</string>
-      </attribute>
-     </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Tab 2</string>
-      </attribute>
-     </widget>
-    </widget>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>150</y>
-       <width>300</width>
-       <height>271</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>300</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>500</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>298</width>
-        <height>269</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-   </widget>
-   <widget class="QTextEdit" name="textEditcons">
-    <property name="geometry">
-     <rect>
-      <x>990</x>
-      <y>370</y>
-      <width>104</width>
-      <height>70</height>
-     </rect>
-    </property>
-   </widget>
-   <zorder>frame</zorder>
-   <zorder>verticalLayoutWidget</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>verticalSpacer</zorder>
-   <zorder>verticalSpacer</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>tabWidget_2</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>tableWidget</zorder>
-   <zorder>verticalSpacer</zorder>
-   <zorder>textEditcons</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -139,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>1230</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -158,19 +52,33 @@
      </property>
      <addaction name="action_13"/>
     </widget>
-    <addaction name="action"/>
-    <addaction name="action_2"/>
-    <addaction name="action_3"/>
+    <widget class="QMenu" name="menu_9">
+     <property name="title">
+      <string>Создать</string>
+     </property>
+     <addaction name="file_create_project_action"/>
+    </widget>
+    <widget class="QMenu" name="menu_10">
+     <property name="title">
+      <string>Открыть</string>
+     </property>
+     <addaction name="file_open_project_action"/>
+    </widget>
+    <addaction name="menu_9"/>
+    <addaction name="menu_10"/>
     <addaction name="menu_7"/>
     <addaction name="separator"/>
+    <addaction name="action_2"/>
     <addaction name="action_7"/>
     <addaction name="action_8"/>
     <addaction name="action_9"/>
+    <addaction name="file_save_project_action"/>
     <addaction name="separator"/>
     <addaction name="action_11"/>
     <addaction name="menu_8"/>
     <addaction name="separator"/>
-    <addaction name="action_16"/>
+    <addaction name="file_close_project_action"/>
+    <addaction name="file_exit_action"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -194,19 +102,29 @@
      <string>Вид</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="action_29"/>
-    <addaction name="action_30"/>
+    <addaction name="view_project_files_action"/>
+    <addaction name="view_interpretator_action"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menu_4">
+   <widget class="QMenu" name="project_menu">
     <property name="title">
      <string>Проект</string>
     </property>
+    <addaction name="project_settings_action"/>
    </widget>
-   <widget class="QMenu" name="menu_5">
+   <widget class="QMenu" name="interpretator_menu">
     <property name="title">
-     <string>Отладка</string>
+     <string>Интерпретатор</string>
     </property>
+    <addaction name="interpretator_start_action"/>
+    <addaction name="interpretator_stop_action"/>
+    <addaction name="action_S"/>
+    <addaction name="action_6"/>
+    <addaction name="separator"/>
+    <addaction name="interpretator_add_action"/>
+    <addaction name="interpretator_edit_action"/>
+    <addaction name="separator"/>
+    <addaction name="interpretator_clear_action"/>
    </widget>
    <widget class="QMenu" name="menu_6">
     <property name="title">
@@ -216,23 +134,13 @@
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
-   <addaction name="menu_4"/>
-   <addaction name="menu_5"/>
+   <addaction name="project_menu"/>
+   <addaction name="interpretator_menu"/>
    <addaction name="menu_6"/>
   </widget>
-  <action name="action">
-   <property name="text">
-    <string>Новый файл</string>
-   </property>
-  </action>
   <action name="action_2">
    <property name="text">
     <string>Новое окно</string>
-   </property>
-  </action>
-  <action name="action_3">
-   <property name="text">
-    <string>Открыть файл...</string>
    </property>
   </action>
   <action name="action_5">
@@ -265,7 +173,7 @@
     <string>тоже чё-то</string>
    </property>
   </action>
-  <action name="action_16">
+  <action name="file_exit_action">
    <property name="text">
     <string>Выход</string>
    </property>
@@ -315,14 +223,74 @@
     <string>Заменить в файлах</string>
    </property>
   </action>
-  <action name="action_29">
+  <action name="view_project_files_action">
    <property name="text">
     <string>Файлы проекта</string>
    </property>
   </action>
-  <action name="action_30">
+  <action name="view_interpretator_action">
    <property name="text">
     <string>Консоль</string>
+   </property>
+  </action>
+  <action name="interpretator_start_action">
+   <property name="text">
+    <string>Запустить</string>
+   </property>
+  </action>
+  <action name="action_S">
+   <property name="text">
+    <string>Отправить S-выражение</string>
+   </property>
+  </action>
+  <action name="action_6">
+   <property name="text">
+    <string>Настройка пользовательских команд</string>
+   </property>
+  </action>
+  <action name="project_settings_action">
+   <property name="text">
+    <string>Настройки</string>
+   </property>
+  </action>
+  <action name="file_create_project_action">
+   <property name="text">
+    <string>Проект</string>
+   </property>
+  </action>
+  <action name="interpretator_stop_action">
+   <property name="text">
+    <string>Остановить</string>
+   </property>
+  </action>
+  <action name="file_open_project_action">
+   <property name="text">
+    <string>Проект</string>
+   </property>
+  </action>
+  <action name="interpretator_add_action">
+   <property name="text">
+    <string>Добавить интерпретатор</string>
+   </property>
+  </action>
+  <action name="interpretator_edit_action">
+   <property name="text">
+    <string>Редактировать интерпретатор</string>
+   </property>
+  </action>
+  <action name="file_close_project_action">
+   <property name="text">
+    <string>Закрыть проект</string>
+   </property>
+  </action>
+  <action name="file_save_project_action">
+   <property name="text">
+    <string>Сохранить проект</string>
+   </property>
+  </action>
+  <action name="interpretator_clear_action">
+   <property name="text">
+    <string>Очистить</string>
    </property>
   </action>
  </widget>

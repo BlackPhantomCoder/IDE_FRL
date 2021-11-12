@@ -10,10 +10,17 @@ CONFIG += qscintilla2
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Interpretator.cpp \
-    InterpretatorWidget.cpp \
-    LexerLisp.cpp \
-    MainWindow.cpp \
+    Editor/EditorWidget.cpp \
+    Interpretator/Interpretator.cpp \
+    Interpretator/InterpretatorEditorWidget.cpp \
+    Interpretator/InterpretatorWidget.cpp \
+    Editor/LexerLisp.cpp \
+    Windows/MainWidget.cpp \
+    Windows/MainWindowToolbar.cpp \
+    Project/ProjectCreatorWidget.cpp \
+    Project/ProjectEditorWidget.cpp \
+    Settings/InterpretatorsSettings.cpp \
+    Windows/MainWindow.cpp \
     Project/Project.cpp \
     Project/ProjectWidget.cpp \
     Project/filetreeitem.cpp \
@@ -23,20 +30,31 @@ SOURCES += \
     main.cpp \
 
 HEADERS += \
-    Interpretator.h \
-    InterpretatorWidget.h \
-    LexerLisp.h \
-    MainWindow.h \
+    Editor/EditorWidget.h \
+    Interpretator/Interpretator.h \
+    Interpretator/InterpretatorEditorWidget.h \
+    Interpretator/InterpretatorWidget.h \
+    Editor/LexerLisp.h \
+    Windows/MainWidget.h \
+    Windows/MainWindowToolbar.h \
+    Project/ProjectCreatorWidget.h \
+    Project/ProjectEditorWidget.h \
+    Settings/InterpretatorsSettings.h \
+    Windows/MainWindow.h \
     Project/Project.h \
     Project/ProjectWidget.h \
     Project/filetreeitem.h \
     Project/treemodel.h \
     Settings/GlobalSettings.h \
-    Settings/SettringJson.h \
+    Settings/SettringJson.h
 
 FORMS += \
-    InterpretatorWidget.ui \
-    MainWindow.ui \
+    Editor/EditorWidget.ui \
+    Interpretator/InterpretatorWidget.ui \
+    Interpretator/InterpretatorEditorWidget.ui \
+    Project/ProjectCreatorWidget.ui \
+    Project/ProjectEditorWidget.ui \
+    Windows/MainWindowMenu.ui \
     Project/ProjectWidget.ui \
 
 TRANSLATIONS += \

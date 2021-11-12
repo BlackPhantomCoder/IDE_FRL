@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
     AU3_WinActiveByHandle(hdos);
     AU3_Send(L"{enter}");
     Sleep(1000);
-    //ShowWindow(hdos, SW_HIDE);
+    ShowWindow(hdos, SW_MINIMIZE);
     
     if (hdos != NULL) {
         while (cin) {
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
                 send(s + "\n\n", out_name, out_acc_name);
             }
             else {
-                cout << get(in_name, in_acc_name);
+                cout << get(in_name, in_acc_name) << std::flush;
             }
             Sleep(51);
         }

@@ -344,3 +344,13 @@ builds/
 ForisWrapper/Debug/
 ForisWrapper/Release/
 ForisWrapper/.compile_dir/
+ForisWrapper/for_dos/in.lsp
+ForisWrapper/for_dos/OUT.LSP
+ForisWrapper/for_dos/OUT.BAK
+ForisWrapper/for_dos/OUT.$SP
+ForisWrapper/for_dos/INACC.LSP
+ForisWrapper/for_dos/INACC.$SP
+ForisWrapper/for_dos/INACC.BAK
+ForisWrapper/for_dos/OUTACC.LSP
+ForisWrapper/for_dos/OUTACC.$SP
+ForisWrapper/for_dos/OUTACC.BAK

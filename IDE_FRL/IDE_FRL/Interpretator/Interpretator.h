@@ -4,11 +4,16 @@
 #include <QObject>
 #include <QProcess>
 
+struct InterpretatorData{
+    QString path;
+    QString params;
+};
+
 class Interpretator : public QObject
 {
     Q_OBJECT
 public:
-    explicit Interpretator(const QString& path, const QStringList& params, QObject *parent = nullptr);
+    explicit Interpretator(const InterpretatorData& data, QObject *parent = nullptr);
     ~Interpretator();
 
     bool run();
@@ -24,12 +29,10 @@ signals:
     void finished();
 
 private slots:
-    void on_read_ready();
-    void on_finish(int exitCode, QProcess::ExitStatus exitStatus);
+    void t_on_read_ready();
 private:
     QProcess* t_process;
-    QString t_path;
-    QStringList t_params;
+    InterpretatorData t_data;
 };
 
 #endif // INTERPRETATOR_H

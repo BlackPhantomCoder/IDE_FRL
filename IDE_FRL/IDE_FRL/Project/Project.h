@@ -14,30 +14,57 @@ class Project: public QObject
 {
     Q_OBJECT
 public:
-    Project(const QString& path);
+    Project(QObject* parent = nullptr);
+    Project(const QString& path, QObject* parent = nullptr);
     ~Project();
 
-    //only ralative paths
-    void add_dir(const QString& path);
-    void add_file(const QString& path);
-
-    bool rem_file(const QString& path);
-    bool rem_dir(const QString& path);
+    bool is_loaded() const;
+    bool is_changed() const;
 
     FileTreeItem& tree();
 
+    const QString& project_name() const;
     const QString& path() const;
-    const QString& interpretator_path();
-    const QStringList& interpretator_params();
+    const QString& interpretator_name();
 
-    void set_interpretator_path(const QString& path);
-    void set_interpretator_params(const QStringList& params);
+    bool rem_file_w_answer(const QString& path);
+    bool rem_dir_w_answer(const QString& path);
+
+signals:
+    void changed();
+    void tree_changed();
+    void tree_added(const QString& path);
+    void tree_removed(const QString& path);
+    void interpretator_name_changed();
+    void project_name_changed();
+
+    void saved();
+
+public slots:
+    void set_project_name(const QString& name);
+
+    //only relative paths
+    void add_dir(const QString& path);
+    void add_file(const QString& path);
+
+    void rem_file(const QString& path);
+    void rem_dir(const QString& path);
+
+    void set_interpretator_name(const QString& name);
+
+    void save();
+
 private:
-    SettringJson t_data;
+    void t_init();
+
+private:
+    bool t_loaded;
+    bool t_changed = false;
+    QString t_name;
+    SettringJson* t_data;
     QString t_path;
     FileTreeItem* t_root;
-    QString t_interpretator_path;
-    QStringList t_interpretator_params;
+    QString t_interpretator_name;
 };
 
 #endif // PROJECT_H

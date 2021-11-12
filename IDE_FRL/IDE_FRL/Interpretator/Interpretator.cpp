@@ -1,13 +1,14 @@
 #include "Interpretator.h"
 
-Interpretator::Interpretator(const QString &path, const QStringList& params, QObject *parent) :
+#include <QDebug>
+
+Interpretator::Interpretator(const InterpretatorData& data,  QObject *parent) :
     QObject(parent),
-    t_path(path),
-    t_params(params)
+    t_data(data)
 {
     t_process = new QProcess(this);
     t_process->setReadChannel(QProcess::ProcessChannel::StandardOutput);
-    connect(t_process, &QProcess::readyRead, this, &Interpretator::on_read_ready);
+    connect(t_process, &QProcess::readyRead, this, &Interpretator::t_on_read_ready);
     connect(t_process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &Interpretator::finished);
 }
 
@@ -22,8 +23,9 @@ Interpretator::~Interpretator()
 
 bool Interpretator::run()
 {
-    t_process->start(t_path, t_params);
-    if( !t_process->waitForStarted(10000)) {
+    t_process->setNativeArguments(t_data.params);
+    t_process->start(t_data.path);
+    if( !t_process->waitForStarted(5000)) {
         return false;
     }
     return true;
@@ -38,6 +40,7 @@ void Interpretator::kill()
 {
     if(is_runing()){
         t_process->kill();
+        t_process->waitForFinished(5000);
     }
 }
 
@@ -62,14 +65,9 @@ void Interpretator::send(const QString &text)
     }
 }
 
-void Interpretator::on_read_ready()
+void Interpretator::t_on_read_ready()
 {
     QString result = t_process->readAllStandardOutput();
 
     emit response(result);
-}
-
-void Interpretator::on_finish(int exitCode, QProcess::ExitStatus exitStatus)
-{
-    emit finished();
 }

@@ -30,9 +30,13 @@
 (movd print **print**)
 (movd read **read**)
 
-(defun **func_under_file** (**rds** **file** **func** **arg** **result**)
-    (if (eval **rds**) (rds **file**) (wrs **file**))
+(defun **func_under_file** (**rds** **file** **func** **arg** **result** **buf**)
+    (cond 
+        ((eval **rds**) (setq **buf** rds) (rds **file**))
+        (T (setq **buf** wrs) (wrs **file**))
+    )
     (setq **result** (funcall **func** **arg**))
+    ;(if (eval **rds**) (rds  **buf*) (wrs  **buf*))
     (if (eval **rds**) (rds) (wrs))
     **result**
 )

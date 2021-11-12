@@ -13,19 +13,27 @@
 #include "treemodel.h"
 #include "filetreeitem.h"
 
-ProjectWidget::ProjectWidget(Project& project, QWidget *parent) :
+ProjectWidget::ProjectWidget(QWidget *parent) :
     QWidget(parent),
-    t_project(&project)
+    t_project(nullptr)
 {
     setupUi(this);
-    treeView = new DeselectableTreeView(this);
-    horizontalLayout->addWidget(treeView);
 
-    t_model = new ProjectModel(*t_project, this);
-    treeView->setModel(t_model);
+}
 
-    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(treeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onCustomContextMenu(const QPoint &)));
+QString ProjectWidget::path_at(const QModelIndex &index) const
+{
+    return t_model->get_path(index);
+}
+
+bool ProjectWidget::is_file_at(const QModelIndex &index) const
+{
+    return t_model->is_file(index);
+}
+
+bool ProjectWidget::exists_at(const QModelIndex &index) const
+{
+    return t_model->is_exists(index);
 }
 
 
@@ -67,6 +75,7 @@ void ProjectWidget::create_and_add_file(const QModelIndex &ind)
             }
         }
         t_model->add(ind, text, true);
+        emit created_and_added_file(ind);
     }
 }
 
@@ -89,6 +98,7 @@ void ProjectWidget::create_and_add_dir(const QModelIndex &ind)
             }
         }
         t_model->add(ind, text, false);
+        emit created_and_added_dir(ind);
     }
 }
 
@@ -178,6 +188,35 @@ void ProjectWidget::exclude_dir(const QModelIndex &ind)
     t_model->rem(ind);
 }
 
+void ProjectWidget::set_project(Project *project)
+{
+    if(t_project){
+        delete treeView;
+        treeView = nullptr;
+        delete t_model;
+        t_model = nullptr;
+    }
+    t_project = project;
+    t_init_project();
+    emit project_changed();
+}
+
+void ProjectWidget::t_element_pressed(const QModelIndex &ind)
+{
+    if(t_model->is_file(ind))
+        emit clicked_file(ind);
+    else
+        emit clicked_dir(ind);
+}
+
+void ProjectWidget::t_element_double_clicked(const QModelIndex &ind)
+{
+    if(t_model->is_file(ind))
+        emit double_clicked_file(ind);
+    else
+        emit double_clicked_dir(ind);
+}
+
 QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
 {
     auto* menu = new QMenu(this);
@@ -214,6 +253,22 @@ QMenu *ProjectWidget::t_root_context_menu()
     t_add_btn(menu, "Добавить файл",[this, index = QModelIndex()](){create_and_add_file(index);});
 
     return menu;
+}
+
+void ProjectWidget::t_init_project()
+{
+    if(t_project != nullptr){
+        treeView = new DeselectableTreeView(this);
+        horizontalLayout->addWidget(treeView);
+
+        t_model = new ProjectModel(*t_project, this);
+        treeView->setModel(t_model);
+
+        treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(treeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onCustomContextMenu(const QPoint &)));
+        connect(treeView, &DeselectableTreeView::pressed, this, &ProjectWidget::t_element_pressed);
+        connect(treeView, &DeselectableTreeView::doubleClicked, this, &ProjectWidget::t_element_double_clicked);
+    }
 }
 
 void DeselectableTreeView::mousePressEvent(QMouseEvent *event)

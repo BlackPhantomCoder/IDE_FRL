@@ -1,23 +1,18 @@
-#include "MainWindow.h"
-
 #include <QApplication>
-#include <memory>
 
+#include <QtDebug>
+#include "Windows/MainWindow.h"
 #include "Project/ProjectWidget.h"
-#include "Interpretator.h"
-#include "InterpretatorWidget.h"
-using namespace std;
+#include "Settings/GlobalSettings.h"
 
-unique_ptr<Project> project;
+using namespace std;
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    project = make_unique<Project>(QApplication::applicationDirPath() + "/project1/settings.json");
-
-    auto w = MainWindow(*project.get());
-    w.show();
+    auto* w = new MainWindow();
+    w->show();
 
     return a.exec();
 }

@@ -1,26 +1,22 @@
 {
     "empty_dirs": [
-        "a1",
         "b",
         "wtf/b",
         "a/a",
         "a/a1",
         "a/wtf",
+        "hah/a",
         "hah/hah/hah'"
     ],
     "files": [
         "a",
+        "1",
         "wtf/a",
         "wtf/c",
+        "wtf/a.t",
         "c/wtf",
         "a/a3/a.txt"
     ],
-    "interpretator": "C:/Users/Dima/source/repos/IDE_FRL/builds/debug/debug/project1/megalisp/AutoItX.exe",
-    "interpretator params": [
-        "D:/SomePrograms/DosEngine/DOSBox/DOSBox.exe",
-        "C:/Users/Dima/source/repos/IDE_FRL/builds/debug/debug/project1/megalisp/sinchro",
-        "D:/SomePrograms/DosEngine/foris",
-        "D",
-        "C:/Users/Dima/source/repos/IDE_FRL/builds/debug/debug/project1/megalisp/data"
-    ]
+    "interpretator": "Foris",
+    "name": "Проект, кста!"
 }

@@ -23,7 +23,24 @@ class ProjectWidget : public QWidget, private Ui::ProjectWidgetUI
     Q_OBJECT
 
 public:
-    explicit ProjectWidget(Project& project, QWidget *parent = nullptr);
+    explicit ProjectWidget(QWidget *parent = nullptr);
+
+    Project* project();
+
+    QString path_at(const QModelIndex& index) const;
+    bool is_file_at(const QModelIndex& index) const;
+    bool exists_at(const QModelIndex& index) const;
+signals:
+    void project_changed();
+
+    void created_and_added_file(const QModelIndex& index);
+    void created_and_added_dir(const QModelIndex& index);
+
+    void clicked_file(const QModelIndex& index);
+    void double_clicked_file(const QModelIndex& index);
+
+    void clicked_dir(const QModelIndex& index);
+    void double_clicked_dir(const QModelIndex& index);
 public slots:
     void onCustomContextMenu(const QPoint &point);
 
@@ -38,9 +55,17 @@ public slots:
 
     void exclude_file(const QModelIndex& ind);
     void exclude_dir(const QModelIndex& ind);
+
+    void set_project(Project* project);
+
+private slots:
+    void t_element_pressed(const QModelIndex &ind);
+    void t_element_double_clicked(const QModelIndex &ind);
 private:
     QMenu* t_context_by_index(const QModelIndex& ind);
     QMenu* t_root_context_menu();
+
+    void t_init_project();
 
     template<class Fnc>
     void t_add_btn(QMenu* menu, const QString& text, Fnc f);

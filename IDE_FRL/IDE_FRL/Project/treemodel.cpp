@@ -41,9 +41,9 @@ bool ProjectModel::rem(const QModelIndex &ind)
     auto* item = static_cast<FileTreeItem*>(ind.internalPointer());
     auto result = true;
     if(item->is_file())
-        result = t_project->rem_file(get_path(ind));
+        result = t_project->rem_file_w_answer(get_path(ind));
     else
-        result = t_project->rem_dir(get_path(ind));
+        result = t_project->rem_dir_w_answer(get_path(ind));
     endRemoveRows();
     return result;
 }
