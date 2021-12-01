@@ -5,6 +5,7 @@
 #include <QProcess>
 
 struct InterpretatorData{
+    bool relative = false;
     QString path;
     QString params;
 };

@@ -26,6 +26,7 @@ InterpretatorsSettings::InterpretatorsSettings(const QString &path, bool destruc
             t_data.beginGroup(name);
             auto intrepretator = InterpretatorData{};
 
+            intrepretator.relative = t_data.value("relative", false).toBool();
             intrepretator.params = t_data.value("params", "").toString();
             intrepretator.path = t_data.value("path", "").toString();
 
@@ -120,6 +121,7 @@ void InterpretatorsSettings::save()
 
         for(const auto& name :t_all.keys()){
             t_data.beginGroup(name);
+            t_data.setValue("relative", t_all[name].relative);
             t_data.setValue("params", t_all[name].params);
             t_data.setValue("path", t_all[name].path);
             t_data.endGroup();

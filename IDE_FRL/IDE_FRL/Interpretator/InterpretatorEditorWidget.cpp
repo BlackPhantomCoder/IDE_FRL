@@ -14,6 +14,7 @@ InterpretatorCreatorWidget::InterpretatorCreatorWidget(const QString& name, cons
     this->name->setText(name);
     params->setText(data.params);
     path->setText(data.path);
+    path_relative->setChecked(data.relative);
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &InterpretatorCreatorWidget::t_check_accept);
     connect(path_btn, &QPushButton::clicked, this, &InterpretatorCreatorWidget::t_get_file_path);
@@ -39,6 +40,13 @@ void InterpretatorCreatorWidget::t_check_accept()
          return;
     }
 
+    if(QFile::exists(((path_relative->isChecked()) ? QCoreApplication::applicationDirPath(): "") + interpretator_path)){
+        QMessageBox::warning(this, tr("Внимание"),
+                                       tr("Файл интерпретатора не существует"),
+                                      QMessageBox::Ok);
+         return;
+    }
+
     if(t_check_rewrite){
         auto exists = MyQApp::interpretator_settings().contains_interpretator(interpretator_name);
         if(exists){
@@ -49,8 +57,10 @@ void InterpretatorCreatorWidget::t_check_accept()
                 return;
         }
     }
-    if(!MyQApp::interpretator_settings().add_interpretator(interpretator_name, {interpretator_path, interpretator_params})){
-        MyQApp::interpretator_settings().change_interpretator(interpretator_name, {interpretator_path, interpretator_params});
+    if(!MyQApp::interpretator_settings().add_interpretator(interpretator_name,
+        {path_relative->isChecked(), interpretator_path, interpretator_params})){
+        MyQApp::interpretator_settings().change_interpretator(interpretator_name,
+                                                              {path_relative->isChecked(), interpretator_path, interpretator_params});
     }
 
     accept();
@@ -59,7 +69,10 @@ void InterpretatorCreatorWidget::t_check_accept()
 void InterpretatorCreatorWidget::t_get_file_path()
 {
     auto file_name = QFileDialog::getOpenFileName(this,
-        tr("Выберете файл"));
+        tr("Выберете файл"), ((path_relative->isChecked()) ? QCoreApplication::applicationDirPath() : ""));
     if(file_name.isEmpty()) return;
+    if(path_relative->isChecked()){
+        file_name.remove(QCoreApplication::applicationDirPath() + "/");
+    }
     path->setText(file_name);
 }

@@ -2,11 +2,13 @@
     "interpretators": {
         "Foris": {
             "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --disklet D --diskp data/for_dos/data",
-            "path": "C:/Users/Dima/source/repos/IDE_FRL/builds/fw_debug/debug/ForisWrapperQt.exe"
+            "path": "fw_debug/debug/ForisWrapperQt.exe",
+            "relative": true
         },
         "RofloLisp": {
             "params": "",
-            "path": "C:/Users/Dima/source/repos/IDE_FRL/interpretators/roflolisp/LispTester.exe"
+            "path": "C:/Users/Dima/source/repos/IDE_FRL/interpretators/roflolisp/LispTester.exe",
+            "relative": false
         }
     }
 }

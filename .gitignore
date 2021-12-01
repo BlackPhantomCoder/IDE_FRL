@@ -342,15 +342,14 @@ healthchecksdb
 #
 builds/**
 
-builds/fw_debug/debug/data/for_dos/sinchro/**
-
 !builds/*/
-!builds/fw_debug/*/
-!builds/fw_debug/debug/*/
-!builds/fw_debug/debug/data/**
-
-!builds/debug/debug/data/**
 
 !builds/debug/*/
 !builds/debug/debug/*/
 !builds/debug/debug/data/**
+
+!builds/debug/debug/fw_debug/*/
+!builds/debug/debug/fw_debug/debug/*/
+!builds/debug/debug/fw_debug/debug/data/**
+
+builds/debug/debug/fw_debug/debug/data/for_dos/sinchro/**
