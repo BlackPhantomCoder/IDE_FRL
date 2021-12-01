@@ -1,0 +1,383 @@
+; Set color variables
+; F1 - for help !!!
+  (SETQ
+        BLACK   0
+        BLUE    1
+        GREEN   2
+        CYAN    3
+        RED     4
+        MAGENTA 5
+        BROWN   6
+        WHITE   7
+  )
+; Create DESK with name = D1,
+; 3 5 20 70 - DESK position and size on the screen
+; 3,5 - left upper corner, 20 - high, 70 - wide
+  (@CREATE_DESK 'D1 3 5 20 70)
+;  Put color to desk D1
+;  RED - background color (0-7)
+;  GREEN - foreground color (0-7)
+;  1 - intensity is on
+;  0 - blinking  is off
+  (@PUT_COLOR 'D1 RED GREEN 1 0)
+; Draw desk D1
+ (@DRAW_DESK 'D1)
+; Remove active desk picture from the screen
+ (@HIDE_DESK)
+; Remove frame handle from the desk structure
+ (@REM_FRAME 'D1)
+; Draw (redraw) desk D1
+ (@DRAW_DESK 'D1)
+; Remove active desk picture from the screen
+ (@HIDE_DESK)
+; Put new frame to the desk structure
+ (@PUT_FRAME 'D1 '*FRAME_BOX*)
+; Draw (redraw) desk D1
+ (@DRAW_DESK 'D1)
+; Remove active desk picture from the screen
+ (@HIDE_DESK)
+; Put procedures to the desk structure
+; DRAW - type of procedures (exec inside @DRAW_DESK)
+; @PRIN_W - print string to relative coordinates
+;           (print to center inside desk D1)
+; x=0, y=0, w=nil (default will be wide of desk :DESK)
+; nil, nil - right or left print, 7,4,0,0 - color attributes
+ (@PUT_PROC 'DRAW D1
+   '((@PRIN_W :DESK (PACK* "Desk name = " :DESK)
+               0 0 NIL NIL NIL 7 4 0 0)))
+; Put procedures to the desk structure
+; AUTO - type of procedures (exec inside @EXEC_DESK, after @DRAW_DESK)
+ (@PUT_PROC 'AUTO D1
+        '( (REPLY* "What is your name?" 'ANS)
+           (MESSAGE "Hello, I'm glad to see you" ANS)
+         ))
+; Execute desk D1 with redrawing
+; T - redrawing flag
+; F1 - help
+(@EXEC_DESK 'D1 T)
+; Shade global variable
+; shade is ON now
+  *NO_SHADE*
+; Switch shade to OFF everywhere
+(SETQ *NO_SHADE* T)
+; Try to test shade service
+ (@EXEC_DESK 'D1)
+; Switch shade to ON everywhere
+(SETQ *NO_SHADE* NIL)
+; Switch shade to OFF only for D1
+(PUT 'D1 'NO_SHADE T)
+; Try to test shade service
+ (@EXEC_DESK 'D1)
+; Switch shade to ON  for D1
+ (PUT 'D1 'NO_SHADE NIL)
+; Connect  key F10 with QUIT-option
+  (PUT_KEYBD_PROC D1
+      (LIST *K_F10*)
+     '((AND (PROMPT_YN "Will you quit really ???")
+            (RETURN_TOP ANS))))
+; Connect keys T & t with printing name of user
+  (PUT_KEYBD_PROC D1
+     '("T" "t")
+     '((MESSAGE (PACK* "Your name is " ANS))) )
+; Connect keys Ctrl-R+Ctrl-N with  AUTO procedures executing
+  (PUT_KEYBD_PROC D1
+      (LIST *K_^R* *K_^N*)
+      '((@EXEC_PROC 'AUTO D1)) T)
+; Execute desk D1
+; Try to use functional keys
+ (@EXEC_DESK 'D1)
+; Create box B
+; 1 - high, 20 - wide
+; If h=1<3 frame will be remove from the box structure automatically
+  (@CREATE_BOX 'B 1 20)
+;  Add color to box B
+;  MAGENTA - background color (0-7)
+;  6    - foreground color (0-7)
+  (@PUT_COLOR 'B MAGENTA 6 1)
+; Add box B to desk D1
+; 1, 1 - box position
+  (@ADD_BOX 'D1 'B 1 1)
+; Put DRAW procedures
+; These procedures put string: "Sound" in the middle of the box field
+  (@PUT_PROC 'DRAW 'B '((@PRIN_W :BOX "Sound" 0 0)))
+; Put NEED procedures (will start after select box & press Enter)
+  (@PUT_PROC 'NEED 'B '((TONE 400 50) (TONE 200 20) (TONE 600 50)))
+; Execute desk D1
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Create box B1_1
+  (@CREATE_BOX 'B1_1 4 20)
+;  Add color to box B1_1
+;  WHITE - background color (0-7)
+;  BLUE  - foreground color (0-7)
+  (@PUT_COLOR 'B1_1 WHITE BLUE 0 0)
+; Add box B1_1 to desk D1
+; 3, 1 - box coordinates
+  (@ADD_BOX 'D1 'B1_1 3 1)
+; Put text into the box field (left)
+; NIL,NIL,NIL,NIL - current coordinates, high & wide
+  (@PUT_PROC 'DRAW 'B1_1
+     '((@PRIN_HW NIL
+         '("Message about" "current time") NIL NIL NIL NIL T)))
+; Put NEED procedures (will start after select box & press Enter)
+  (@PUT_PROC 'NEED 'B1_1 '((MESSAGE "Current time" "is" (SETTIME))))
+; Create box B1_2
+; 6 - high, 20 - wide
+  (@CREATE_BOX 'B1_2 NIL NIL 'B1_1)
+; Add box B1_2 to desk D1
+; 3, 25 - box coordinates
+  (@ADD_BOX 'D1 'B1_2 3 25)
+; Put text into the box field (left)
+; NIL,NIL,NIL,NIL - current coordinates, high & wide
+  (@PUT_PROC 'DRAW 'B1_2
+     '((@PRIN_HW NIL
+         '("Quit from" "this desk") )))
+; Put NEED procedures (will start after select box & press Enter)
+  (@PUT_PROC 'NEED 'B1_2 '((KEYBD_EXEC *K_F10* 'D1)))
+; Create box B1_3 with text (Special service)
+; NIL, NIL - default size & wide
+; ("Message about" "current date") - output text
+; R - output format (more right position)
+; ((MESSAGE "Current date" "is" (SETDATE))) - List of NEED procedures
+;                             (will start after select box & press Enter)
+; *K_^D* - code for box execute (Ctrl+D)
+  (@CREATE_TBOX 'B1_3 NIL NIL '("Message about" "current date") 'R
+        '((MESSAGE "Current date" "is" (SETDATE))) *K_^D* 'B1_1)
+; Add box B1_3 to desk D1
+; 3, 49 - box coordinates
+  (@ADD_BOX 'D1 'B1_3 3 49)
+; Remove AUTO procedures from D1
+  (@REM_PROC 'AUTO 'D1)
+; Execute desk D1
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Set cursor color for desk D1
+ (@CURSOR_COLOR 'D1 1 7 1 0)
+; Execute desk D1
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Create new frame for D1
+  (@CREATE_FRAME 'F#D1 NIL NIL NIL NIL NIL NIL NIL NIL '*FRAME_DESK*)
+; Put new frame for D1
+  (@PUT_FRAME 'D1 'F#D1)
+; Create box B2_1
+  (@CREATE_BOX 'B2_1 1 20)
+  (@REM_FRAME 'B2_1)
+;  Add color to box B2_1
+  (@PUT_COLOR 'B2_1 WHITE MAGENTA 0 0)
+; Add box B2_1 to desk D1
+  (@ADD_BOX 'D1 'B2_1 8 1)
+; Put text into the box field
+  (@PUT_PROC 'DRAW 'B2_1 '((@PRIN_W NIL "Set frame colors")))
+; Put NEED procedures (will start after select box & press Enter)
+; execute color service for getting color attributes from user
+; then draw frame of desk D1 and restart DRAW procedures
+; for printing desk name
+  (@PUT_PROC 'NEED 'B2_1 '((SET_COLOR 'F#D1) (@DRAW_FRAME :DESK)
+                           (@EXEC_PROC 'DRAW :DESK)))
+; Create box B2_2
+  (@CREATE_BOX 'B2_2 NIL NIL 'B2_1)
+; Add box B2_1 to desk D1
+  (@ADD_BOX 'D1 'B2_2 8 25)
+; Put text into the box field
+  (@PUT_PROC 'DRAW 'B2_2 '((@PRIN_W NIL "Set colors for boxes")))
+; Put NEED procedures (will start after select box & press Enter)
+; 1) select one or more boxes from box list
+; 2) set color and redrawing every selected box
+; 3) set cursor to the old box
+  (@PUT_PROC 'NEED 'B2_2
+     '((SETQ *L* (SELECTOR* (GET :DESK 'BOX) "Point your box"))
+       (MAPC '(LAMBDA(:BOX) (SET_COLOR :BOX) (@DRAW_BOX :DESK :BOX))
+              (AND *L* (IF (ATOM *L*) (LIST *L*) *L*)))
+       (POINT_BOX 'B2_2)   ))
+; Create box B2_3
+  (@CREATE_BOX 'B2_3 NIL NIL 'B2_1)
+; Add box B2_3 to desk D1
+  (@ADD_BOX 'D1 'B2_3 8 49)
+; Put text into the box field
+  (@PUT_PROC 'DRAW 'B2_3 '((@PRIN_W NIL "Set colors for desk")))
+; Put NEED procedures (will start after select box & press Enter)
+; 1) set color
+; 2) redraw desk
+; 3) set cursor to the old box
+  (@PUT_PROC 'NEED 'B2_3
+     '((SET_COLOR :DESK) (@HIDE_DESK) (@DRAW_DESK :DESK)
+       (POINT_BOX 'B2_3)))
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Set colors for point box
+; Connect key = F5 with set color&redraw service
+  (PUT_KEYBD_PROC 'D1 (LIST *K_F5*)
+     '((SET_COLOR(POINT_BOX)) (@DRAW_BOX :DESK (POINT_BOX))
+       (CHANGE_BOX *K_RIGTH*) ) )
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Put SCAN procedures for every box
+; 1) clear field for printing
+; 2) print string (the first path of string is standard,
+;                  but the last one is got from box structure)
+  (@PUT_PROC 'SCAN 'D1
+    '((@CLEAR_HW :DESK 1 25 1 44 176)
+      (@PRIN_HW :DESK (PACK* "Press F5 - color; ENTER for "
+                             (GET(POINT_BOX) 'TEXT))
+                      1 25 1 44)))
+; Put message for SCAN-procedure
+  (PUT 'B 'TEXT "Sound effect")
+; Put message for SCAN-procedure
+  (PUT 'B1_1 'TEXT "Current time")
+; Put message for SCAN-procedure
+  (PUT 'B1_2 'TEXT "Quit")
+; Put message for SCAN-procedure
+  (PUT 'B1_3 'TEXT "Current date")
+; Put message for SCAN-procedure
+  (PUT 'B2_1 'TEXT "change board color")
+; Put message for SCAN-procedure
+  (PUT 'B2_2 'TEXT "change box color")
+; Put message for SCAN-procedure
+  (PUT 'B2_3 'TEXT "change desk color")
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Create box for block test executing
+   (@CREATE_BOX 'B3_1 1 20)
+; Put DRAW procedures for box (text inside box field)
+   (@PUT_PROC 'DRAW 'B3_1 '((@PRIN_W NIL "Block test (^T)")))
+; Add key to box for execute B3_1
+   (@ADD_KEYBD 'B3_1 *K_^T*)
+; Create block structure
+   (@CREATE_BLOCK 'BL1 15 WHITE BLUE 0 0 NIL
+        '((" Nothing ")
+          (" Hello (^H)" NIL (LIST *K_^H*) (MESSAGE (PACK* "Hello, " ANS " !!!")))
+          (" Sound (^S)" NIL (LIST *K_^S*) (@EXEC_BOX 'B))
+           -
+          ("Color desk" NIL NIL (@EXEC_BOX 'B2_3))
+          -
+          (" Quit (F10) " NIL (LIST *K_F10*) (@EXEC_BOX 'B1_2))
+         )
+   )
+; Set colors of block
+   (@PUT_COLOR 'BL1 7 4)
+; Add block to the box
+   (@PUT_BLOCK 'B3_1 'BL1)
+; Add box to the desk
+   (@ADD_BOX 'D1 'B3_1 10 1)
+; Put message for SCAN-procedure
+   (PUT 'B3_1 'TEXT " test block of boxes")
+; Try to use new option
+ (@EXEC_DESK 'D1)
+; Create box for block execute
+   (@CREATE_BOX 'B3_2 NIL NIL 'B3_1)
+; Put DRAW procedures for box (text inside box field)
+   (@PUT_PROC 'DRAW 'B3_2 '((@PRIN_W NIL "Window (^W)")))
+; Add key to box for execute B3_1
+   (@ADD_KEYBD 'B3_2 *K_^W*)
+; Create block structure
+   (@CREATE_BLOCK 'BL2 15 WHITE BLUE 0 0 NIL
+        '((" Show&Exec (1) " NIL (LIST "1") (@EXEC_WINDOW 'W1))
+          (" Hide 1"         NIL NIL  (@HIDE_WINDOW 'W1))
+          -
+          (" Show&Exec (2) " NIL (LIST "2")
+                (IF (EQL (ACTIV_WINDOW?) W2) (@EXEC_PROC 'NEED 'W2)
+                                             (@EXEC_WINDOW 'W2)))
+          (" Hide 2"    NIL NIL  (@HIDE_WINDOW 'W2))
+   ))
+; Set colors of block
+   (@PUT_COLOR 'BL2 7 4)
+; Add block to the box
+   (@PUT_BLOCK 'B3_2 'BL2)
+; Add box to the desk
+   (@ADD_BOX 'D1 'B3_2 10 49)
+; Message for SCAN-procedure
+   (PUT 'B3_2 'TEXT " some test for window ")
+; Create window W1, size h=7, w=24, color&frame - set default
+   (@CREATE_WINDOW 'W1 7 24)
+; Put INFO procedures for W1
+  (@PUT_PROC 'INFO 'W1 '((@CLEAR_HW NIL NIL NIL 1 NIL 177)
+                         (@PRIN_W NIL " First process ")))
+; Put AUTO procedures for W1
+  (@PUT_PROC 'AUTO 'W1
+     '((SETQ COLOR
+        (WINDOW_DRIVER 'W1 '(BLACK RED GREEN MAGENTA WHITE BROWN BLUE) T))
+        (PRINC# :DESK "I show your color" 10 25 (EVAL COLOR)) ))
+; Set window position (x=13, y=46) on desk D1
+   (@ADD_WINDOW 'D1 'W1 13 46)
+; Create window W2, size h=7, w=24, color&frame - set default
+   (@CREATE_WINDOW 'W2 7 24)
+; Put INFO procedures for W2
+  (@PUT_PROC 'INFO 'W2 '((@CLEAR_HW NIL NIL NIL 1 NIL 177)
+                         (@PRIN_W NIL " Second process ")))
+; Put AUTO procedures for W2
+  (@PUT_PROC 'NEED 'W2
+      '((SETQ COLOR1
+          (WINDOW_DRIVER 'W2 '(BLACK RED GREEN MAGENTA WHITE BROWN BLUE) T))
+        (PRINC# :DESK "I show your color" 10 25 NIL (EVAL COLOR1)) ))
+; Set window position (x=11, y=45) on desk D1
+   (@ADD_WINDOW 'D1 'W2 11 45)
+; Try to use new option
+(@EXEC_DESK 'D1)
+; Set start color variable
+(SETQ N 0)
+; Create desk for test delay options on print example
+(@CREATE_DESK 'D2 9 3 10 40 'D1)
+; Create box for print inside current desk
+(@CREATE_BOX 'D2B1 3 15)
+; Put DRAW procedures for box (text inside box field)
+(@PUT_PROC 'DRAW 'D2B1 '((@PRIN_W NIL "Normal print")))
+; Put NEED procedures for print inside current desk
+(@PUT_PROC 'NEED 'D2B1
+    '((MESSAGE "Normal print")
+      (PRINC# :DESK (PACK* "Print to " :DESK) 1 15 (MOD (INCQ N) 8) )))
+; Add box D2B1 to desk D2
+(@ADD_BOX 'D2 'D2B1 2 2)
+; Create box for print to other desk field (DELAY service)
+(@CREATE_BOX 'D2B2 3 15)
+; Put DRAW procedures for box (text inside box field)
+(@PUT_PROC 'DRAW 'D2B2 '((@PRIN_W NIL "Delay  print")))
+; Put NEED procedures for print inside other desk field (DELAY service)
+(@PUT_PROC 'NEED 'D2B2
+      '((@PUT_PROC 'DELAY 'D1
+          '((MESSAGE "Delay print")
+            (@CLEAR_HW :DESK 16 1 3 44 177 (MOD (INCQ N) 8))
+            (@PRIN_W :DESK (PACK* "Print to " :DESK " from an other one")
+               17 1 44 ) ))
+        (RETURN_TOP)) )
+; Add box D2B1 to desk D2
+(@ADD_BOX 'D2 'D2B2 2 22)
+; Create box for quit from current desk
+(@CREATE_BOX 'D2B3 3 15)
+; Put DRAW procedures for box (text inside box field)
+(@PUT_PROC 'DRAW 'D2B3 '((@PRIN_W NIL " Q U I T ")))
+; Put NEED procedures for quit from current desk
+(@PUT_PROC 'NEED 'D2B3 '((RETURN_TOP)))
+; Add box D2B3 to desk D2
+(@ADD_BOX 'D2 'D2B3 6 12)
+; Create box on D1 for exec desk for testing this delay service
+(@CREATE_BOX 'B4_1 1 20 'B)
+; Put DRAW procedures for box (text inside box field)
+(@PUT_PROC 'DRAW 'B4_1 '((@PRIN_W NIL "Exec desk D2")))
+; Put NEED procedures for execute desk D2
+(@PUT_PROC 'NEED 'B4_1 '((@EXEC_DESK 'D2))))
+; Add box B4_1 to desk D1
+(@ADD_BOX 'D1 'B4_1 12 1)
+; Put message for SCAN procedures
+(PUT 'B4_1 'TEXT " Go to DESK D2")
+; Create an other box on D1 for testing delay service
+(@CREATE_BOX 'B4_2 1 20 'B)
+; Put DRAW procedures for box (text inside box field)
+(@PUT_PROC 'DRAW 'B4_2 '((@PRIN_W NIL "Exec desk D3")))
+; Put NEED procedures for execute desk D3
+(@PUT_PROC 'NEED 'B4_2  '((@EXEC_DESK 'D3))))
+; Add box B4_2 to desk D1
+(@ADD_BOX 'D1 'B4_2  12 25)
+; Put message for SCAN procedures
+(PUT 'B4_2 'TEXT " Go to DESK D3")
+; Create an other desk for delay service testing
+(@CREATE_DESK 'D3 NIL NIL NIL NIL 'D2)
+; Add box D2B1 to desk D3
+(@ADD_BOX 'D3 'D2B1 2 2)
+; Add box D2B2 to desk D3
+(@ADD_BOX 'D3 'D2B2 2 22)
+; Add box D2B3 to desk D3
+(@ADD_BOX 'D3 'D2B3 6 12)
+; Try to use new option
+ (@EXEC_DESK 'D1)
+

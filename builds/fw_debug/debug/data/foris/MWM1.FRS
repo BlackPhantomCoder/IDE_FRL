@@ -1,0 +1,174 @@
+
+
+; Test V-Screen N1
+ 
+   (DEFUN @TEST (X Y H W
+                 SPACE)
+     (@CREATE_DESK '#D3 5 15 15 50)
+;;     (@PUT_PROC 'AUTO '#D3 '((@EXEC_VSCRN 'VS1)))
+     (@PUT_COLOR '#D3 1 3 1 0)
+     (@CURSOR_COLOR '#D3 4 7 0 0)
+     (@CREATE_BOX 'B4 3 10)
+     (@PUT_COLOR 'B4 7 4 0 0)
+     (@CREATE_BOX 'B5 3 10 'B4)
+     (@ADD_BOX '#D3 'B4 2 5)
+     (@ADD_BOX '#D3 'B5 2 25)
+     (@CREATE_VSCRN 'VS1 35 60)
+     (@PUT_FRAME 'VS1 '*FRAME_HANDLE* 1 5 1 0)
+     (@PUT_COLOR 'VS1 3 7 1 0 176)
+     (@CURSOR_COLOR 'VS1 4 7 0 0)
+     (@ADD_VSCRN '#D3 'VS1 6 5 8 40)
+     (@PUT_PROC 'DRAW 'B4 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@PUT_PROC 'DRAW 'B5 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B6 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B6 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B7 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B7 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B8 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B8 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B9 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B9 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B10 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B10 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B11 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B11 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B12 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B12 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@CREATE_BOX 'B13 NIL NIL 'B4)
+     (@PUT_PROC 'DRAW 'B13 '((@PRIN_W @OBJECT @OBJECT 1 0 10)))
+     (@ADD_BOX 'VS1 'B4 5 5)
+     (@ADD_BOX 'VS1 'B5 5 25)
+     (@ADD_BOX 'VS1 'B6 5 45)
+     (@ADD_BOX 'VS1 'B7 15 5)
+     (@ADD_BOX 'VS1 'B8 15 25)
+     (@ADD_BOX 'VS1 'B9 15 45)
+     (@ADD_BOX 'VS1 'B10 25 5)
+     (@ADD_BOX 'VS1 'B11 25 25)
+     (@ADD_BOX 'VS1 'B12 25 45)
+     (@CREATE_MBOX 'B13 10 NIL '(1 2 3 4 5) NIL 'B4)
+     (@ADD_BOX 'VS1 'B13 30 5)
+     (@CREATE_EBOX 'B14 10 'eee NIL  NIL NIL 'B4)
+     (@ADD_BOX 'VS1 'B14 30 25)
+     (REMD '@TEST)
+     '#D3
+   )
+
+   (SETQ *VS1* '(@TEST))
+
+
+; Test V-Screen N2
+
+   (DEFUN VS_SETUP ()
+      (@CREATE_DESK '*VS_SETUP* 4 23 12 38)
+      (@PUT_COLOR '*VS_SETUP* 7 1 0 0)
+      (@PUT_PROC 'DRAW '*VS_SETUP*
+             '((@PRIN_W @OBJECT " SETUP   SERVICE " 0 0 NIL NIL NIL 1 7)
+               (@PRIN_W @OBJECT *SYSTEM_VER*  2 0 NIL NIL NIL 7 4)) )
+      (@CREATE_VSCRN '#VS_SETUP# 25 50)
+      (@CURSOR_COLOR  *V_H* 4 7 1)
+      (@ADD_VSCRN '*VS_SETUP* '#VS_SETUP# 4 2 7 34)
+      (@PUT_COLOR '#VS_SETUP# 1 7 0 0)
+      (@ADD_TABLE '#VS_SETUP# 4 10 18  NIL 7 1 0 'R
+                                35 10  1   6 1 0  2 NIL
+         '((("Edit program name:") NIL E *EDIT* (TE LEXICON) NIL NIL)
+           (("Type of Edit:") NIL M *EDIT_LSP* (NIL T) ("External" "Internal"))
+           (("Screen Driver" "(for graphic mode)") NIL M *SCRN_DRVR* (T NIL) ("Yes" "No"))
+           (("Keyboard Driver:") NIL M *ALFA* (*ALFA* NIL) ("Yes" "No"))
+           (("Printer Driver:") NIL M *PRINT_DRVR* (NIL FX RUSPRINT) ("No" FX RUSPRINT)
+               ((SETQ *PRINTER_CODE* (AND (EQ *PRINT_DRVR* 'RUSPRINT)
+                                          '*PRINTER_CODE*))) )
+           (("Menu colors:") *FC* B NIL "Set Color"
+                ((SETQ *FC* (SET_COLOR NIL *B_1* *T_1* 0 0)
+                       *B_1* (CAR *FC*)
+                       *T_1* (CADR *FC*)))   )
+           (("Screen colors:") *SC* B NIL "Set Color"
+                ((SETQ *SC* (SET_COLOR NIL *B_2* *T_2* 0 0)
+                       *B_2* (CAR *SC*)
+                       *T_2* (CADR *SC*)))   )
+           (("Save setup:")    NIL E NIL* (CONFIG.LSP) NIL
+                  ((SAVE_SETUP (@GET_VBOX :BOX)) ))
+           (("Load setup:")    NIL E NIL* (CONFIG.LSP) NIL
+                  ((LOAD_SETUP (@GET_VBOX :BOX)) (RETURN_TOP 'RESTART)))
+          )
+      )
+      (REMD 'VS_SETUP)
+      '*VS_SETUP*
+   )
+
+   (SETQ *VS_SETUP* '(VS_SETUP))
+
+   (DEFUN !TEST (X Y H W V_SCR
+                 SPACE BYTE)
+     (SETQ SPACE (MAKE-WINDOW))
+     (AND X Y H W (MAKE-WINDOW X Y H W))
+     (OR V_SCR (SETQ V_SCR '#V_SCR))
+     ((NULL(!MAKE_VSCRN V_SCR 95 120 1 7 1 0)) ; Создать вирт. экран
+              NIL)
+     (!SET_VSCRN V_SCR)   ; Переключить вывод на  вирт. экран
+     (PRINC* "Virtual screen" 6 35) ; Вывод строки
+     (!!BOX_COLOR 16 35 30 15  4 1 nil nil nil 197) ; Вывод фрагмента
+     (!!FRAME_COLOR 16 35 30 15  4 1 nil nil nil
+                    4 4 4 4 4 4 4 4 ) ; Вывод рамки
+     (!!BOX_COLOR 16 75 50 40  5 2 1 nil nil 176) ; Вывод фрагмента
+     (!!FRAME_COLOR 16 75 50 40 6 3 1 nil nil
+                    8 8 8 8 8 8 8 8) ; Вывод рамки
+     (!!BOX_COLOR 80 15 10 60 5 1 1 nil nil 7)
+     (!SET_VSCRN) ; Переключить вывод на реальный экран
+     (MAPC '(LAMBDA(L)
+              (!MOVE_VSCRN V_SCR (CAR L) (CADR L))
+              (TONE 0 80)
+            )
+           '((2 2) (4 4) (6 6) (8 8) (10 10) (12 12)
+             (12 14) (12 16) (12 18) (12 20) (12 22)
+             (10 22) (8 22)  (6 22) (4 22) (2 22)
+             (2 22) (2 20)(2 18) (2 16)(2 14)(2 12)(2 10)
+             (2 8) (2 6)(2 4) (2 2)
+             (6 35)
+            )
+     )
+     (PRT_WAIT1 "Press any key to continue" 40 1 7 1 0)
+     (READ-BYTE1)
+     (PRT_WAIT1 T)
+     (!OUT_FUN V_SCR '!!BOX_COLOR 70 10 5 20 5 3 1 nil nil 177) ; Вывод фрагмента
+     (!OUT_FUN V_SCR 'PRINC* "70,10,5,20"  72 13)
+     (!MOVE_BOX V_SCR 70 10 5 10)
+     (PRT_WAIT1 "Press any key to continue" 40 1 7 1 0)
+     (READ-BYTE1)
+     (PRT_WAIT1 T)
+     (!OUT_FUN V_SCR '!!BOX_COLOR 70 40 5 20 5 3 1 nil nil 177) ; Вывод фрагмента
+     (!OUT_FUN V_SCR 'PRINC* "70,40,5,20"  72 43)
+     (!MOVE_BOX V_SCR 70 40 5 20)
+     (PRT_WAIT1 "Press any key to continue" 40 1 7 1 0)
+     (READ-BYTE1)
+     (PRT_WAIT1 T)
+     (!OUT_FUN V_SCR '!!BOX_COLOR 80 30 5 20 5 3 1 nil nil 177) ; Вывод фрагмента
+     (!OUT_FUN V_SCR 'PRINC* "80,30,5,20"  82 33)
+     (!MOVE_BOX V_SCR 80 30 5 20)
+     (PRT_WAIT1 "Press any key to continue" 40 1 7 1 0)
+     (READ-BYTE1)
+     (PRT_WAIT1 T)
+     (PRT_WAIT1 "Press Esc to quit" 40 5 7 1 0)
+     (LOOP (SETQ BYTE (READ-BYTE1))
+           ((EQ BYTE *K_ESC*) T)
+           (@MOVE_VSCRN V_SCR BYTE)
+     )
+     (PRT_WAIT1 T)
+     (CLEAR-SCREEN)
+     (APPLY 'MAKE-WINDOW SPACE)
+     (!DESTROY_VSCRN V_SCR)
+
+  )
+
+     (DEFUN TEST3 ()
+        (MESSAGE "Virtual screen size: 95x120"
+           "Real screen size: 18x76")
+        (!TEST 1 0 23 80)
+        (MESSAGE "Virtual screen size: 95x120"
+                 "Real screen size: 15x30")
+        (!TEST 5 5 15 30)
+        (MESSAGE "Virtual screen size: 95x120"
+                 "Real screen size: 10x60")
+        (!TEST 10 10 10 60)
+
+    )
+

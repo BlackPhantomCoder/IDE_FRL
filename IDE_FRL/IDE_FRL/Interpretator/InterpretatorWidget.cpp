@@ -1,6 +1,6 @@
 #include "InterpretatorWidget.h"
 
-#include "Settings/GlobalSettings.h"
+#include "Settings/MyQApp.h"
 #include <QMessageBox>
 #include <QDebug>
 #include <QScrollBar>
@@ -11,19 +11,21 @@ InterpretatorWidget::InterpretatorWidget(QWidget *parent):
     t_project(nullptr)
 {
     setupUi(this);
-    t_finish_state = true;
 
     connect(this, &InterpretatorWidget::started, this, &InterpretatorWidget::changed_state);
     connect(this, &InterpretatorWidget::stopped, this, &InterpretatorWidget::changed_state);
     connect(input, &QLineEdit::returnPressed, this, &InterpretatorWidget::t_send);
+
+    QObject::connect(scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
+                     [this](){scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximum());});
 }
 
 InterpretatorWidget::~InterpretatorWidget()
 {
-    t_change_state(false);
-    if(t_interpretator){
+    if(is_running()){
         disconnect(t_interpretator, &Interpretator::response, this, &InterpretatorWidget::on_response);
-        t_interpretator->stop();
+        auto result = t_interpretator->stop();
+        if(!result)t_interpretator->kill();
         delete t_interpretator;
         t_interpretator = nullptr;
     }
@@ -31,7 +33,7 @@ InterpretatorWidget::~InterpretatorWidget()
 
 bool InterpretatorWidget::is_running() const
 {
-    return !t_finish_state;
+    return t_interpretator && t_interpretator->is_runing();
 }
 
 bool InterpretatorWidget::start_interpretator_w_answear()
@@ -42,11 +44,11 @@ bool InterpretatorWidget::start_interpretator_w_answear()
         QMessageBox::warning(this, "Внимание","Интерпретатор не задан");
         return false;
     }
-    if(!interpretator_settings().contains_interpretator(t_project->interpretator_name())){
+    if(!MyQApp::interpretator_settings().contains_interpretator(t_project->interpretator_name())){
         QMessageBox::warning(this, "Внимание","Неизвестный интерпретатор");
         return false;
     }
-    t_interpretator = new Interpretator(interpretator_settings().get_interpretator(t_project->interpretator_name()), this);
+    t_interpretator = new Interpretator(MyQApp::interpretator_settings().get_interpretator(t_project->interpretator_name()), this);
     connect(t_interpretator, &Interpretator::finished, this, &InterpretatorWidget::on_finished);
     auto result = t_interpretator->run();
     if(!result){
@@ -57,27 +59,27 @@ bool InterpretatorWidget::start_interpretator_w_answear()
     }
     connect(t_interpretator, &Interpretator::response, this, &InterpretatorWidget::on_response);
 
-    t_change_state(true);
+    t_change_state();
     emit started();
     return true;
 }
 
 bool InterpretatorWidget::stop_interpretator_w_answear()
 {
-    if(!t_interpretator) return false;
+    if(!is_running()) return false;
+    disconnect(t_interpretator, &Interpretator::finished, this, &InterpretatorWidget::on_finished);
     auto result = t_interpretator->stop();
-    t_change_state(false);
     if(!result){
          auto ans = QMessageBox::warning(this, "Внимание", "Интерпретатор не отвечает.\nЗавершить принудительно?", QMessageBox::Ok | QMessageBox::Cancel);
          if(ans == QMessageBox::Ok){
             t_interpretator->kill();
          }
          else{
-             t_change_state(true);
              return false;
          }
 
     }
+    t_change_state();
     delete t_interpretator;
     t_interpretator = nullptr;
     emit stopped();
@@ -106,34 +108,38 @@ void InterpretatorWidget::clear()
     scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximumHeight());
 }
 
+void InterpretatorWidget::send(const QString &str, bool new_line)
+{
+    if(is_running()){
+        if(str.isEmpty()) return;
+        output->setText(output->text() + str + ((new_line) ? "\n": ""));
+        t_interpretator->send(str);
+    }
+}
+
 void InterpretatorWidget::on_finished()
 {
-    if(t_finish_state){
+    if(!is_running()){
          QMessageBox::warning(this, "Внимание","Интерпретатор закончил свою работу");
-         t_change_state(false);
          delete t_interpretator;
          t_interpretator = nullptr;
-         emit stopped();
     }
+    t_change_state();
+    emit stopped();
 }
 
 void InterpretatorWidget::t_send()
 {
-    if(input->text().isEmpty()) return;
-    output->setText(output->text() + input->text() +"\n");
-    t_interpretator->send(input->text());
+    send(input->text());
     input->clear();
-    scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximumHeight());
 }
 
 void InterpretatorWidget::on_response(const QString &input)
 {
     output->setText(output->text() + input);
-    scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximumHeight());
 }
 
-void InterpretatorWidget::t_change_state(bool processing)
+void InterpretatorWidget::t_change_state()
 {
-    input->setEnabled(processing);
-    t_finish_state = !processing;
+    input->setEnabled(is_running());
 }

@@ -23,6 +23,7 @@ Interpretator::~Interpretator()
 
 bool Interpretator::run()
 {
+    t_process->setWorkingDirectory(t_data.path.mid(0, t_data.path.lastIndexOf("/")));
     t_process->setNativeArguments(t_data.params);
     t_process->start(t_data.path);
     if( !t_process->waitForStarted(5000)) {
@@ -43,15 +44,18 @@ void Interpretator::kill()
         t_process->waitForFinished(5000);
     }
 }
-
-
+//#include <windows.h>
 bool Interpretator::stop()
 {
     if(is_runing()){
-        t_process->closeWriteChannel();
-        t_process->waitForFinished(5000);
+        t_process->terminate();
+        t_process->waitForFinished(1000);
         if(t_process->state() != QProcess::NotRunning){
-            return false;
+            t_process->closeWriteChannel();
+            t_process->waitForFinished(3000);
+            if(t_process->state() != QProcess::NotRunning){
+                return false;
+            }
         }
     }
     return true;

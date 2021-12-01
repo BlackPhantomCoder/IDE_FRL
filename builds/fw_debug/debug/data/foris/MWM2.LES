@@ -1,0 +1,192 @@
+; Create desk @@DS with coordinates x=1, y=1, h=20, w=60
+(@CREATE_DESK '@@DS 1 1 20 60)
+; Draw created desk
+(@DRAW_DESK '@@DS)
+; Hide active desk
+(@HIDE_DESK '@@DS)
+; Create desk @@DS and set new size
+(@CREATE_DESK '@@DS 5 5 15 60)
+; Add color for desk @@DS
+; background (1), foreground (7), high intensity (1), blinking  (0),
+; fill ascii (176=°)
+(@PUT_COLOR '@@DS 1 7 1 0 176)
+; Remove frame handle from desk structure
+(@REM_FRAME '@@DS)
+; Draw desk @@DS
+(@DRAW_DESK '@@DS)
+; Hide active desk
+(@HIDE_DESK '@@DS)
+; Set new size for desk @@DS
+(@PUT_XYHW '@@DS 1 1 20 70)
+; Create new frame @@F
+(@CREATE_FRAME '@@F)
+; Add frame handle to the desk structure
+(@PUT_FRAME '@@DS '@@F)
+; Draw desk @@DS
+(@DRAW_DESK '@@DS)
+; Hide active desk
+(@HIDE_DESK '@@DS)
+; Add frame handle to the desk structure & set frame colors
+; background (4), foreground (6), high intensity (1)
+(@PUT_FRAME '@@DS '@@F 4 6 1)
+; Draw desk @@DS
+(@DRAW_DESK '@@DS)
+; Hide active desk
+(@HIDE_DESK '@@DS)
+; Create new box @@B, size: h=4, w=20
+(@CREATE_BOX '@@B 4 20)
+; Add color for box @@B
+; background (2), foreground (5), high intensity (1), blinking  (0),
+; fill ascii (8)
+(@PUT_COLOR '@@B 2 5 1 0 8)
+; Remove frame handle from box structure
+(@REM_FRAME '@@B)
+; Create new box @@B1, size&colors&frame inherited from box @@B
+(@CREATE_BOX '@@B1 NIL NIL '@@B)
+; Set default (from desk) colors, fill ascii=10
+(@PUT_COLOR '@@B1 NIL NIL NIL NIL 10)
+; Add frame handle to the box structure
+(@PUT_FRAME '@@B1 '@@F)
+; Add DRAW-procedure for @@B1
+; this procedure prints text to the center current field @@B1
+(@PUT_PROC 'DRAW '@@B1 '((@PRIN_W NIL "EXECUTE OLD")))
+; Create new box @@B2, colors&frame inherited from box @@B2
+(@CREATE_BOX '@@B2 8 25 '@@B1)
+; Add DRAW-procedure for @@B2
+; this procedure prints text to the center current field @@B2
+(@PUT_PROC 'DRAW '@@B2 '((@PRIN_HW NIL '(QUIT FROM DESK) )))
+; Add box to desk structure; position on desk field: x=2, y=2
+(@ADD_BOX '@@DS '@@B 2 2)
+; Add box to desk structure; position on desk field: x=14, y=40
+(@ADD_BOX '@@DS '@@B1 14 40)
+; Add box to desk structure; position on desk field: x=4, y=40
+(@ADD_BOX '@@DS '@@B2 4 40)
+; Draw desk @@DS
+(@DRAW_DESK '@@DS)
+; Create new desk @@DS1, size&colors&frame inherited from desk @@DS
+(@CREATE_DESK '@@DS1 4 4 13 60 '@@DS)
+; Put color for desk @@DS1
+; background (4), foreground (7), high intensity (1), blinking  (0),
+; fill ascii (177=±)
+(@PUT_COLOR '@@DS1 4 7 1 0 177)
+; Add old box to the new desk structure; position on desk field: x=2, y=30
+(@ADD_BOX '@@DS1 '@@B2 2 30)
+; Add old box to the new desk structure; position on desk field: x=2, y=2
+(@ADD_BOX '@@DS1 '@@B 2 2)
+; Add old box to the new desk structure; position on desk field: x=7, y=5
+(@ADD_BOX '@@DS1 '@@B1 7 5)
+; Draw new desk @@DS1
+(@DRAW_DESK '@@DS1)
+; Create the next desk @@DS2, size&colors&frame inherited from desk @@DS
+(@CREATE_DESK '@@DS2 6 9 13 60 '@@DS)
+; Put color for desk @@DS2
+; background (2), foreground (7), high intensity (1), blinking  (0),
+; fill ascii (177=±)
+(@PUT_COLOR '@@DS2 2 7 1 0 177)
+; Add old box to the new desk structure; position on desk field: x=2, y=30
+(@ADD_BOX '@@DS2 '@@B2 2 30)
+; Add old box to the new desk structure; position on desk field: x=2, y=2
+(@ADD_BOX '@@DS2 '@@B 2 2)
+; Add old box to the new desk structure; position on desk field: x=7, y=5
+(@ADD_BOX '@@DS2 '@@B1 7 5)
+; Draw desk @@DS2
+(@DRAW_DESK '@@DS2)
+; Draw desk @@DS1
+(@DRAW_DESK '@@DS1 )
+; Draw desk @@DS2 !!! This desk has already been drawed !!!
+(@DRAW_DESK '@@DS2 )
+; Draw desk @@DS
+(@DRAW_DESK '@@DS )
+; Create window @@W, colors&frame inherited from desk @@DS
+; size: h=10, w=30
+(@CREATE_WINDOW '@@W 10 30 '@@DS)
+; Put color to @@W
+(@PUT_COLOR '@@W 1 7 1 0)
+; Add window to the global desk
+;  NIL - deskname (if NIL - deskname=*DESK_HANDLE*)
+; position on desk: x=1, y=0
+(@ADD_WINDOW NIL '@@W 1 0)
+; Draw window
+(@DRAW_WINDOW '@@W)
+; Hide active window
+(@HIDE_WINDOW)
+; Add window to the desk @@DS
+; position on desk: x=1, y=10
+(@ADD_WINDOW '@@DS '@@W 1 10)
+; Draw window on active desk @@DS
+(@DRAW_WINDOW '@@W)
+; Create window @@W1,
+; size: h=10, w=20
+(@CREATE_WINDOW '@@W1 10 20)
+; Put colors to window
+(@PUT_COLOR '@@W1 RED 7 1 0)
+; Add window to the desk @@DS
+; position on desk: x=3, y=15
+(@ADD_WINDOW '@@DS '@@W1 3 15)
+; Draw window on active desk @@DS
+(@DRAW_WINDOW '@@W1)
+; Draw window on active desk @@DS !!! This window has already been drawed !!!
+(@DRAW_WINDOW '@@W)
+; Move window to the new position on desk @@DS: x=5, y=0
+(MOVE_WINDOW '@@W 5 0)
+; Switch active window size on active desk
+(DRAW_FULL_WINDOW '@@W)
+; Switch active window size on active desk
+(DRAW_FULL_WINDOW '@@W)
+; Change size and position of active window
+(REDRAW_WINDOW '@@W 10 5 5 35)
+; Hide window
+(@HIDE_WINDOW '@@W)
+; Hide window
+(@HIDE_WINDOW '@@W1)
+; Hide active desks
+(MAPC '@HIDE_DESK '(@@DS @@DS1 @@DS2))
+; Add NEED procedures for box @@B1
+; Execute selected desk driver
+(@PUT_PROC 'NEED '@@B1 '((@EXEC_DESK(SELECTOR* '(@@DS @@DS1 @@DS2)
+                                             "Find name"))))
+; Add NEED procedures for box @@B2
+; Quit from active desk and remove active desk picture from the screen
+; (i.e. hide active desk)
+(@PUT_PROC 'NEED '@@B2 '((RETURN_TOP)))
+; Execute desk driver for @@DS
+(@EXEC_DESK '@@DS)
+; Set global variables
+(SETQ @@VAR1 'READ_BOX1 @@VAR2 'READ_BOX2 @@VAR3 "Read box3")
+; Create edit box @@R1
+; size: h=1 (everywhere); w=8
+; @@VAR1 - edit variable name
+(@CREATE_EBOX '@@R1 8 '@@VAR1)
+; Create edit box @@R2
+; size: h=1 (everywhere); w=4
+; @@VAR2 - edit variable name
+(@CREATE_EBOX '@@R2 4 '@@VAR2)
+; Create edit box @@R3
+; size: h=1 (everywhere); w=10
+; @@VAR3 - edit variable name
+(@CREATE_EBOX '@@R3 10 '@@VAR3)
+; Put color for box @@R1
+(@PUT_COLOR '@@R1 1 6 1 0)
+; Put color for box @@R2
+(@PUT_COLOR '@@R2 4 5 1 0)
+; Add box @@R1 to desk @@DS. Position: x=18, y=1
+(@ADD_BOX '@@DS '@@R1 18 1)
+; Add box @@R2 to desk @@DS. Position: x=18, y=15
+(@ADD_BOX '@@DS '@@R2 18 15)
+; Add box @@R3 to desk @@DS. Position: x=18, y=25
+(@ADD_BOX '@@DS '@@R3 18 25)
+; Add box @@R1 to desk @@DS1. Position: x=11, y=10
+(@ADD_BOX '@@DS1 '@@R1 11 10)
+; Add box @@R2 to desk @@DS1. Position: x=11, y=25
+(@ADD_BOX '@@DS1 '@@R2 11 25)
+; Add box @@R3 to desk @@DS1. Position: x=11, y=35
+(@ADD_BOX '@@DS1 '@@R3 11 35)
+; Add box @@R1 to desk @@DS2. Position: x=11, y=10
+(@ADD_BOX '@@DS2 '@@R1 11 10)
+; Add box @@R2 to desk @@DS2. Position: x=11, y=25
+(@ADD_BOX '@@DS2 '@@R2 11 25)
+; Add box @@R3 to desk @@DS2. Position: x=11, y=35
+(@ADD_BOX '@@DS2 '@@R3 11 35)
+; Execute desk driver for @@DS
+(@EXEC_DESK '@@DS)
+

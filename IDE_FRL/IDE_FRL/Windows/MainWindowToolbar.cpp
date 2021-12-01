@@ -3,7 +3,7 @@
 
 MainWindowToolbar::MainWindowToolbar(MainWindow *parent)
 {
-    toolbar_1 = new QToolBar(parent);
+    toolbar_1 = new QToolBar("Панель инструментов", parent);
 
     toolbar_1->setAllowedAreas(Qt::TopToolBarArea);
     toolbar_1->setFloatable(false);

@@ -1,0 +1,112 @@
+; Find dBASE example file
+(SETQ #FILE (!!FIND_FILE 'EMPLOYEE  '.DBF))
+; (#OUT_DBF <filename> [<framename>]
+;           [<list fields numbers>]
+;           [<list records numbers>]
+;           [X] [Y] [H] [W])               => <filename>
+;                                          => NIL (if failure)
+; Displays the contents of a database file in the table form
+; <framename> - frame of a table structure
+; If frame is absent (<framename> is NIL) then creates frame-primitive
+; X,  Y - co-ordinates of a left upper corner of a virtual screen
+; to output table
+; H, W - high and width of this virtual screen
+(#OUT_DBF #FILE)
+;Creates frame of the table structure
+;STRUCT1 - frame name
+;Names of the term slots - numbers of columns
+;Aspect $VALUE of nonterm slot LEVELS consists list of all slots
+;of upper level hierarchy
+;Aspects: $TITLE - column heading,
+;         $FIELD - field number in database file,
+;         $WIDTH - column width
+;are corresponds to every term slot
+;This frame describes table with 3 fields
+  (FASSERTQ STRUCT1
+       (LEVELS ($VALUE (1) (2) (3)))
+       (1 ($TITLE ("î†¨®´®Ô"))
+          ($FIELD (1))
+          ($WIDTH (15))  )
+       (2 ($TITLE ("à¨Ô"))
+          ($FIELD (2))
+          ($WIDTH (10))  )
+       (3 ($TITLE ("à≠®Ê."))
+          ($FIELD (3))
+          ($WIDTH (5))   )
+  )
+; Output database file according to frame STRUCT1
+(#OUT_DBF #FILE 'struct1)
+; Three columns have one common title àåü in frame STRUCT2
+; Slot LEVELS get new value
+  (FASSERTQ STRUCT2
+       (LEVELS ($VALUE (LEVEL1)))
+       (LEVEL1  ($TITLE ("àåü"))
+                ($VALUE (1) (2) (3)))
+       (1 ($TITLE ("î†¨®´®Ô"))
+          ($FIELD (1))
+          ($WIDTH (15))  )
+       (2 ($TITLE ("à¨Ô"))
+          ($FIELD (2))
+          ($WIDTH (10))  )
+       (3 ($TITLE ("à≠®Ê."))
+          ($FIELD (3))
+          ($WIDTH (5))   )
+  )
+; Output database file according to frame STRUCT2
+(#OUT_DBF #FILE 'struct2)
+; Displays the contents of the frame STRUCT
+; Press Ctrl+S to stop and continue
+(FPRINT '(struct))
+; (#OUT_DBF <filename> [<framename>]
+;           [<list fields numbers>]
+;           [<list records numbers>]
+;           [X] [Y] [H] [W])               => <filename>
+;                                          => NIL (if failure)
+; STRUCT - frame of a table structure
+; Default outputs all columns and all rows
+; Co-ordinates are NIL and table outputs to the current window
+(#OUT_DBF #FILE 'struct)
+; (#OUT_DBF <filename> [<framename>]
+;           [<list fields numbers>]
+;           [<list records numbers>]
+;           [X] [Y] [H] [W])               => <filename>
+;                                          => NIL (if failure)
+; STRUCT - frame of a table structure
+; (1 2 6 16 8) - list field's numbers
+; (3 4 5 6) - list record's numbers (in database file)
+; Outputs to the current window
+(#OUT_DBF #FILE 'struct '(1 2 6 16 8) '(3 4 5 6))
+; (#OUT_DBF <filename> [<framename>]
+;           [<list fields numbers>]
+;           [<list records numbers>]
+;           [X] [Y] [H] [W])               => <filename>
+;                                          => NIL (if failure)
+; STRUCT - frame of a table structure
+; (1 2 19 20 21) - list field's numbers
+; (3 4 5 6 10 15) - list record's numbers (in database file)
+; Outputs to the current window
+(#OUT_DBF #FILE 'struct '(1 2 19 20 21) '(3 4 5 6 10 15))
+; (#OUT_DBF <filename> [<framename>]
+;           [<list fields numbers>]
+;           [<list records numbers>]
+;           [X] [Y] [H] [W])               => <filename>
+;                                          => NIL (if failure)
+; STRUCT - frame of a table structure
+; (1 2 6 16 8) - list field's numbers
+; (3 4 5 6) - list record's numbers (in database file)
+; 5, 10 - co-ordinates of a left upper corner of virtual screen
+; to output table
+; 10, 20 - high and width of this virtual screen
+(#OUT_DBF #FILE 'struct '(1 2 6 16) '(3 4 5 6) 3 10 9 20)
+; Frame to set structure of the table "ìóÖçàäà îåò"
+(FPRINT '(TABLE))
+; (#OUT_DBF <filename> [<framename>]
+;           [<list fields numbers>]
+;           [<list records numbers>]
+;           [X] [Y] [H] [W])               => <filename>
+;                                          => NIL (if failure)
+; TABLE - frame of a table structure
+; Find dBASE example file
+(SETQ ##FILE (!!FIND_FILE 'PUPILS  '.DBF))
+(#OUT_DBF ##FILE 'TABLE)
+

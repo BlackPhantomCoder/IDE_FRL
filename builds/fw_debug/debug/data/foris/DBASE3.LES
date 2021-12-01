@@ -1,0 +1,72 @@
+; Find dBASE example file
+(SETQ #FILE (!!FIND_FILE 'EMPLOYEE  '.DBF))
+(#OUT_DBF  #FILE)
+; Duplicates all or part of database file FILE1, creating a new
+;file FILE2 on the disk
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE #FILE 'test9.dbf
+            '((FINDSTRING "SALES" (#GET_FIELD 4))) nil nil
+            '(1 2 4 6 7))
+; Close database file
+(#CLOSE_BASE 'test9.dbf)
+(#OUT_DBF '"test9.dbf")
+; Duplicates all or part of database file FILE1, creating a new
+;file FILE2 in RAM
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE #FILE 'test11.dbf
+            '((FINDSTRING "SALES" (#GET_FIELD 4))) nil nil
+            '(1 2 4 6 7) T T)
+; Close database file
+(#CLOSE_BASE 'test11.dbf)
+(#OUT_DBF '"test11.dbf")
+; Duplicates all or part of database file FILE1, creating a new
+;file FILE2 on the disk
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE #FILE 'test10.dbf
+              '((NOT(FINDSTRING "SALES" (#GET_FIELD 4)))) nil nil
+              '(1 2 4))
+; Close database file
+(#CLOSE_BASE 'test10.dbf)
+(#OUT_DBF '"test10.dbf")
+; Duplicates all or part of database file FILE1, creating a new
+;file FILE2 in RAM
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE #FILE 'test12.dbf
+              '((NOT(FINDSTRING "SALES" (#GET_FIELD 4)))) nil nil
+              '(1 2 4) T T)
+; Close database file
+(#CLOSE_BASE 'test12.dbf)
+(#OUT_DBF '"test12.dbf")
+

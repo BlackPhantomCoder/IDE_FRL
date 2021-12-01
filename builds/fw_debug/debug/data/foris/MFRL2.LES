@@ -1,0 +1,229 @@
+; This lesson will show You some  mechanisms  of  MFRL/PC  for
+; entering and removing frames or their parts.
+; Clear active frame memory.
+(FRESET)
+; You can use function DEFRAME or DEFRAMEQ to create new frames.
+; We define a frame FR1 without any slots.
+(DEFRAME FR1)
+; Frame FR2 is defined with one slot S.
+(DEFRAME FR2
+  '(S (A (V1) (V2)))
+)
+; Function FRESET without arguments is used for removal of all
+; active frames from working memory.
+(FRESET)
+; Frame FR3 is defined with slot S.
+(DEFRAMEQ FR3
+  (S (A (V1) (V2)))
+)
+; Function FPRINT without arguments is used for pretty print
+; of all active frames in working memory.
+(FPRINT)
+; Now it's just the same assertion as in previous DEFRAMEQ.
+(FASSERTQ FR3
+  (S (A (V1) (V2)))
+)
+; You can see that frame FR3 is unchanged.
+(FPRINT)
+; Let's add slot S1 to frame FR3.
+(FASSERTQ FR3
+  (S1 (A (V1) (V2)))
+)
+; This is actual frame FR3.
+(FPRINT '(FR3))
+; Function FRENAME is used to rename frame FR3. New name is FR3*.
+(FRENAME FR3 FR3*)
+; Only frame FR3* is active in working memory.
+(FPRINT)
+; Clear active frame memory.
+(FRESET)
+; No active frames!
+(FPRINT)
+; Function FPUT with one argument is used for creation of
+; empty frame.
+(FPUT 'FR1)
+; You can see the empty frame FR1.
+(FPRINT)
+; Now we add the empty slot S1 to this frame.
+(FPUT 'FR1 'S1)
+; You can see the frame FR1 with empty slot S1.
+(FPRINT)
+; Now we add the empty facet A1 to slot S1 of this frame.
+(FPUT 'FR1 'S1 'A1)
+; You can see the frame FR1 with empty facet A1 in slot S1.
+(FPRINT)
+; Now we add the value V1 to facet A1 of slot S1 of this frame.
+(FPUT 'FR1 'S1 'A1 'V1)
+; You can see the frame FR1 with value V1 in facet A1 in slot S1.
+(FPRINT)
+; Now we add the label L1 to value V1 of facet A1 of slot S1 of
+; this frame.
+(FPUT 'FR1 'S1 'A1 'V1 'L1)
+; Look at the frame FR1.
+(FPRINT)
+; Now we add the message M1 to label L1 of value V1 of facet A1 of
+; slot S1 of this frame.
+(FPUT 'FR1 'S1 'A1 'V1 'L1 'M1)
+; Look at the frame FR1.
+(FPRINT '(FR1))
+; We add another message to the same place.
+(FPUT 'FR1 'S1 'A1 'V1 'L1 'M2)
+; Look at the frame FR1: message M2 is added at the end of message
+; list.
+(FPRINT)
+; We add third message M3 to the same place.
+(FPUT 'FR1 'S1 'A1 'V1 'L1 'M3)
+; Look at the frame FR1: message M3 is added at the end of message
+; list.
+(FPRINT)
+; Two special slots AKO (A Kind Of) and INSTANCE (opposite for AKO)
+; are used for creation of hierarchy on frames.
+; Frame FR1_PROTOTYPE is called to be the "prototype" for frame FR1.
+(FPUT 'FR1 AKO $VALUE 'FR1_PROTOTYPE)
+; Frame FR1_INSTANCE is called to be the "instance" for frame FR1.
+; Notice that You can use reserved keywords AKO, INSTANCE, $VALUE
+; and so on without quoting.
+(FPUT 'FR1 INSTANCE $VALUE 'FR1_INSTANCE)
+; Look at frames: relations AKO and INSTANCE are mutually reversal.
+(FPRINT)
+; Function FDELETE is used to remove parts from frame. In our case
+; the message M2 is removed from comment with label L1 of value V1
+; of facet A1 of slot S1 of frame FR1.
+(FDELETE 'FR1 'S1 'A1 'V1 'L1 'M2)
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we delete all the comment with label L1 from value V1 of fa-
+; cet A1 of slot S1 of frame FR1.
+(FDELETE 'FR1 'S1 'A1 'V1 'L1)
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; If You try to delete an unexisting label ...
+(FDELETE 'FR1 'S1 'A1 'V1 'L1**)
+; ... nothing is done.
+(FPRINT '(FR1))
+; Now we delete all the value V1 from facet A1 of slot S1 of
+; frame FR1.
+(FDELETE 'FR1 'S1 'A1 'V1)
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we delete all the facet A1 from slot S1 of frame FR1.
+(FDELETE 'FR1 'S1 'A1)
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we delete all the slot S1 from frame FR1.
+(FDELETE 'FR1 'S1)
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we delete all the frame FR1.
+(FDELETE 'FR1)
+; You can see the altered working memory.
+(FPRINT)
+; Clear active frame memory.
+(FRESET)
+; Function FPUT-STRUCTURE is used to add any substructures to frame.
+; In our case the facet structure is added to slot S2 of frame FR1.
+(FPUT-STRUCTURE 'FR1 'S2 '(A1 (V1 (L1 M1 M2) (L2 M1 M2))))
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we add new slot structure to frame FR1.
+(FPUT-STRUCTURE 'FR1 '(S3 (A1) (A2)))
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we add new messages M1 and M2 to new slot S4.
+(FPUT-STRUCTURE 'FR1 'S4 'A1 'V1 'L1 '(M1 M2))
+; Now we add new comment structure to new slot S5.
+(FPUT-STRUCTURE 'FR1 'S5 'A1 'V1 '(L1 M1 M2 M3 M4 M5 M6))
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Now we remove substructure with label L1 from slot S4.
+(FREM-STRUCTURE 'FR1 'S4 'A1 'V1 '(L1))
+; Now we remove facet substructure with name A1 from slot S2.
+(FREM-STRUCTURE 'FR1 'S2 '(A1 (V1 (L2))))
+; Now we remove messages M2, M4 M6 from comment with label L1
+; of slot S5.
+(FREM-STRUCTURE 'FR1 'S5 'A1 'V1 '(L1 M2 M4 M6))
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Function FREP-STRUCTURE is used to replace any substructures in frame.
+; In our case the comment structure with label L2 is replaced in slot S5
+; of frame FR1.
+(FREP-STRUCTURE 'FR1 'S5 'A1 'V1 '(L2 M2 M4 M6))
+; Now the comment structure with label L1 is replaced in slot S5.
+(FREP-STRUCTURE 'FR1 'S5 'A1 'V1 '(L1 M1* M2* M3*))
+; Now the slot structure with name S2 is replaced in frame FR1.
+(FREP-STRUCTURE 'FR1 '(S2 (A2* (V2*) (V*))))
+; You can see the altered frame FR1.
+(FPRINT '(FR1))
+; Clear active frame memory.
+(FRESET)
+; Now we've defined the frame F#TEST with attached procedures
+; to slots S1, S2 and S3.
+(DEFRAMEQ F#TEST
+  (S1 ($VALUE (V1))
+      ($IF-ADDED ((PROGN
+                   (PRINC "S1:  ")
+                   (PRINT (LIST :FRAME :SLOT :FACET :VALUE
+                                :LABEL :MESSAGE))  ))     )
+  )
+  (S2 ($VALUE (V2))
+      ($IF-ADDED (PRINC_LINE
+                  (PARM: "S2:  "  (LIST :FRAME :SLOT :FACET :VALUE
+                                        :LABEL :MESSAGE)) )  )
+  )
+  (S3 ($VALUE (V3))
+      ($IF-ADDED (PRINC_LINE
+                  (PARM: "S3:  "  (LIST :FRAME :SLOT :FACET :VALUE
+                                        :LABEL :MESSAGE)) ) )
+  )
+)
+; The side effect of this FPUT is printing of list of frame slot
+; facet, value and message of frame F#TEST.
+(FPUT 'F#TEST 'S1 $VALUE 'V1*)
+; The side effect of this FPUT is printing of list of frame slot
+; facet, value and message of frame F#TEST.
+(FPUT 'F#TEST 'S2 $VALUE 'V2* 'L*)
+; The side effect of this FPUT is printing of list of frame slot
+; facet, value and message of frame F#TEST.
+(FPUT 'F#TEST 'S3 $VALUE 'V3* 'L* 'M*)
+; You can see the altered frame F#TEST.
+(FPRINT '(F#TEST))
+; Clear active frame memory.
+(FRESET)
+; This is the example for TRACE ability of FORIS environment.
+; Following example illustrates how You can attach procedures
+; generally to frames, slots, facets and so on.
+(DEFRAMEQ *TRACE*
+       (FRAME ($IF-ADDED   ((PRINC_LINE "FRAME_TO_ADD: " :FRAME)))
+              ($IF-REMOVED ((PRINC_LINE "FRAME_TO_DEL: " :FRAME)))
+              ($IF-GETED   ((PRINC_LINE "GET FROM FRAME: " :FRAME))) )
+       (FACET ($IF-ADDED   ((PRINC_LINE "FACET_TO_ADD: " :FACET)))
+              ($IF-REMOVED ((PRINC_LINE "FACET_TO_DEL: " :FACET)))
+              ($IF-GETED   ((PRINC_LINE "GET FROM FRAME: " :FRAME
+                                        " SLOT: " :SLOT))) )
+       (VALUE ($IF-ADDED   ((PRINC_LINE "VALUE_TO_ADD: " :VALUE)))
+              ($IF-REMOVED ((PRINC_LINE "VALUE_TO_DEL: " :VALUE)))
+              ($IF-GETED   ((PRINC_LINE "GET FROM FRAME: " :FRAME
+                                        " SLOT: " :SLOT " FACET: " :FACET))) )
+)
+; This function activates tracing frame *TRACE*.
+(FTRACE '*TRACE*)
+; The side effect of this FPUT is printing of message about only new
+; added values:  FRAME, FACET, VALUE
+(FPUT 'A 'C 'B 'D 'R)
+; The side effect of this FPUT is printing of message about only new
+; added values:  FRAME, FACET, VALUE
+(FPUT 'A 'C 'E 'D 'R)
+; The side effect of this FPUT is printing of message about only new
+; added values:  FRAME, FACET, VALUE
+(FPUT 'A 'C 'E 'M 'R)
+; The side effect of this FGET is printing of message about frame, slot
+; and facet names
+(FGET 'A 'C 'B)
+; The side effect of this  FGET  is  printing  of  message  about
+; frame, facet and value names
+(FGET 'A 'C 'B 'D)
+; Switch off all side procedures
+(FUNTRACE)
+; Clear active frame memory.
+(FRESET)
+

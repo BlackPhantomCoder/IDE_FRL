@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "Settings/GlobalSettings.h"
+#include "Settings/MyQApp.h"
 #include "Project.h"
 
 ProjectCreatorWidget::ProjectCreatorWidget(QWidget *parent) :
@@ -13,7 +13,7 @@ ProjectCreatorWidget::ProjectCreatorWidget(QWidget *parent) :
 {
     setupUi(this);
 
-    t_interetators = interpretator_settings().all_names();
+    t_interetators = MyQApp::interpretator_settings().all_names();
 
     interpretator_chose->addItems(t_interetators);
 

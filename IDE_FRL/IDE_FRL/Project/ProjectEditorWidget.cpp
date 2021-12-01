@@ -1,5 +1,5 @@
 #include "ProjectEditorWidget.h"
-#include "Settings/GlobalSettings.h"
+#include "Settings/MyQApp.h"
 
 ProjectEditorWidget::ProjectEditorWidget(Project* project, QWidget *parent) :
     QDialog(parent),
@@ -7,10 +7,12 @@ ProjectEditorWidget::ProjectEditorWidget(Project* project, QWidget *parent) :
 {
     setupUi(this);
 
-    t_interetators = interpretator_settings().all_names();
+    t_interetators = MyQApp::interpretator_settings().all_names();
     t_interetators.push_front("");
 
     t_from_project();
+
+    connect(cancel_btn, &QPushButton::clicked, this, &ProjectEditorWidget::reject);
 }
 
 void ProjectEditorWidget::on_save_btn_clicked()

@@ -1,0 +1,227 @@
+; This lesson will show You some  mechanisms  of  MFRL/PC  for
+; retrieving information from frame nets.
+; Functions FRAMES and PROCEDURES give lists of active frames
+; and procedures respectively.
+; Now these lists are empty. Look at frames.
+(FRAMES)
+; Just the same for procedures.
+(PROCEDURES)
+; You can use functions DEFRAME and DEFRAMEQ to create new frames.
+; We define a frame EXAMPLE without any slots.
+(DEFRAME 'EXAMPLE)
+; Another frame MAN with only one slot AKO. This is predefined
+; slot for building of hierarchies with property inheritance.
+(DEFRAME 'MAN '(AKO ($VALUE (ANIMAL))))
+; Our third frame is TENNY. Note that we've used function FASSERTQ
+; instead of DEFRAMEQ (in this case there is no need in quote sign).
+(FASSERTQ TENNY
+  (AKO   ($VALUE (DOG)))
+  (OWNER ($VALUE (PETER)))
+  (FOOD  ($VALUE (MEAT) (FISH) (MILK)))
+  (BREED ($VALUE (UNKNOWN)))
+)
+; Functions PASSERT and PASSERTQ are used to define user procedures.
+; Their sintax is similar to DEFUN.
+; In this step we define a simple function TEST wich only prints
+; its name when called.
+(PASSERTQ TEST ()
+  (PRINT TEST)
+)
+; A look at all active frames.
+; Note that the result of function FRAMES is a name list of all
+; active frames.
+(FRAMES)
+; Just the same for procedures.
+(PROCEDURES)
+; Function FACTIV? is successful if its argument is an active frame.
+(FACTIV? 'UNEXISTING-FRAME)
+; Another call of this function for really active frame TENNY.
+(FACTIV? 'TENNY)
+; The same call as above one but without quote sign.
+; This is possible due to Auto Quotting property of muLISP.
+; Please, avoid such calls if You don't want to get unexpected result!
+(FACTIV?  TENNY)
+; Function PACTIV? is successful if its argument is an active
+; procedure.
+(PACTIV?  'TENNY)
+; Another call of this function for really active procedure TEST.
+(PACTIV?  'TEST)
+; Function FRAME gives a whole frame structure of its argument.
+(FRAME 'TENNY)
+; Now we try to print bodies of four frames. Only two of them exist:
+; TENNY and DOG.
+(FPRINT '(TENNY UNEXIST-1 DOG UNEXIST-2))
+; A look at the whole base of active frames.
+(FPRINT)
+; Function FRESET is used for deletion of useless active frames from
+; frame base.
+(FRESET '(DOG UNEXIST-1))
+; A look at the whole base of active frames after deletion.
+(FRAMES)
+; Clear the whole base of active frames.
+(FRESET)
+; Clear the whole base of active procedures.
+(PRESET)
+; A look at the whole base of active frames after clearing.
+(FRAMES)
+; A look at the whole base of active procedures after clearing.
+(PROCEDURES)
+; Now we start an example with a little knowledge base about
+; home pets.
+; Our first frame is TENNY. This is the name of a dog which
+; belongs to Victor; eats meat, fish and milk; is a puddel and
+; has the same hobby as VASILISA.
+(FASSERTQ TENNY
+  (AKO   ($VALUE (DOG)))
+  (OWNER ($VALUE (VICTOR)))
+  (FOOD  ($VALUE (MEAT) (FISH) (MILK)))
+  (BREED ($VALUE (PUDDEL)))
+  (HOBBY ($VALUE (VASILISA (STATUS: INDIRECT) (SLOT: HOBBY*))))
+)
+; The second frame is DOG. It's a prototype for previous frame.
+(FASSERTQ DOG
+  (AKO   ($VALUE (ANIMAL)))
+  (KIND  ($VALUE (HOME)))
+  (HOBBY ($VALUE (BONE) (BARKING)))
+)
+; The third frame is VASILISA. This is the name of Victor's cat
+; which eats fish, milk and sour-cream.
+(FASSERTQ VASILISA
+  (AKO   ($VALUE (CAT)))
+  (OWNER ($VALUE (VICTOR)))
+  (FOOD  ($VALUE (FISH) (MILK) (SOUR-CREAM)))
+  (BREED ($VALUE (UNKNOWN)))
+)
+; The next frame is CAT. It's a prototype for previous frame.
+; Note that we use facet $DEFAULT for default hobby.
+(FASSERTQ CAT
+  (AKO   ($VALUE (ANIMAL)))
+  (KIND  ($VALUE (HOME)))
+  (HOBBY ($VALUE (SLIPPING))
+         ($DEFAULT (MOUSE)) )
+)
+; The next frame in our pet hierarchy is ANIMAL. It's a prototype
+; for frames DOG and CAT.
+(FASSERTQ ANIMAL
+   (AKO    ($VALUE (FAUNA)))
+   (HOBBY  ($VALUE (RUNING)))
+   (HOBBY* ($VALUE (PLAYING)))
+)
+; Finally the top frame in our pet hierarchy is FAUNA.
+(FASSERTQ FAUNA
+  (HOBBY*  ($VALUE (H1)))
+)
+; A look at the whole base of active frames after assertion.
+(FPRINT)
+; Let's try to retrieve information from our frame net.
+; This call of function FGET- shows how You can get the list of
+; slot names for given frame.
+(FGET-  'DOG)
+; The next call of function FGET- shows how You can get the list of
+; facet names for given slot of frame.
+(FGET-  'DOG 'HOBBY)
+; The next call of function FGET shows how You can get the list of
+; data names (or values) for given path in frame.
+; Note that value of slot HOBBY is inherited from frames
+; CAT and ANIMAL.
+(FGET   'VASILISA 'HOBBY $VALUE)
+; In this call inheritance is forbided.
+(FGET-  'VASILISA 'HOBBY $VALUE)
+; If You want the value to be inherited from first relevant frame
+; You must use function FGET1.
+(FGET1  'VASILISA 'HOBBY $VALUE)
+; If You don't want to activate any attached procedure or indirect
+; inheritance You must use function FGET1-.
+(FGET1- 'VASILISA 'HOBBY $VALUE)
+; In this call indirect inheritance is permitted.
+(FGET   'TENNY 'HOBBY $VALUE)
+; In this call indirect inheritance is forbiden and all relevant
+; items are looked for.
+(FGET-  'TENNY 'HOBBY $VALUE)
+; In this call indirect inheritance is permitted and only first
+; relevant item is looked for.
+(FGET1  'TENNY 'HOBBY $VALUE)
+; In this call indirect inheritance is forbiden and only first
+; relevant item is looked for.
+(FGET1- 'TENNY 'HOBBY $VALUE)
+; The next call of function FGET- shows how You can get the list of
+; comment names for given datum of frame.
+(FGET-  'TENNY 'HOBBY $VALUE 'VASILISA)
+; This call of function FGET- shows You how to get the list of
+; messages for given comment of frame.
+(FGET-  'TENNY 'HOBBY $VALUE 'VASILISA 'STATUS:)
+; If You want to get data from frame with comments use function
+; FGET with key "C" as in this example.
+(FGET 'TENNY 'HOBBY $VALUE '(C))
+; If You want to get only one (first) relevant value (not a list of items)
+; from frame try to use function FGET with key "E" ...
+(FGET 'TENNY 'HOBBY $VALUE '(E))
+; ... or function FGETE.
+(FGETE 'TENNY 'HOBBY)
+; You can also intermix keys in one call of FGET.
+(FGET 'TENNY 'HOBBY $VALUE '(C E))
+; Functions from family FGET-STRUCTURExx are used to retrieve from
+; given frame a substructure with indicated path :frame :slot ...
+; In this case a result must be ($VALUE (BONE) (BARKING))
+(FGET-STRUCTURE   'DOG 'HOBBY $VALUE)
+; In this case a result must be ($VALUE (BONE) (BARKING))
+(FGET-STRUCTURE-  'DOG 'HOBBY $VALUE)
+; In this case a result must be ($VALUE (BONE) (BARKING))
+(FGET-STRUCTURE1  'DOG 'HOBBY $VALUE)
+; In this case a result must be ($VALUE (BONE) (BARKING))
+(FGET-STRUCTURE1- 'DOG 'HOBBY $VALUE)
+; In this case a result must be
+; ($VALUE (PLAYING (IN: ANIMAL HOBBY* $VALUE))
+;         (H1 (IN: FAUNA HOBBY* $VALUE)) )
+(FGET-STRUCTURE   'TENNY 'HOBBY $VALUE)
+; In this case a result must be
+; ($VALUE (VASILISA (STATUS: INDIRECT) (SLOT: HOBBY*)))
+(FGET-STRUCTURE-  'TENNY 'HOBBY $VALUE)
+; In this case a result must be
+; ($VALUE (PLAYING (IN: ANIMAL HOBBY* $VALUE))
+;         (H1 (IN: FAUNA HOBBY* $VALUE)) )
+(FGET-STRUCTURE1  'TENNY 'HOBBY $VALUE)
+; In this case a result must be
+; ($VALUE (VASILISA (STATUS: INDIRECT) (SLOT: HOBBY*)))
+(FGET-STRUCTURE1- 'TENNY 'HOBBY $VALUE)
+; In this case a result must be NIL
+(FGET-STRUCTURE  'DOG 'HOBBY* $VALUE)
+; In this case a result must be NIL
+(FGET-STRUCTURE- 'DOG 'HOBBY* $VALUE)
+; In this case a result must be NIL
+(FGET-STRUCTURE1  'DOG 'HOBBY* $VALUE)
+; In this case a result must be ($VALUE (PLAYING))
+(FGET-STRUCTURE1- 'DOG 'HOBBY* $VALUE)
+; In this case a result must be NIL
+(FGET-STRUCTUREN  'DOG 'HOBBY* $VALUE)
+; In this case a result must be ($VALUE (PLAYING) (H1))
+(FGET-STRUCTUREN- 'DOG 'HOBBY* $VALUE)
+; This is the example of procedural attaching
+; and activating.
+; Frame TEST has three slots with attached procedures.
+(DEFRAMEQ TEST
+ (A ($PROC ((PRINT '"Slot A of frame TEST"))))
+ (B ($PROC (PRINT (PARMQ: (CAR '("Slot B of frame TEST" "Unknown"))))))
+ (C ($PROC (PRINT (PARM:  (CAR '("Slot C of frame TEST" "Unknown"))))))
+)
+; This call activates procedure in facet $PROC of slot A.
+(FEXEC 'TEST 'A '$PROC)
+; This call activates procedure in facet $PROC of slot B.
+(FEXEC 'TEST 'B '$PROC)
+; This call activates procedure in facet $PROC of slot C.
+(FEXEC 'TEST 'C '$PROC)
+; This is the frame for testing $IF-GET attachment.
+; Frame TEST-FRAME has four values in slot S.
+(DEFRAMEQ TEST-FRAME
+  (S ($VALUE (5) (A) (6) (B)))
+)
+; Extract the value list from frame TEST-FRAME.
+(FGET 'TEST-FRAME 'S)
+; Now we attach to slot S of TEST-FRAME procedure which
+; filters values retrieved from this slot.
+(FASSERTQ TEST-FRAME
+  (S ($IF-GET ((AND (NUMBERP :VALUE) :VALUE))))
+)
+; The result must be (5 NIL 6 NIL).
+(FGET1 'TEST-FRAME 'S)
+

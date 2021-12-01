@@ -1,5 +1,5 @@
 #include "InterpretatorEditorWidget.h"
-#include "Settings/GlobalSettings.h"
+#include "Settings/MyQApp.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -40,7 +40,7 @@ void InterpretatorCreatorWidget::t_check_accept()
     }
 
     if(t_check_rewrite){
-        auto exists = interpretator_settings().contains_interpretator(interpretator_name);
+        auto exists = MyQApp::interpretator_settings().contains_interpretator(interpretator_name);
         if(exists){
             auto ans = QMessageBox::warning(this, tr("Внимание"),
                                            tr("Такой интерпертатор уже существет, перезаписать?"),
@@ -49,8 +49,8 @@ void InterpretatorCreatorWidget::t_check_accept()
                 return;
         }
     }
-    if(!interpretator_settings().add_interpretator(interpretator_name, {interpretator_path, interpretator_params})){
-        interpretator_settings().change_interpretator(interpretator_name, {interpretator_path, interpretator_params});
+    if(!MyQApp::interpretator_settings().add_interpretator(interpretator_name, {interpretator_path, interpretator_params})){
+        MyQApp::interpretator_settings().change_interpretator(interpretator_name, {interpretator_path, interpretator_params});
     }
 
     accept();

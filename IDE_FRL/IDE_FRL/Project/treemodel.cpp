@@ -21,8 +21,9 @@ int ProjectModel::columnCount(const QModelIndex &parent) const
 
 void ProjectModel::add(const QModelIndex &ind, const QString &name, bool file)
 {
-    auto path = ((!is_root(ind)) ? get_path(ind) + "/" :"") + name;
-    auto parent = (!is_root(ind) ? ind.parent() : ind);
+    bool root = t_is_root(ind);
+    auto path = (!root ? t_get_path(ind) + "/" :"") + name;
+    auto parent = (!root ? ind.parent() : ind);
     beginInsertRows(parent, rowCount(parent), rowCount(parent));
     if(file){
         t_project->add_file(path);
@@ -41,68 +42,73 @@ bool ProjectModel::rem(const QModelIndex &ind)
     auto* item = static_cast<FileTreeItem*>(ind.internalPointer());
     auto result = true;
     if(item->is_file())
-        result = t_project->rem_file_w_answer(get_path(ind));
+        result = t_project->rem_file_w_answer(t_get_path(ind));
     else
-        result = t_project->rem_dir_w_answer(get_path(ind));
+        result = t_project->rem_dir_w_answer(t_get_path(ind));
     endRemoveRows();
     return result;
 }
 
-bool ProjectModel::is_file(const QModelIndex &index) const
+bool ProjectModel::t_is_file(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return false;
-    auto *item = static_cast<FileTreeItem*>(index.internalPointer());
-    return item->is_file();
+    return data(index, data_role::is_file).toBool();
 }
 
-bool ProjectModel::is_root(const QModelIndex &index) const
+bool ProjectModel::t_is_root(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return true;
-    auto* item = static_cast<FileTreeItem*>(index.internalPointer());
-    return item == &t_project->tree();
+    return data(index, data_role::is_root).toBool();
 }
 
-bool ProjectModel::is_exists(const QModelIndex &index) const
+bool ProjectModel::t_is_exists(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        throw "invalid index";
-    auto* item = static_cast<FileTreeItem*>(index.internalPointer());
-    return item->exists();
+    return data(index, data_role::is_exits).toBool();
 }
 
-QString ProjectModel::get_path(const QModelIndex &index) const
+QString ProjectModel::t_get_path(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return "";
-    auto *item = static_cast<FileTreeItem*>(index.internalPointer());
-    return path_by_node(item);
+    return data(index, data_role::path).toString();
 }
 
 QVariant ProjectModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid()){
+        if(role == data_role::is_root)
+            return true;
+//        if(role == data_role::is_file)
+//            return false;
+
         return QVariant();
+    }
+
 
     auto *item = static_cast<FileTreeItem*>(index.internalPointer());
-
-    if (role != Qt::DisplayRole){
-        if(role == Qt::ForegroundRole){
+    switch (role) {
+        case Qt::DisplayRole:
+            return item->data(index.column());
+        case Qt::ForegroundRole:
             if(!item->exists())
                 return QColor(Qt::gray);
-        }
-        else if(role == Qt::FontRole){
+            break;
+        case Qt::FontRole:
             if(item->is_dir()){
                 auto font = QFont();
                 font.setBold(true);
                 return font;
             }
-        }
-        return QVariant();
-    }
+            break;
+        case data_role::is_exits:
+            return item->exists();
+        case data_role::is_file:
+            return item->is_file();
+        case data_role::is_root:
+            return item == &t_project->tree();
+        case data_role::path:
+            return path_by_node(item);
 
-    return item->data(index.column());
+        default:
+            break;
+    }
+    return QVariant();
 }
 
 Qt::ItemFlags ProjectModel::flags(const QModelIndex &index) const

@@ -24,7 +24,8 @@ public:
     FileTreeItem& tree();
 
     const QString& project_name() const;
-    const QString& path() const;
+    const QString& dir_path() const;
+    QString full_path() const;
     const QString& interpretator_name();
 
     bool rem_file_w_answer(const QString& path);
@@ -58,11 +59,13 @@ private:
     void t_init();
 
 private:
+    std::function<bool(const QString)> t_f_or_d_exist_f;
     bool t_loaded;
     bool t_changed = false;
     QString t_name;
     SettringJson* t_data;
-    QString t_path;
+    QString t_dir_path;
+    QString t_filename;
     FileTreeItem* t_root;
     QString t_interpretator_name;
 };

@@ -34,6 +34,8 @@ public slots:
     void stop_interpretator();
     void clear();
 
+     void send(const QString& str, bool new_line = true);
+
 
 private slots:
     void on_finished();
@@ -42,12 +44,12 @@ private slots:
 
     void on_response(const QString& input);
 
+
 private:
-    void t_change_state(bool processing);
+    void t_change_state();
 private:
     Interpretator* t_interpretator;
     Project* t_project;
-    bool t_finish_state;
 };
 
 #endif // INTERPRETATORWIDGET2_H

@@ -12,10 +12,11 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
-#include "Settings/GlobalSettings.h"
+#include "Settings/MyQApp.h"
 #include "Project/ProjectCreatorWidget.h"
 #include "Interpretator/InterpretatorEditorWidget.h"
 #include "Project/ProjectEditorWidget.h"
+#include "Settings/IDESettingsEditor.h"
 
 MainWindow::MainWindow():
    t_toolbar(this)
@@ -28,19 +29,28 @@ MainWindow::MainWindow():
     t_interpretator_w = new InterpretatorWidget(this);
 
     setCentralWidget(t_editor_w);
-    set_side_widget(MainWidget::doks_type::left, t_project_w, MainWidget::doks_state::show);
-    set_side_widget(MainWidget::doks_type::right, nullptr, MainWidget::doks_state::hidden);
-    set_side_widget(MainWidget::doks_type::bottom, t_interpretator_w, MainWidget::doks_state::show);
 
-    set_side_widget_text(MainWidget::doks_type::left, "Проект");
-    set_side_widget_text(MainWidget::doks_type::right, "");
-    set_side_widget_text(MainWidget::doks_type::bottom, "Интерпретатор");
+    t_docks = new DocksControl(this);
+    t_menu_c = new MainWindowMenuControl(this);
+
+    t_sexpr_controller = new SExprSellerController(this);
 
     t_set_enabled_interpretator_action(false);
     t_set_enabled_project_action(false);
 
     t_init_toolbar();
     t_connect_actions();
+}
+
+MainWindow::~MainWindow()
+{
+    t_interpretator_w->stop_interpretator();
+    //auto& s = MyQApp::global_settings();
+    t_docks->save();
+    t_menu_c->save();
+    t_sexpr_controller->save();
+
+    //qDebug() << "MainWindow destroyed" << endl;
 }
 
 void MainWindow::t_init_toolbar()
@@ -87,50 +97,55 @@ void MainWindow::t_connect_actions()
     connect(t_menu->file_create_project_action,  &QAction::triggered, this, &MainWindow::t_create_project);
     connect(t_menu->file_close_project_action,  &QAction::triggered, this, &MainWindow::t_close_project);
     connect(t_menu->file_save_project_action,  &QAction::triggered, this, &MainWindow::t_project_save);
+    connect(t_menu->file_settings_action,  &QAction::triggered, [this](){
+        auto* menu = new IDESettingsEditor();
+        connect(this, &MainWindow::closed, menu, &QWidget::close);
+        connect(this, &MainWindow::closed, menu, &QWidget::deleteLater);
+        menu->show();
+    });
 
     connect(t_menu->project_settings_action,  &QAction::triggered, this, &MainWindow::t_on_preject_settings_triggered);
 
 
-    connect(this, &MainWindow::side_widget_state_changed, this, &MainWindow::t_on_side_widget_state_changed);
+    connect(t_docks, &DocksControl::dock_state_changed, this, &MainWindow::t_on_dock_widget_state_changed);
 
 
 
     connect(t_interpretator_w, &InterpretatorWidget::changed_state, this, &MainWindow::t_on_interpretator_state_changed);
 
     connect(t_project_w, &ProjectWidget::double_clicked_file,
-            [this](const QModelIndex& index){ if(t_project_w->exists_at(index)) t_editor_w->open_new_tab(t_project_w->path_at(index), EditorWidget::tab_pos::back);});
+            [this](const QModelIndex& index){
+                if(t_project_w->exists_at(index))
+                    t_editor_w->open_new_tab(t_project_w->path_at(index), EditorWidget::tab_pos::back);
+            });
 }
 
 void MainWindow::t_on_view_interpretator_action_triggered()
 {
-    set_side_widget_state(doks_type::bottom, doks_state::show);
+    t_docks->show(t_interpretator_w);
 }
 
 void MainWindow::t_on_view_project_files_action_triggered()
 {
-    set_side_widget_state(doks_type::left, doks_state::show);
+    t_docks->show(t_project_w);
 }
 
-void MainWindow::t_on_side_widget_state_changed(MainWidget::doks_type type)
+void MainWindow::t_on_dock_widget_state_changed(QDockWidget* w)
 {
-    auto state = get_side_widget_state(type) == MainWidget::doks_state::hidden;
-    switch (type) {
-    case MainWidget::doks_type::bottom:
-        t_menu->view_interpretator_action->setEnabled(state);
-        break;
-    case MainWidget::doks_type::left:
+    auto state = w->isHidden();
+
+    if(w->widget() == t_project_w){
         t_menu->view_project_files_action->setEnabled(state);
-        break;
-    case MainWidget::doks_type::right:
-        //
-        break;
-    default:
-        break;
+    }
+    else if(w->widget() == t_interpretator_w){
+        t_menu->view_interpretator_action->setEnabled(state);
     }
 }
 
+
 void MainWindow::t_on_interpretator_start_action_triggered()
 {
+    t_docks->show(t_interpretator_w);
     if(!t_interpretator_w->start_interpretator_w_answear()){
 //        QMessageBox::warning(this, tr("Внимание"),
 //                                        tr("Интерпретатор не запустился"),
@@ -159,7 +174,7 @@ void MainWindow::t_on_interpretator_add_triggered()
 
 void MainWindow::t_on_interpretator_edit_triggered()
 {
-    if(interpretator_settings().count() == 0){
+    if(MyQApp::interpretator_settings().count() == 0){
         QMessageBox::warning(this, tr("Внимание"),
                                         tr("Нет доступных для редактирования интерпретаторов"),
                                        QMessageBox::Ok);
@@ -167,10 +182,10 @@ void MainWindow::t_on_interpretator_edit_triggered()
     }
     bool ok;
     QString item = QInputDialog::getItem(this, tr("Выбор интерпретатора"),
-                                        tr("Интерперетатор:"), interpretator_settings().all_names(), 0, false, &ok);
+                                        tr("Интерперетатор:"), MyQApp::interpretator_settings().all_names(), 0, false, &ok);
     if (ok && !item.isEmpty()){
 
-       auto w = InterpretatorCreatorWidget(item,  interpretator_settings().get_interpretator(item), false);
+       auto w = InterpretatorCreatorWidget(item,  MyQApp::interpretator_settings().get_interpretator(item), false);
        w.exec();
     }
 }
@@ -210,6 +225,7 @@ void MainWindow::t_open_project(const QString &path)
         if(t_project_w) t_project_w->set_project(t_project);
         if(t_interpretator_w) t_interpretator_w->set_project(t_project);
         t_set_enabled_project_action(true);
+        emit project_opened();
     }
     else {
         delete t_project;
@@ -232,8 +248,8 @@ bool MainWindow::t_close_project_check()
         delete t_project;
         t_project = nullptr;
 
-
         t_set_enabled_project_action(false);
+        emit project_closed();
     }
     return false;
 }
@@ -265,7 +281,7 @@ void MainWindow::t_set_enabled_interpretator_action(bool val)
 {
     t_menu->interpretator_start_action->setEnabled(!val);
     t_menu->interpretator_stop_action->setEnabled(val);
-        t_menu->interpretator_clear_action->setEnabled(val);
+    t_menu->interpretator_clear_action->setEnabled(val);
     t_toolbar.toolbar_1_start_interpretator_btn->setEnabled(!val);
     t_toolbar.toolbar_1_stop_interpretator_btn->setEnabled(val);
     t_toolbar.toolbar_1_clear_interpretator_btn->setEnabled(val);
@@ -275,6 +291,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(t_project_need_save_check())
         event->ignore();
-    else
+    else{
+        emit closed();
         QWidget::closeEvent(event);
+    }
 }

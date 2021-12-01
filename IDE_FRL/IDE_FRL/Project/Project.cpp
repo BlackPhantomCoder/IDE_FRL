@@ -7,9 +7,11 @@
 Project::Project(const QString &path, QObject *parent):
     QObject(parent),
     t_data(new SettringJson(path, this)),
-    t_path(dir_by_path(path))
+    t_dir_path(dir_by_path(path)),
+    t_filename(path)
 {
-    if(t_data->status() == QSettings::NoError)
+    t_filename.remove(t_dir_path + "/");
+    if(QFile(path).exists() && t_data->status() == QSettings::NoError)
         t_init();
     else
         t_loaded = false;
@@ -24,8 +26,10 @@ Project::Project(const QString &path, QObject *parent):
 
 Project::~Project()
 {
-    delete t_root;
-    t_root = nullptr;
+    if(t_loaded){
+        delete t_root;
+        t_root = nullptr;
+    }
 }
 
 Project::Project(QObject *parent):
@@ -48,8 +52,7 @@ void Project::add_dir(const QString &path)
 {
     if(!is_loaded()) throw "project not loaded";
     if(path.isEmpty()) throw "empty str";
-    auto buf = QDir(t_path + "/" + path);
-    if(path_into_tree(t_root, path, false, buf.exists())){
+    if(path_into_tree(t_root, path, false, t_f_or_d_exist_f)){
         t_changed = true;
         emit tree_added(path);
     }
@@ -59,8 +62,7 @@ void Project::add_file(const QString &path)
 {
     if(!is_loaded()) throw "project not loaded";
     if(path.isEmpty()) throw "empty str";
-     auto buf = QFile(t_path + "/" + path);
-    if(path_into_tree(t_root, path, true, buf.exists())){
+    if(path_into_tree(t_root, path, true, t_f_or_d_exist_f)){
         t_changed = true;
         emit tree_added(path);
     }
@@ -87,9 +89,14 @@ const QString &Project::project_name() const
     return t_name;
 }
 
-const QString &Project::path() const
+const QString &Project::dir_path() const
 {
-    return t_path;
+    return t_dir_path;
+}
+
+QString Project::full_path() const
+{
+    return t_dir_path + "/" + t_filename;
 }
 
 const QString &Project::interpretator_name()
@@ -164,19 +171,22 @@ void Project::save()
 
 void Project::t_init()
 {
+    t_f_or_d_exist_f = [this](const QString& lpath){
+        auto bufd = QDir(t_dir_path + "/" + lpath);
+        auto buff = QFile(t_dir_path + "/" + lpath);
+        return  bufd.exists() || buff.exists();
+    };
+
     t_name = t_data->value("name").toString();
     t_root = new FileTreeItem(t_name, false, false);
     t_interpretator_name = t_data->value("interpretator").toString();
     auto files = t_data->value("files").toStringList();
     auto empty_dirs = t_data->value("empty_dirs").toStringList();
-
     for(const auto& folder : empty_dirs){
-        auto buf = QDir(t_path + "/" + folder);
-        path_into_tree(t_root, folder, false, buf.exists());
+        path_into_tree(t_root, folder, false, t_f_or_d_exist_f);
     }
 
     for(const auto& file : files){
-        auto buf = QFile(t_path + "/" + file);
-        path_into_tree(t_root, file, true, buf.exists());
+        path_into_tree(t_root, file, true, t_f_or_d_exist_f);
     }
 }

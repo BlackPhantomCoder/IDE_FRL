@@ -23,17 +23,17 @@ ProjectWidget::ProjectWidget(QWidget *parent) :
 
 QString ProjectWidget::path_at(const QModelIndex &index) const
 {
-    return t_model->get_path(index);
+    return t_model->data(index, ProjectModel::data_role::path).toString();
 }
 
 bool ProjectWidget::is_file_at(const QModelIndex &index) const
 {
-    return t_model->is_file(index);
+    return t_model->data(index, ProjectModel::data_role::is_file).toBool();
 }
 
 bool ProjectWidget::exists_at(const QModelIndex &index) const
 {
-    return t_model->is_exists(index);
+    return t_model->data(index, ProjectModel::data_role::is_exits).toBool();
 }
 
 
@@ -56,9 +56,9 @@ void ProjectWidget::create_and_add_file(const QModelIndex &ind)
                                          "", &ok);
     if (ok && !text.isEmpty()){
 
-        auto path = (!(t_model->is_root(ind)) ? t_model->get_path(ind) + "/" : "") + text;
+        auto path = (!(t_is_root_at(ind)) ? path_at(ind) + "/" : "") + text;
         {
-            QFile file(t_project->path() + "/" + path);
+            QFile file(t_project->dir_path() + "/" + path);
             if(file.exists()){
                 QMessageBox::warning(this, tr("Внимание"),
                                                tr("Файл уже существует"),
@@ -86,9 +86,9 @@ void ProjectWidget::create_and_add_dir(const QModelIndex &ind)
                                          tr("Имя директории:"), QLineEdit::Normal,
                                          "", &ok);
     if (ok && !text.isEmpty()){
-        auto path = (!(t_model->is_root(ind)) ? t_model->get_path(ind) + "/" : "") + text;
+        auto path = (!(t_is_root_at(ind)) ? path_at(ind) + "/" : "") + text;
         {
-            QDir dir(t_project->path());
+            QDir dir(t_project->dir_path());
             auto result = dir.mkpath(path);
             if(!result){
                 QMessageBox::warning(this, tr("Внимание"),
@@ -105,9 +105,9 @@ void ProjectWidget::create_and_add_dir(const QModelIndex &ind)
 void ProjectWidget::add_exist_file(const QModelIndex &ind)
 {
     auto file_name = QFileDialog::getOpenFileName(this,
-        tr("Выберете файл"), t_project->path());
+        tr("Выберете файл"), t_project->dir_path());
     if(file_name.isEmpty()) return;
-    auto ppath = t_project->path();
+    auto ppath = t_project->dir_path();
     if(ppath.size() > file_name.size() || ppath != file_name.midRef(0, ppath.size())){
         QMessageBox::warning(this, tr("Внимание"),
                                        tr("Ошибка добавления файла\nФайл должен находится в папке проекта!"),
@@ -123,9 +123,9 @@ void ProjectWidget::add_exist_file(const QModelIndex &ind)
 void ProjectWidget::add_exist_dir(const QModelIndex &ind)
 {
     auto dir_name = QFileDialog::getExistingDirectory(this,
-        tr("Выберете папку"), t_project->path());
+        tr("Выберете папку"), t_project->dir_path());
     if(dir_name.isEmpty()) return;
-    auto ppath = t_project->path();
+    auto ppath = t_project->dir_path();
     if(ppath.size() > dir_name.size() || ppath != dir_name.midRef(0, ppath.size())){
         QMessageBox::warning(this, tr("Внимание"),
                                        tr("Ошибка добавления папки\nПапка должена находится в папке проекта!"),
@@ -140,7 +140,7 @@ void ProjectWidget::add_exist_dir(const QModelIndex &ind)
 
 void ProjectWidget::remove_file(const QModelIndex& ind)
 {
-    auto path = t_project->path() + "/" + t_model->get_path(ind);
+    auto path = t_project->dir_path() + "/" + path_at(ind);
     QFile file(path);
     if(!file.exists()){
         auto ans = QMessageBox::warning(this, tr("Внимание"),
@@ -160,7 +160,7 @@ void ProjectWidget::remove_file(const QModelIndex& ind)
 
 void ProjectWidget::remove_dir(const QModelIndex &ind)
 {
-    auto path = t_project->path() + "/" + t_model->get_path(ind);
+    auto path = t_project->dir_path() + "/" + path_at(ind);
     QDir dir(path);
     if(!dir.exists()){
         auto ans = QMessageBox::warning(this, tr("Внимание"),
@@ -203,7 +203,7 @@ void ProjectWidget::set_project(Project *project)
 
 void ProjectWidget::t_element_pressed(const QModelIndex &ind)
 {
-    if(t_model->is_file(ind))
+    if(is_file_at(ind))
         emit clicked_file(ind);
     else
         emit clicked_dir(ind);
@@ -211,7 +211,7 @@ void ProjectWidget::t_element_pressed(const QModelIndex &ind)
 
 void ProjectWidget::t_element_double_clicked(const QModelIndex &ind)
 {
-    if(t_model->is_file(ind))
+    if(is_file_at(ind))
         emit double_clicked_file(ind);
     else
         emit double_clicked_dir(ind);
@@ -220,8 +220,8 @@ void ProjectWidget::t_element_double_clicked(const QModelIndex &ind)
 QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
 {
     auto* menu = new QMenu(this);
-    if(t_model->is_file(index)){
-        if(t_model->is_exists(index)){
+    if(is_file_at(index)){
+        if(exists_at(index)){
             t_add_btn(menu, "Удалить файл", [this, index](){remove_file(index);});
             t_add_btn(menu, "Исключить файл", [this, index](){exclude_file(index);});
         }
@@ -230,7 +230,7 @@ QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
         }
     }
     else{
-        if(t_model->is_exists(index)){
+        if(exists_at(index)){
             t_add_btn(menu, "Добавить папку",[this, index](){create_and_add_dir(index);});
             t_add_btn(menu, "Добавить файл",[this, index](){create_and_add_file(index);});
             t_add_btn(menu, "Удалить папку",[this, index](){remove_dir(index);});
@@ -253,6 +253,11 @@ QMenu *ProjectWidget::t_root_context_menu()
     t_add_btn(menu, "Добавить файл",[this, index = QModelIndex()](){create_and_add_file(index);});
 
     return menu;
+}
+
+bool ProjectWidget::t_is_root_at(const QModelIndex &index) const
+{
+     return t_model->data(index, ProjectModel::data_role::is_root).toBool();
 }
 
 void ProjectWidget::t_init_project()

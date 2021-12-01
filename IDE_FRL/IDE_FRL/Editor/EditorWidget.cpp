@@ -1,9 +1,8 @@
 #include "EditorWidget.h"
 
 #include "LexerLisp.h"
-#include <QToolBar>
-#include <QComboBox>
-#include <QLabel>
+
+#include "SExprSeller.h"
 
 EditorWidget::EditorWidget(QWidget *parent) :
     QWidget(parent)
@@ -18,6 +17,11 @@ EditorWidget::EditorWidget(QWidget *parent) :
     tabWidget->setMovable(true);
 
     connect(tabWidget, &QTabWidget::tabCloseRequested, this, &EditorWidget::t_tab_removed);
+}
+
+QString EditorWidget::get_sexpr()
+{
+    return "stroka";
 }
 
 int EditorWidget::tabs_count()
@@ -60,6 +64,14 @@ void EditorWidget::open_new_tab(const QString &text, EditorWidget::tab_pos pos)
     }
 }
 
+void EditorWidget::set_sexpr_menu(QMenu *menu)
+{
+    t_s_expr_actions = menu;
+    //заготовка для отправки с-выражений
+    connect(t_s_expr_actions, &QMenu::triggered, [this](QAction* act){ t_sexpr_apply(act, get_sexpr());});
+}
+
+
 void EditorWidget::on_tabWidget_tabCloseRequested(int index)
 {
     close_tab(index);
@@ -75,6 +87,12 @@ void EditorWidget::on_tabWidget_tabBarDoubleClicked(int index)   //не рабо
 void EditorWidget::t_tab_removed(int index)
 {
     t_pathes.removeAt(index);
+}
+
+void EditorWidget::t_sexpr_apply(QAction *act, const QString &str)
+{
+    auto* sexpr = static_cast<SExprAction*>(act);
+    sexpr->apply(str);
 }
 
 QsciScintilla* EditorWidget::init_editor(){

@@ -1,0 +1,285 @@
+;(#CREATE_BASE <filename> <flag> <field pointer 1> . . .
+;              <field pointer N>)=> <filename> (if success)
+;                                => NIL (if error)
+; Create the structure of database file
+; <filename> - the name of database file
+; <flag> - if flag is T, then file will be created in MEMORY (RAM or
+;          EXTENDED)
+; <field pointer1> ... <field pointerN> - results of #CREATE_FIELD
+; (#CREATE_FIELD <field name> <type> <width>
+;                [<dec>])=> <field pointer>
+; Create field description
+;  <field name> - string (max 11 symbols)
+;  <type>       - С - character, N - numeric,
+;                 F - float,
+;                 D - date, L - logical, M - memory
+;  <width>      - integer (1 - 255)
+;  <dec>        - integer (1 - 15)
+; CREATE DATABASE FILE ON THE DISK
+(#CREATE_BASE 'test3.dbf NIL
+   (#CREATE_FIELD 'NAME 'C 20)
+   (#CREATE_FIELD 'CITY 'C 15)
+   (#CREATE_FIELD 'PHONE 'C 9)
+   (#CREATE_FIELD 'N-DEPT 'N 3)
+)
+; (#OPEN_BASE <filename> <flag> [READ_ONLY]) => <filename> (if success)
+;                                            => NIL (if error)
+; Open database file (this file became an active file)
+; If flag is T, then this file will be open in MEMORY (RAM or EXTENDED)
+; If READ_ONLY is T, then this file will be open only to read
+; OPEN FILE ON THE DISK
+(#OPEN_BASE 'test3.dbf NIL)
+; (#FIELD? [<field number>] [<field descriptor>]
+;          [<filename>]) => <value of the field descriptor>
+; Get value of the field descriptor
+; Default <field number> is number of the active field
+; <field descriptor>
+;       => FIELD_NAME (default)
+;       => FIELD_TYPE (С - character, N - numeric,
+;                         F - float, D - date,
+;                         L - logical, M - memory)
+;       => FIELD_WIDTH (1 - 255)
+;       => FIELD_DEC (number of decimal places)
+(#FIELD? 1 'WIDTH)
+; (#PUT_RECORD [<record string>] [<record number>]
+;              [<filename>]) => <record string> (if success)
+;                            => NIL (if error)
+; Write record (append or replace) to the database file
+; (default record string is spaces)
+; Default <record number> is number of the active record
+; and <filename> is the name of the active database file
+(#PUT_RECORD NIL 1)
+; (#PUT_FIELD <field value> [<field number>] [<record number>]
+;             [<filename>]) => <field value> (if success)
+;                           => NIL (if error)
+; Write field value "Байдун В.В." to the 1st field of the active record
+; of the active database
+(#PUT_FIELD "Байдун В.В." 1)
+; Write field value "Москва" to the 2nd field of the active database
+(#PUT_FIELD "Москва" 2)
+; (#OPEN_BASE? [<filename>]) => <database structure pointer>
+; Predicate to test database file to opening
+; If argument is absent, then returns the list of the open files
+(#OPEN_BASE? test4.dbf)
+(#OPEN_BASE? test3.dbf)
+(#OPEN_BASE?)
+; (#ACTIV_BASE [<filename>])
+; Set active database
+; File must be open
+; If argument is absent, then returns the name of the current active base
+(#ACTIV_BASE)
+; (#ACTIV_RECORD [<record number>] [<filename>])
+; Set active record
+; File must be open
+;If argument is absent, then returns the number of the current active record
+(#ACTIV_RECORD)
+; Write value "352-89-93" to the 3rd field of the active database
+(#PUT_FIELD "352-89-93" 3)
+; Write value 15 to the 4th field of the active database
+(#PUT_FIELD 15 4)
+; (#GET_FIELD [<field number>] [<record number>]
+;             [<filename>]) => <field value> (if success)
+;                           => NIL (if error)
+; File must be open
+; Output field value
+(#GET_FIELD 3)
+; Append blank record
+(#PUT_RECORD NIL 2)
+; Set active record
+(#ACTIV_RECORD 2)
+; Write value "Бунин А.И." to the 1st field of the active record of
+; the active database
+(#PUT_FIELD "Бунин А.И." 1)
+; Write value to the 2nd field of the active record of
+; the active database
+(#PUT_FIELD "Люберцы" 2)
+; Write value to the 3rd field of the active record of
+; the active database
+(#PUT_FIELD "554-61-64" 3)
+; Write value to the 4th field of the active record of
+; the active database
+(#PUT_FIELD 15 4)
+; (#GET_RECORD [<record number>] [<filename>]
+;              [<field number i>] ... [<field number j>])
+;              =><concatenation of the field values>
+; Default output concatenation of all field values of the active record
+; of the active file
+; File  must be open
+(#GET_RECORD 2 NIL 1 2 3 4 4 3 2 1)
+; Copy record number 2 to the record number 3
+(#PUT_RECORD (#GET_RECORD 2) 3)
+; Set active record
+(#ACTIV_RECORD 3)
+; Replace field value 1 of the record number 3
+(#PUT_FIELD "Бунина О.Ю." 1)
+; Copy record number 1 to the record number 4
+(#PUT_RECORD (#GET_RECORD 1) 4)
+; Copy record number 2 to the record number 5
+(#PUT_RECORD (#GET_RECORD 2) 5)
+; (#SET_FIRST <list of the forms> [<start record number>]
+;             [<stop record number>] [<filename>])
+;   => <record number for which value of the last form from <list>
+;      is nonNIL  /this record became active/>
+(#SET_FIRST '((FINDSTRING "352-" (#GET_FIELD 3))) )
+; Get value of the active record
+(#GET_RECORD)
+; (#SET_NEXT) - repeat query which set in the last #SET_FIRST
+(#SET_NEXT)
+; Get value of the active record
+(#GET_RECORD)
+; (#SET_NEXT) - repeat query which set in the last #SET_FIRST
+(#SET_NEXT)
+; Get value of the 5th record
+(#GET_RECORD 5)
+; Get value of the 4th record
+(#GET_RECORD 4)
+; Delete record from the database
+; (#DEL_RECORD [<record number>] [<filename(opened)>])
+(#DEL_RECORD 4)
+; Get value of the 5th record
+(#GET_RECORD 5)
+; Get value of the 4th record
+(#GET_RECORD 4)
+; Delete record number 5 from the database
+(#DEL_RECORD 5)
+; Delete record number 4 from the database
+(#DEL_RECORD 4)
+; Get value of the 1st record
+(#GET_RECORD 1)
+; Get value of the 2nd record
+(#GET_RECORD 2)
+; Get value of the 3rd record
+(#GET_RECORD 3)
+; Get value of the 4th record
+(#GET_RECORD 4)
+; (#CLOSE_BASE [<filename(opened)>])
+; Close database file
+(#CLOSE_BASE 'test3.dbf)
+(#OUT_DBF '"test3.dbf")
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'test3.dbf 'test4.dbf)
+; Close database file
+(#CLOSE_BASE 'test4.dbf)
+(#OUT_DBF '"test4.dbf")
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'test3.dbf 'test5.dbf '((FINDSTRING "554" (#GET_FIELD 2))))
+; Duplicates all or part of database file FILE1, creating a new
+;file FILE2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'test3.dbf 'test5.dbf '((FINDSTRING "554" (#GET_FIELD 3))))
+; Close database file
+(#CLOSE_BASE 'test5.dbf)
+(#OUT_DBF '"test5.dbf")
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'test3.dbf 'test6.dbf '((FINDSTRING "Мос" (#GET_FIELD 2))))
+; Close database file
+(#CLOSE_BASE 'test6.dbf)
+(#OUT_DBF '"test6.dbf")
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'test3.dbf 'test7.dbf '((FINDSTRING "554" (#GET_FIELD 3)))
+            nil nil '(1 2))
+; Close database file
+(#CLOSE_BASE 'test7.dbf)
+(#OUT_DBF '"test7.dbf")
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'test3.dbf 'test8.dbf '((FINDSTRING "554" (#GET_FIELD 3)))
+            nil nil '(1 2 3 4 4 3 2 1))
+; Close database file
+(#CLOSE_BASE 'test8.dbf)
+(#OUT_DBF '"test8.dbf")
+; Find dBASE example file
+(SETQ #FILE (!!FIND_FILE 'EMPLOYEE  '.DBF))
+(#OUT_DBF #FILE)
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE 'employee.dbf 'test9.dbf
+            '((FINDSTRING "SALES" (#GET_FIELD 4))) nil nil
+            '(1 2 4 6 7))
+; Close database file
+(#CLOSE_BASE 'test9.dbf)
+(#OUT_DBF '"test9.dbf")
+; Duplicates all or part of database file 1, creating a new
+;file 2
+;(#COPY_BASE FILE1 FILE2 <list forms> [<number start record>]
+;                        [<number stop record>]
+;                        [<list fields numbers>] FLAG1 FLAG2)
+;                       => <new filename>
+;  FILE1 - file-source
+;  FILE2 - file-target
+;  FLAG1 - T, if FILE1 must be open in RAM
+;  FLAG2 - T, if FILE2 must be open in RAM
+;  FILE2 became active database file.
+(#COPY_BASE #FILE 'test10.dbf
+              '((NOT(FINDSTRING "SALES" (#GET_FIELD 4)))) nil nil
+              '(1 2 4))
+; Close database file
+(#CLOSE_BASE 'test10.dbf)
+(#OUT_DBF '"test10.dbf")
+

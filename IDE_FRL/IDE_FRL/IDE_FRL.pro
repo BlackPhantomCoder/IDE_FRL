@@ -11,11 +11,15 @@ CONFIG += qscintilla2
 
 SOURCES += \
     Editor/EditorWidget.cpp \
+    Settings/IDESettingsEditor.cpp \
     Interpretator/Interpretator.cpp \
     Interpretator/InterpretatorEditorWidget.cpp \
     Interpretator/InterpretatorWidget.cpp \
     Editor/LexerLisp.cpp \
-    Windows/MainWidget.cpp \
+    Interpretator/SExprSeller.cpp \
+    Settings/MyQApp.cpp \
+    Windows/MainWidowDocksControl.cpp \
+    Windows/MainWindowMenuControl.cpp \
     Windows/MainWindowToolbar.cpp \
     Project/ProjectCreatorWidget.cpp \
     Project/ProjectEditorWidget.cpp \
@@ -25,17 +29,21 @@ SOURCES += \
     Project/ProjectWidget.cpp \
     Project/filetreeitem.cpp \
     Project/treemodel.cpp \
-    Settings/GlobalSettings.cpp \
     Settings/SettringJson.cpp \
+    Windows/SExprSellerController.cpp \
     main.cpp \
 
 HEADERS += \
     Editor/EditorWidget.h \
+    Settings/IDESettingsEditor.h \
     Interpretator/Interpretator.h \
     Interpretator/InterpretatorEditorWidget.h \
     Interpretator/InterpretatorWidget.h \
     Editor/LexerLisp.h \
-    Windows/MainWidget.h \
+    Interpretator/SExprSeller.h \
+    Settings/MyQApp.h \
+    Windows/MainWidowDocksControl.h \
+    Windows/MainWindowMenuControl.h \
     Windows/MainWindowToolbar.h \
     Project/ProjectCreatorWidget.h \
     Project/ProjectEditorWidget.h \
@@ -45,11 +53,12 @@ HEADERS += \
     Project/ProjectWidget.h \
     Project/filetreeitem.h \
     Project/treemodel.h \
-    Settings/GlobalSettings.h \
-    Settings/SettringJson.h
+    Settings/SettringJson.h \
+    Windows/SExprSellerController.h
 
 FORMS += \
     Editor/EditorWidget.ui \
+    Settings/IDESettingsEditor.ui \
     Interpretator/InterpretatorWidget.ui \
     Interpretator/InterpretatorEditorWidget.ui \
     Project/ProjectCreatorWidget.ui \

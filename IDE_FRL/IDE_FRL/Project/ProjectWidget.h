@@ -64,6 +64,7 @@ private slots:
 private:
     QMenu* t_context_by_index(const QModelIndex& ind);
     QMenu* t_root_context_menu();
+    bool t_is_root_at(const QModelIndex& index) const;
 
     void t_init_project();
 

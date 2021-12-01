@@ -1,0 +1,131 @@
+
+; File  MWMDTEST1.LSP       11:24:54  2/17/1988
+
+;---------------------------- MWM TEST EXAMPLE  -------------------------------
+
+
+   (DEFUN MWM_TEST (
+                    *NOT_SYSTEM*)             ; Start main procedure
+      (@EXEC_DESK *MENU1*)
+   )
+   (SETQ *MENU1* '(MAIN_MENU_OPEN))
+
+   (DEFUN MAIN_MENU_OPEN (*D_H*  ; Main open function
+                           )
+; Open main desk handle
+      (@CREATE_DESK '*MAIN_H*)
+      (@PUT_COLOR *D_H* 1 7 0 0)
+      (@PUT_FRAME *D_H*  (@GET_FRAME *D_H*) 1 5 1)
+; Open lisp window handle
+      (@CREATE_LWINDOW '*LSP_WIN_TST* 21 78)
+      (@ADD_WINDOW *D_H* *W_H* 1 1)
+      (@ADD_KEYBD *W_H* *K_^W*)
+      (PUT_KEYBD_PROC *W_H* (LIST *K_^W*) '((WRITE-BYTE *K_BELL*))) ; No re-evaluate WINDOW_EXEC
+; Open block handles for menu bar
+      (OPEN_MENU_BAR)
+; Open box handles for functional keys
+      (OPEN_FUNKEY_BOX '*MAIN_H* 22 1 8 2)
+      (@PUT_PROC 'AUTO '*MAIN_H*
+           '((OR (ACTIV_WINDOW? '*LSP_WIN_TST*) (@EXEC_WINDOW '*LSP_WIN_TST* ))))
+;      (REMD 'MAIN_MENU_OPEN)
+      '*MAIN_H*
+   )
+
+
+
+; Open menu bar for test
+
+   (DEFUN OPEN_MENU_BAR (
+                         )
+      (@CREATE_TBOX '*B_DSK* 1 12 "Desk" NIL NIL *K_^D*)  ; Create box for block test executing
+      (@PUT_COLOR '*B_DSK* 3 7 1)
+      (@CREATE_BLOCK '*DSK* 27 7 1 0 0 'L   ; Create block structure
+        '((" About this system (^A)" NIL (LIST *K_^A*) (@HELP 'MWMPC))
+          -
+          (" Window test example" NIL NIL
+             (IF (VALUEP '*WINDOW_TEST*) (@EXEC_DESK *WINDOW_TEST*)
+                 (MESSAGE " You should load file: WINDOWS.LSP")))
+          (" GEM Desktop test example" NIL NIL
+             (IF (VALUEP '*GEM_H*) (@EXEC_DESK *GEM_H*)
+                 (MESSAGE " You should load file: GEM.LSP")))
+          (" Game SNAKE" NIL NIL
+             (IF (VALUEP '*SNAKE*)  (@EXEC_DESK *SNAKE*)
+                 (MESSAGE " You should load file: SNAKE.LSP")))
+       ) )
+      (@PUT_COLOR '*DSK* 7 5 0) ; Set colors of block
+      (@PUT_BLOCK '*B_DSK* '*DSK*) ; Add block to the box
+      (@ADD_BOX '*MAIN_H* '*B_DSK* 0 5) ; Add box to the desk
+
+      (@CREATE_TBOX '*B_FILE* NIL NIL "File" NIL NIL *K_^F* '*B_DSK*)  ; Create box for block test executing
+      (@CREATE_BLOCK '*FILE_H* 21 7 1 0 0 'L   ; Create block structure
+        '((" Load   file   (F2)" NIL (LIST *K_F2*) (MWM_LOAD_FILE))
+          (" Edit   file   (F4)" NIL (LIST *K_F4*) (KEYBD_EXEC *K_F4* '*DESK_HANDLE*))
+          (" Show   file   (^Y)" NIL (LIST *K_^Y*) (MWM_SHOW_FILE))
+          (" Print  file   (^N)" NIL (LIST *K_^N*) (MWM_PRINT_FILE NIL NIL T))
+          (" Delete file   (^L)" NIL (LIST *K_^L*) (MWM_DELETE_FILE))
+          (" Rename file   (^R)" NIL (LIST *K_^R*) (MWM_RENAME_FILE))
+          -
+          (" Selector      (^S)" NIL (LIST *K_^S*)
+             (IF (VALUEP '*SEL_FILE*)  (@EXEC_DESK *SEL_FILE*)
+                 (MESSAGE " You should load file: SELECTOR.LSP")))
+          -
+          (" Quit          (^Q)" NIL (LIST *K_^Q*) (SYSTEM_QUIT T))
+;           (KEYBD_EXEC *K_F10* '*DESK_HANDLE*))
+       ) )
+       (@PUT_COLOR '*FILE_H* 7 5 0) ; Set colors of block
+       (@PUT_BLOCK '*B_FILE* '*FILE_H*) ; Add block to the box
+       (@ADD_BOX '*MAIN_H* '*B_FILE* 0 20) ; Add box to the desk
+
+      (@CREATE_TBOX '*B_UTIL* NIL NIL "Options" NIL NIL *K_^O* '*B_DSK*)  ; Create box for block test executing
+      (@CREATE_BLOCK '*UTIL_H* 21 7 1 0 0 'L   ; Create block structure
+        '(
+          (" Trace          (^T)" NIL (LIST *K_^T*) (KEYBD_EXEC *K_F7* '*DESK_HANDLE*))
+          (" Untrace        (^U)" NIL (LIST *K_^U*) (KEYBD_EXEC *K_F8* '*DESK_HANDLE*))
+          -
+          (" Lisp window    (^W)" NIL (LIST *K_^W*)  (@EXEC_WINDOW '*LSP_WIN_TST*))
+          -
+          (" MS DOS  window (^X)" NIL (LIST *K_^X*)  (COM_DRIVER))
+       ) )
+       (@PUT_COLOR '*UTIL_H* 7 5 0) ; Set colors of block
+       (@PUT_BLOCK '*B_UTIL* '*UTIL_H*) ; Add block to the box
+       (@ADD_BOX '*MAIN_H* '*B_UTIL* 0 35) ; Add box to the desk
+;       (REMD 'OPEN_MENU_BAR)
+       T
+
+  )
+
+
+   (DEFUN OPEN_FUNKEY_BOX (D_H X Y !W !DW
+                           )
+      (SETQ !W  (OR !W 6)
+            !DW (+ (OR !DW 2) !W))
+      (@CREATE_TBOX NIL 2 !W '(F2 "Load") NIL
+               '((KEYBD_EXEC *K_F2* '*DESK_HANDLE*)) *K_F2*)
+      (@PUT_COLOR *B_H* 3 7 1)
+      (@ADD_BOX D_H *B_H* X Y)
+      (@CREATE_TBOX NIL NIL NIL '(F3 "Print") NIL
+               '((KEYBD_EXEC *K_F3* '*DESK_HANDLE*)) *K_F3* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+      (@CREATE_TBOX NIL NIL NIL '(F4 "Edit") NIL
+               '((KEYBD_EXEC *K_F4* '*DESK_HANDLE*)) *K_F4* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+      (@CREATE_TBOX NIL NIL NIL '(F5 "Base") NIL
+               '((KEYBD_EXEC *K_F5* '*DESK_HANDLE*)) *K_F5* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+      (@CREATE_TBOX NIL NIL NIL '(F6 "Ms Dos") NIL
+               '((KEYBD_EXEC *K_F6* '*DESK_HANDLE*)) *K_F6* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+      (@CREATE_TBOX NIL NIL NIL '(F7 "Trace") NIL
+               '((KEYBD_EXEC *K_F7* '*DESK_HANDLE*)) *K_F7* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+      (@CREATE_TBOX NIL NIL NIL '(F8 "Untrace") NIL
+               '((KEYBD_EXEC *K_F8* '*DESK_HANDLE*)) *K_F8* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+      (@CREATE_TBOX NIL NIL NIL '(F10 "Quit") NIL
+               '((SYSTEM_QUIT T)) *K_F10* *B_H*)
+      (@ADD_BOX D_H *B_H* X (INCQ Y !DW))
+;      (REMD 'OPEN_FUNKEY_BOX)
+      T
+  )
+
+

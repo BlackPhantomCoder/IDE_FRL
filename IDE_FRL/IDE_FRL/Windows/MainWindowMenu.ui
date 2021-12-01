@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RofloLisp</string>
+   <string>ForRorfloLisp</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -40,17 +40,10 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <widget class="QMenu" name="menu_7">
+    <widget class="QMenu" name="file_last_projects_menu">
      <property name="title">
       <string>Открыть последние</string>
      </property>
-     <addaction name="action_5"/>
-    </widget>
-    <widget class="QMenu" name="menu_8">
-     <property name="title">
-      <string>Настройки</string>
-     </property>
-     <addaction name="action_13"/>
     </widget>
     <widget class="QMenu" name="menu_9">
      <property name="title">
@@ -66,7 +59,7 @@
     </widget>
     <addaction name="menu_9"/>
     <addaction name="menu_10"/>
-    <addaction name="menu_7"/>
+    <addaction name="file_last_projects_menu"/>
     <addaction name="separator"/>
     <addaction name="action_2"/>
     <addaction name="action_7"/>
@@ -75,7 +68,7 @@
     <addaction name="file_save_project_action"/>
     <addaction name="separator"/>
     <addaction name="action_11"/>
-    <addaction name="menu_8"/>
+    <addaction name="file_settings_action"/>
     <addaction name="separator"/>
     <addaction name="file_close_project_action"/>
     <addaction name="file_exit_action"/>
@@ -116,9 +109,14 @@
     <property name="title">
      <string>Интерпретатор</string>
     </property>
+    <widget class="QMenu" name="interpretator_sexpr_menu">
+     <property name="title">
+      <string>Отправить S-выражение</string>
+     </property>
+    </widget>
     <addaction name="interpretator_start_action"/>
     <addaction name="interpretator_stop_action"/>
-    <addaction name="action_S"/>
+    <addaction name="interpretator_sexpr_menu"/>
     <addaction name="action_6"/>
     <addaction name="separator"/>
     <addaction name="interpretator_add_action"/>
@@ -238,11 +236,6 @@
     <string>Запустить</string>
    </property>
   </action>
-  <action name="action_S">
-   <property name="text">
-    <string>Отправить S-выражение</string>
-   </property>
-  </action>
   <action name="action_6">
    <property name="text">
     <string>Настройка пользовательских команд</string>
@@ -291,6 +284,16 @@
   <action name="interpretator_clear_action">
    <property name="text">
     <string>Очистить</string>
+   </property>
+  </action>
+  <action name="actionq">
+   <property name="text">
+    <string>q</string>
+   </property>
+  </action>
+  <action name="file_settings_action">
+   <property name="text">
+    <string>Настройки...</string>
    </property>
   </action>
  </widget>

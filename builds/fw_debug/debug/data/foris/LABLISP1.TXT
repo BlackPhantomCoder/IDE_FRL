@@ -1,0 +1,282 @@
+
+                           2Вариант N1
+
+     Реализовать функции:
+
+     (@NTHCDR n list), возвращает n-й CDR от списка list
+        (n >= 0)
+
+     Примеры:  (@NTHCDR  0 '(А В С))   => (А В С)
+               (@NTHCDR  2 '(А В С Д)) => (С Д)
+               (@NTHCDR  5 '(А В ))    => NIL
+               (@NTHCDR -2 '(А В ))    => NIL
+
+     (@NTH n list), возвращает n-й элемент списка list
+       (n>= 0)
+
+    Примеры:   (@NTH  0 '(А В))   => А
+               (@NTH  1 '((АВ)(ВС)(ДВ)К))  => (ВС)
+               (@NTH  5 '(А В))   => NIL
+               (@NTH -1 '(А))     => NIL
+
+
+.
+                            - 2 -
+
+                           2Вариант N2
+
+    Реализовать функции:
+
+    (@COUNT object list test) - возвращает число элементов в списке
+                               list, для которых (test object
+                               element) есть не NIL. element -
+                               текущий элемент списка list. Если
+                               аргумент test опущен, то test =
+                               EQUAL
+
+
+    Пример: (@COUNT 'А '(А В С D А Е)) => 2
+            (@COUNT 'A '(B C D))       => 0
+
+
+    (@COUNT-IF test list) -     возвращает число элементов в списке
+                               list для которых (test element)
+                               ecть не NIL. element - текущий
+                               элемент списка list
+
+    Пример: (@COUNT-IF 'EVENP '(3 -6 8 7 0)) => 3
+
+.
+                            - 3 -
+                           2Вариант N3
+
+    Реализовать функции:
+
+    (@FINDLIST object list test) - осуществляет линейный поиск
+                                  (поиск на верхнем уровне) в
+                                  списке list. Возвращает список
+                                  из элементов из list для которых
+                                  (test object element) не NIL.
+                                  element - текущий элемент спис-
+                                  ка list. Если test опущен, то
+                                  test = EQUAL
+
+     Пример: (@FINDLIST 'A '(B C A B C A)) => (A A)
+             (@FINDLIST 'A '(B CD)) => NIL
+             (@FINDLIST  5 '(1 0 -5 6 10) '<) => (6 10)
+
+     (@FINDLIST-IF test list) -    осуществляет линейный поиск в
+                                  списке list. Возвращает элемент
+                                  списка list для которого (test
+                                  element) не NIL
+
+     (@FINDLIST-IF 'MINUSP '(5 10 -3 -4)) => (-3 -4)
+.
+                            - 4 -
+                           2Вариант N4
+
+    Реализовать функции:
+
+    (@ASSOC key alist test) - осуществляет поиск пары pair в
+                              ассоциативном списке alist. Возвра-
+                              щает пару для которой (test key
+                              (CAR pair)) не NIL. По умолчанию
+                              (если опущен). test = EQUAL
+
+    Пример:  (@ASSOC  'А '(В D (A B)(C D))) => (A B)
+             (@ASSOC  'A '((C D)(K M)))     => NIL
+             (@ASSOC   5 '((1 2)(3 4)(6 8)) '<) => (6 8)
+
+    (@ASSOC-IF test alist) - осуществляет поиск пары pair в ассо-
+                            циативном списке alist. Возвращает
+                            пару для которой (test pair) не NIL.
+
+    Пример:  (@ASSOC-IF 'MINUSP '((2 3)(-3 4)))  => (-3 4)
+
+.
+                            - 5 -
+                           2Вариант N5
+
+     Реализовать функции:
+
+     (@FIND object list test) - осуществляет линейный поиск (поиск
+                               на верхнем уровне) в списке. Возв-
+                               ращает элемент списка list для ко-
+                               торого (test object element) не
+                               NIL. element - текущий элемент
+                               списка list. Если test опущен, то
+                               test = EQUAL
+
+     Пример: (@FIND 'A '(B CA B C A)) => A
+             (@FIND 'A '(B D C))      => NIL
+             (@FIND  5 '(10 -5 6 10) 'LESSP)) => 6
+
+
+     (@FIND -IF test list) - осуществляет линейный поиск в списке
+                            list. Возвращает элемент списка list
+                            для которого (test element) не NIL
+
+     (@FIND-IF 'MINUSP' (5 10 -3 -4)) => -3
+     (@FIND-IF 'MINUSP' (5 10 4))     => NIL
+
+
+.
+                            - 6 -
+
+                           2Вариант N6
+
+     Реализовать функции
+
+     (@POSITION object list test) - осуществляет линейный поиск
+                                   (поиск на верхнем уровне) в
+                                   списке list. Возвращает номер
+                                   элемента в списке list для ко-
+                                   торого (test object element) не
+                                   NIL. element - текущий элемент
+                                   списка list. Если аргумент test
+                                   опущен, то test=EQUAL
+
+     Пример:
+            (@POSITION '(A B C) '((A)(A B C)(B) D)) => 1
+            (@POSITION 'A '(B C)) => NIL
+
+     (@POSITION-IF test list) -     осуществляет линейный поиск в
+                                   списке list. Возвращает номер
+                                   элемента list для которого
+                                   (test element) не NIL.
+     Пример:
+            (@POSITION-IF 'MINUSP (1 2 -5 1))  => 2
+.
+                            - 7 -
+                           2Вариант N7
+
+     Реализовать функции:
+
+     (@FIRSTN n list) - возвращает в качестве результата список
+        (n > 0)        из n первых элементов списка list.
+
+
+     Пример:
+            (@FIRSTN  0 '(A B))    => NIL
+            (@FIRSTN  2 '(A B C))  => (A B)
+            (@FIRSTN  3 '(A B))    => (A B)
+
+     (@BUTLAST list n) - возвращает в качестве результата список
+                        без последних n элементов list. Если n
+                        опущено либо < 0, то возвращает список
+                        без последнего элемента.
+
+     Примеры:
+             (@BUTLAST '(A B C))     => (A B)
+             (@BUTLAST '(A B C D) 2) => (A B)
+
+
+     (@SUBLIST list n m) - выделяет из списка list элементы с n
+        n,m >= 0          по m и возвращает их в виде резуль-
+          n >= m          тирующего списка.
+
+     Пример:
+            (@SUBLIST '(A B C D E F) 2 4) => (C D E)
+            (@SUBLIST '(A B C D) 2 2)     => (C)
+            (@SUBLIST '(A B C D E F) 2)   => (C D E F)
+            (@SUBLIST  (A B C D E F) 03)  => (A B C D)
+.
+                            - 8 -
+
+                           2Вариант N8
+
+     Реализовать функции:
+
+     (@SUBSTITUDE new old list test) - возвращает список list в
+                                    котором все элементы для кото-
+                                    рых (test old element) не NIL.
+                                    заменяет на new. element -
+                                    текущий элемент списка. По
+                                    умолчанию (если test опущен)
+                                    test=EQUAL
+
+     Пример:
+
+     (@SUBSTITUDE  5 2 '(3 4 2 8 5 2))    =>  (3 4 5 8 5 5)
+     (@SUBSTITUDE  5 2 '(3 4 2 8 5 2) 'GREATERP) => (5 5 5 8 5 5)
+
+
+     (@SUBSTITUDE-IF new test list) - возвращает список list в
+                                     котором все элементы, для
+                                     которых (test element) не NIL
+                                     заменены на new
+
+     Пример:
+
+     (@SUBSTITUDE-IF '0 (3 4 -5 8 -3)) => (3 4 0 8 0)
+
+.
+                            - 9 -
+                           2Вариант N9
+
+     Реализовать функции:
+
+     (@MEMBER item list test) - осуществляет поиск в списке list
+                                Возвращает остаток списка list
+                                начиная с элемента для которого
+                                (test item element) не NIL.
+                                element - текущий элемент списка
+                                По умолчанию (если test опущен)
+                                test=EQUAL
+
+     Пример:
+            (@MEMBER 'A '(B C DD A B A))     => (A B A)
+            (@MEMBER  5  (3 4 8 1 3) 'LESSP) => (8 1 3)
+
+     (@MEMBER-IF test list) -    осуществляет поиск в списке list,
+                                возвращает остаток списка list
+                                начиная с элемента для которого
+                                (test element) не NIL.
+
+   Пример:
+
+
+
+     (@MEMBER-IF 'NUMBERP '(A B C) 3 4 5) => (3 4 5)
+
+.
+                            - 10 -
+
+                          2Вариант N10
+
+   Реализовать функции:
+
+   (@CHAR atom n) - возвращает n-ый символ атома atom
+     (n>0)
+
+
+   Пример:
+           (@CHAR 'ABCD  3)  => D
+           (@CHAR 'AB    0)  => A
+           (@CHAR 'ABC  10)  => NIL
+
+
+    (@FINDSTRING atom1 atom2 n) - возвращает позицию первого вхож-
+                                 дения atom2 и atom1, n- указывает
+                                 номер символа в атом 1 с которого
+                                 начинать поиск. Если n опущено,
+                                 то n = 0
+
+   Пример:
+          (@FINDSTRING 'ABCDEFCD 'CD)     => 2
+          (@FINDSTRING 'ABCDEFCD 'CD  4)  => 6
+
+
+.
+                            - 11 -
+                          2Вариант N 11
+
+    Реализовать функцию декартового произведения:
+
+    (@X list1 list2)
+
+    Пример:
+
+    (@X '(A1 A2) '(B1 B2 B3)) => ((A1 B1) (A2 B1)(A2 B2) (A2 B3))
+
+    list1, list2 - списки произвольной длины

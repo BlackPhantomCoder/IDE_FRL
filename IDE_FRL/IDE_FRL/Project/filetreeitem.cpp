@@ -147,7 +147,7 @@ pair<FileTreeItem*, QStringList::const_iterator> find_by_path(FileTreeItem *root
     return {found_child, b};
 }
 
-bool path_into_tree(FileTreeItem *root, const QString &path, bool file, bool exists)
+bool path_into_tree(FileTreeItem *root, const QString &path, bool file, const std::function<bool(const QString&)>& is_exist_f)
 {
     if(root == nullptr) throw "root is empty";
     if(path.isEmpty()) return false;
@@ -159,12 +159,12 @@ bool path_into_tree(FileTreeItem *root, const QString &path, bool file, bool exi
         found_child = root;
     }
     while(it != prev(end(data))){
-        auto* buf = new FileTreeItem(*it, false, exists);
+        auto* buf = new FileTreeItem(*it, false, is_exist_f(path_by_node(found_child) + "/" + *it));
         found_child->appendChild(buf);
         found_child = buf;
         ++it;
     }
-    found_child->appendChild( new FileTreeItem(*it, file, exists));
+    found_child->appendChild( new FileTreeItem(*it, file, is_exist_f(path)));
     return true;
 }
 

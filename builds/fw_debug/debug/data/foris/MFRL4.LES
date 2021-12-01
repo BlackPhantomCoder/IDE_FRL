@@ -1,0 +1,105 @@
+; This lesson will show You some  mechanisms  of  MFRL/PC  for
+; frame matching.
+; Clear active frame memory.
+(FRESET)
+; Let's define a simple medical knoledge base.
+; This is descriptor for grippe.
+(DEFRAMEQ SYMPTOMS-GRIPPE
+  (TEMP ($VALUE (387) OR (HIGH-TEMP) (JUMP-TEMP)))
+  (PAIN ($VALUE (HEAD) OR (NOSE)))
+OR(COLD ($VALUE ((YES (DATE ($VALUE (FEW-DAYS-AGO))))))) )
+; This is descriptor for cold.
+(DEFRAMEQ SYMPTOMS-COLD
+  (TEMP ($VALUE (HIGH-TEMP) OR (JUMP-TEMP)))
+  (PAIN ($VALUE (THROAT) (NOSE) NOT (HEAD)))
+NOT (CONTACT-WITH-GRIPPE ($VALUE (YES)))
+  (COLD ($VALUE ((YES (DATE ($VALUE (FEW-DAYS-AGO))))))) )
+; This is descriptor for high temperature.
+; Note that slot SELF is used to match the whole frame
+; against some real value.
+(DEFRAMEQ HIGH-TEMP
+  (SELF ($REQUIRE (EQ (PARM: :VALUE 'HIGH)) ALT
+    (NUMBERP (PARM: :VALUE)) (> (PARM: :VALUE 379)))) )
+; This is descriptor for jumping temperature.
+(DEFRAMEQ JUMP-TEMP
+  (SELF ($REQUIRE (EQ (PARM: :VALUE 'JUMP-TEMP)))) )
+; This is frame YES wich is used above in slots COLD.
+(DEFRAMEQ YES
+  (DATE ($VALUE (DATE))) )
+; This is descriptor for notion "yesterday".
+(FASSERTQ YESTERDAY
+  (AKO ($VALUE (DATE)))
+  (SELF ($VALUE (3))) )
+; This is descriptor for notion "few days ago".
+(FASSERTQ FEW-DAYS-AGO
+  (SELF ($REQUIRE (NUMBERP (PARM: :VALUE))
+    (< (PARM: 1 :VALUE)) (<*1 (PARM: :VALUE 7))))
+  (AKO ($VALUE (DATE))) )
+; This is descriptor for notion "some days ago".
+(FASSERTQ SOME-DAYS-AGO
+  (AKO ($VALUE (DATE))) )
+; Now we define some factual knowledge about patients.
+; Knowledge about patient Petrov.
+(DEFRAMEQ IST-BOL*1
+  (AKO ($VALUE (IST-BOL)))
+  (NAME ($VALUE (PETROV)))
+  (TEMP ($VALUE (390) (JUMP-TEMP)))
+  (PAIN ($VALUE (THROAT) (NOSE)))
+  (COLD ($VALUE (
+    (YES (DATE ($VALUE (YESTERDAY)))) ))) )
+; Knowledge about patient Ivanov.
+(DEFRAMEQ IST-BOL*2
+  (NAME ($VALUE (IVANOV)))
+  (TEMP ($VALUE (368)))
+  (PAIN ($VALUE (THINGER))) )
+; Knowledge about patient Sidorov.
+(DEFRAMEQ IST-BOL*3
+  (NAME ($VALUE (SIDOROV)))
+  (TEMP ($VALUE (JUMP-TEMP)))
+  (PAIN ($VALUE (THROAT) (NOSE)))
+  (COLD ($VALUE ((YES (DATE ($VALUE (9))))))) )
+; Knowledge about patient Chernov.
+(DEFRAMEQ IST-BOL*4
+  (NAME ($VALUE (CHERNOV)))
+  (TEMP ($VALUE (395)))
+  (PAIN ($VALUE (THROAT) (NOSE)))
+  (COLD ($VALUE ((YES (DATE ($VALUE (FEW-DAYS-AGO))))))) )
+; Knowledge about patient Sobolewsky.
+(DEFRAMEQ IST-BOL*5
+  (NAME ($VALUE (SOBOLEWSKY)))
+  (CONTACT-WITH-GRIPPE ($VALUE (YES)))
+  (TEMP ($VALUE (395) (JUMP-TEMP)))
+  (PAIN ($VALUE (NOSE) (THROAT)))
+  (COLD ($VALUE (
+    (YES (DATE ($VALUE (
+      (SOME-DAYS-AGO (SELF ($VALUE (5)))) )))) ))) )
+; Knowledge about patient Sapaty.
+(DEFRAMEQ IST-BOL*6
+  (NAME ($VALUE (SAPATY)))
+  (TEMP ($VALUE (390) (JUMP-TEMP)))
+  (COLD ($VALUE ((YES (DATE ($VALUE (FEW-DAYS-AGO))))))) )
+; Attemption to match IST-BOL*1 against SYMPTOMS-GRIPPE.
+(FMATCH? 'IST-BOL*1 'SYMPTOMS-GRIPPE)
+; Matched items.
+*MATCHED*
+; Unmatched items.
+*UNMATCHED*
+; Attemption to match IST-BOL*1 against SYMPTOMS-COLD.
+(FMATCH? 'IST-BOL*1 'SYMPTOMS-COLD)
+; Matched items.
+*MATCHED*
+; Unmatched items.
+*UNMATCHED*
+; Attemption to match IST-BOL*2 against SYMPTOMS-GRIPPE.
+(FMATCH? 'IST-BOL*2 'SYMPTOMS-GRIPPE)
+; Matched items.
+*MATCHED*
+; Unmatched items.
+*UNMATCHED*
+; Attemption to match IST-BOL*2 against SYMPTOMS-COLD.
+(FMATCH? 'IST-BOL*2 'SYMPTOMS-COLD)
+; Matched items.
+*MATCHED*
+; Unmatched items.
+*UNMATCHED*
+

@@ -1,0 +1,120 @@
+; This lesson will show You some  mechanisms  of  MFRL/PC  for
+; forward  chaining  inference  process organisation.
+; You can use function DEFRAME or DEFRAMEQ to create new frames.
+;             Man
+;             /
+;       AKO /
+;         /
+;      John
+(deframe 'John '(AKO ($value (Man))))
+; Just the same for another frame.
+;            Woman
+;             /
+;       AKO /
+;         /
+;      Mary
+; Pay Your attention to using DEFRAMEQ instead of DEFRAME.
+(deframeq Mary (AKO ($value (Woman))))
+; Now we can define a simple rulebase which consist of two
+; prototypic frames which describe family tree.
+; The first frame is "Woman" and the rules are:
+;
+; Woman(x) & Hasband(x,y) => Wife(y,x)
+; Woman(x) & Son(x,y) => Mother(y,x)
+; Woman(x) & Hasband(x,y) & Son(x,z) => Son(y,z)
+(deframeq Woman
+   (husband
+      ($IF-ADDED ((FREVADD wife)))
+   )
+   (son
+      ($IF-ADDED ((FREVADD mother))
+        IF ((FGETV :FRAME husband))
+      THEN ((FPUT (FGETE :FRAME husband $VALUE) son $VALUE :VALUE))
+        FI)
+   )
+)
+; And the second one is "Man" and the rules are:
+;
+; Man(x) & Wife(x,y) => Hasband(y,x)
+; Man(x) & Son(x,y) => Father(y,x)
+; Man(x) & Wife(x,y) & Son(x,z) => Son(y,z)
+(deframeq Man
+   (wife
+      ($IF-ADDED ((FREVADD husband)))
+   )
+   (son
+      ($IF-ADDED ((FREVADD father))
+        IF ((FGETV :FRAME wife))
+      THEN ((FPUT (FGETE :FRAME wife $VALUE) son $VALUE :VALUE))
+        FI)
+   )
+)
+; The next four frames define AKO-hierarhy.
+;             Man
+;             /
+;       AKO /
+;         /
+;      John
+(fassertq John (AKO ($value (Man))))
+; The second one.
+;            Woman
+;             /
+;       AKO /
+;         /
+;      Mary
+(fassertq Mary (AKO ($value (Woman))))
+; The fird one.
+;             Man
+;             /
+;       AKO /
+;         /
+;      Bill
+(fassertq Bill (AKO ($value (Man))))
+; The fourth one.
+;            Woman
+;             /
+;       AKO /
+;         /
+;       Ann
+(fassertq Ann (AKO( $value (Woman))))
+; And now we add into frames "John" and "Mary" information about
+; some relatives. Frame "John" is completed with function
+; FASSERTQ   which  activates  procedures  attached  to  slots
+; "wife" and "son" of frame "Man".
+(fassertq John
+     (wife ($value (Mary)))
+     (son ($value (Bill)))
+)
+; Frame Mary is completed with function FPUT which activates
+; procedures attached to slot "son" of frame "Woman".
+(fput Mary son $value Jim)
+; The contents of frames "John" "Mary" "Bill" "Ann" and
+; "Jim" after above operations.
+; To stop scrolling press Ctrl+S.
+(fprint '(John Mary Bill Ann Jim))
+; You can get value of slot "mother" of frame "Bill" (there wasn't
+; such info in initial factual base).
+(fget Bill mother)
+; In this way you must use FGET to get just one value
+; without comments.
+(fgete Bill mother)
+; It's equal to previous call.
+(fget Bill mother $value '(e))
+; In this way you must use FGET to get values with comments.
+(fget John son $value '(c))
+; Frame "Person" is top level token in person hierarchy.
+; It contains procedure GET-RELATIVES attached to slot "relatives".
+; This is used for listing of all relatives for current frame.
+(fassertq Person
+  (INSTANCE ($value (Woman) (Man)))
+  (relatives ($if-needed (GET-RELATIVES (parm: :frame))))
+)
+; This is definition of procedure GET-RELATIVES.
+(passertq GET-RELATIVES (:frame)
+  (mapcar '(lambda (:s) (fget- :frame :s $value))
+         (set-difference (fslots :frame) '(AKO INSTANCE))
+  )
+)
+; And this is a call of GET-RELATIVES.
+(fneed John relatives)
+
