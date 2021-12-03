@@ -6,10 +6,13 @@ using namespace std;
 
 
 MainWindowMenuControl::MainWindowMenuControl(MainWindow *main):
-    QObject(main),
-    t_main(main)
+    MainWindowPartInt(main)
 {
     t_load();
+}
+
+void MainWindowMenuControl::init()
+{
     connect(t_main, &MainWindow::project_opened, this, &MainWindowMenuControl::t_project_opened);
 }
 

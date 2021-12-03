@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow
     friend class DocksControl;
     friend class MainWindowMenuControl;
     friend class SExprSellerController;
+    friend class MainWindowToolbar;
 public:
     MainWindow();
     ~MainWindow();
@@ -30,7 +31,6 @@ signals:
     void closed();
 
 private:
-    void t_init_toolbar();
     void t_connect_actions();
 
 private slots:
@@ -72,7 +72,7 @@ private:
     ProjectWidget* t_project_w = nullptr;
     InterpretatorWidget* t_interpretator_w = nullptr;
     Ui::MainWindowMenu* t_menu = nullptr;
-    MainWindowToolbar t_toolbar;
+    MainWindowToolbar* t_toolbar = nullptr;
     DocksControl* t_docks = nullptr;
     MainWindowMenuControl* t_menu_c = nullptr;
     SExprSellerController* t_sexpr_controller = nullptr;

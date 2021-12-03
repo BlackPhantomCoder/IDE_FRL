@@ -10,7 +10,6 @@ static auto settings = QSettings();
 
 MyQApp::MyQApp(int &argc, char **argv, int f):QApplication(argc, argv, f)
 {
-
 }
 
 QString MyQApp::now_global_settings_path()

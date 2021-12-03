@@ -234,10 +234,10 @@ QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
             t_add_btn(menu, "Добавить папку",[this, index](){create_and_add_dir(index);});
             t_add_btn(menu, "Добавить файл",[this, index](){create_and_add_file(index);});
             t_add_btn(menu, "Удалить папку",[this, index](){remove_dir(index);});
-            t_add_btn(menu, "Иксключить папку",[this, index](){exclude_dir(index);});
+            t_add_btn(menu, "Исключить папку",[this, index](){exclude_dir(index);});
         }
         else{
-            t_add_btn(menu, "Иксключить папку",[this, index](){exclude_dir(index);});
+            t_add_btn(menu, "Исключить папку",[this, index](){exclude_dir(index);});
         }
     }
     return menu;

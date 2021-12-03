@@ -62,6 +62,7 @@ private slots:
     void t_element_pressed(const QModelIndex &ind);
     void t_element_double_clicked(const QModelIndex &ind);
 private:
+    void t_init_menus();
     QMenu* t_context_by_index(const QModelIndex& ind);
     QMenu* t_root_context_menu();
     bool t_is_root_at(const QModelIndex& index) const;
@@ -74,6 +75,7 @@ private:
     Project* t_project;
     ProjectModel* t_model;
     DeselectableTreeView* treeView;
+
 };
 
 #endif // TEST_H

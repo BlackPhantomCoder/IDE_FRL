@@ -3,11 +3,13 @@
 #include "MainWindow.h"
 
 SExprSellerController::SExprSellerController(MainWindow *main):
-    QObject(main),
-    t_main(main)
+    MainWindowPartInt(main)
 {
     connect(&t_data, &SExprSeller::func_added, this, &SExprSellerController::t_add_fnc);
+}
 
+void SExprSellerController::init()
+{
     for(auto i = SExprSeller::to_numb(SExprSeller::none_begin) + 1; i != SExprSeller::none_end; ++i){
         t_add_fnc(t_data.get_bi_func(SExprSeller::bi_func(i)));
     }

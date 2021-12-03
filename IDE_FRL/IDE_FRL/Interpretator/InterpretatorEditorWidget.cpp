@@ -40,7 +40,7 @@ void InterpretatorCreatorWidget::t_check_accept()
          return;
     }
 
-    if(QFile::exists(((path_relative->isChecked()) ? QCoreApplication::applicationDirPath(): "") + interpretator_path)){
+    if(!QFile::exists(((path_relative->isChecked()) ? QCoreApplication::applicationDirPath() + "/": "") + interpretator_path)){
         QMessageBox::warning(this, tr("Внимание"),
                                        tr("Файл интерпретатора не существует"),
                                       QMessageBox::Ok);

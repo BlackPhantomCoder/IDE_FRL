@@ -18,8 +18,7 @@
 #include "Project/ProjectEditorWidget.h"
 #include "Settings/IDESettingsEditor.h"
 
-MainWindow::MainWindow():
-   t_toolbar(this)
+MainWindow::MainWindow()
 {
     t_menu = new Ui::MainWindowMenu();
     t_menu->setupUi(this);
@@ -28,17 +27,23 @@ MainWindow::MainWindow():
     t_project_w = new ProjectWidget(this);
     t_interpretator_w = new InterpretatorWidget(this);
 
-    setCentralWidget(t_editor_w);
 
+    t_toolbar = new MainWindowToolbar(this);
     t_docks = new DocksControl(this);
     t_menu_c = new MainWindowMenuControl(this);
-
     t_sexpr_controller = new SExprSellerController(this);
+
+
+    t_toolbar->init();
+    t_docks->init();
+    t_menu_c->init();
+    t_sexpr_controller->init();
+
 
     t_set_enabled_interpretator_action(false);
     t_set_enabled_project_action(false);
+    setCentralWidget(t_editor_w);
 
-    t_init_toolbar();
     t_connect_actions();
 }
 
@@ -46,6 +51,8 @@ MainWindow::~MainWindow()
 {
     t_interpretator_w->stop_interpretator();
     //auto& s = MyQApp::global_settings();
+
+    t_toolbar->save();
     t_docks->save();
     t_menu_c->save();
     t_sexpr_controller->save();
@@ -53,35 +60,11 @@ MainWindow::~MainWindow()
     //qDebug() << "MainWindow destroyed" << endl;
 }
 
-void MainWindow::t_init_toolbar()
-{
-    addToolBar(Qt::TopToolBarArea, t_toolbar.toolbar_1);
-
-    connect(t_toolbar.toolbar_1_start_interpretator_btn, &QPushButton::clicked, this, &MainWindow::t_on_interpretator_start_action_triggered);
-    connect(t_toolbar.toolbar_1_stop_interpretator_btn, &QPushButton::clicked , t_interpretator_w, &InterpretatorWidget::stop_interpretator);
-    connect(t_toolbar.toolbar_1_clear_interpretator_btn, &QPushButton::clicked , t_interpretator_w, &InterpretatorWidget::clear);
-
-//    tool1->addSeparator();
-//    tool1->addWidget(butt3);
-//    tool1->addSeparator();
-
-//    auto* combo = new QComboBox(this);
-//    combo->addItem(QString("Roflolisp"));
-//    combo->addItem(QString("DOS_Roflolisp"));
-//    tool1->addWidget(combo);
-
-//    auto* tool2 = new QToolBar(this);
-//    addToolBar(Qt::TopToolBarArea, tool2);
-//    tool2->setAllowedAreas(Qt::TopToolBarArea);
-//    tool2->setFloatable(false);
-//    auto* butt4 = new QPushButton(QString("функции"));
-//    auto* butt5 = new QPushButton(QString("доп. функции"));
-//    tool2->addWidget(butt4);
-//    tool2->addWidget(butt5);
-}
-
 void MainWindow::t_connect_actions()
 {
+    t_menu->interpretator_clear_action->setEnabled(!t_interpretator_w->clear_state());
+
+
     connect(t_menu->view_interpretator_action, &QAction::triggered, this, &MainWindow::t_on_view_interpretator_action_triggered);
     connect(t_menu->view_project_files_action, &QAction::triggered, this, &MainWindow::t_on_view_project_files_action_triggered);
 
@@ -104,14 +87,16 @@ void MainWindow::t_connect_actions()
         menu->show();
     });
 
+
     connect(t_menu->project_settings_action,  &QAction::triggered, this, &MainWindow::t_on_preject_settings_triggered);
 
 
     connect(t_docks, &DocksControl::dock_state_changed, this, &MainWindow::t_on_dock_widget_state_changed);
 
 
-
     connect(t_interpretator_w, &InterpretatorWidget::changed_state, this, &MainWindow::t_on_interpretator_state_changed);
+    connect(t_interpretator_w, &InterpretatorWidget::clear_state_changed,
+            [this](bool state){t_menu->interpretator_clear_action->setEnabled(!state);});
 
     connect(t_project_w, &ProjectWidget::double_clicked_file,
             [this](const QModelIndex& index){
@@ -274,17 +259,12 @@ void MainWindow::t_set_enabled_project_action(bool val)
     t_menu->file_save_project_action->setEnabled(val);
     t_menu->project_menu->setEnabled(val);
     t_menu->interpretator_start_action->setEnabled(val);
-    t_toolbar.toolbar_1_start_interpretator_btn->setEnabled(val);
 }
 
 void MainWindow::t_set_enabled_interpretator_action(bool val)
 {
     t_menu->interpretator_start_action->setEnabled(!val);
     t_menu->interpretator_stop_action->setEnabled(val);
-    t_menu->interpretator_clear_action->setEnabled(val);
-    t_toolbar.toolbar_1_start_interpretator_btn->setEnabled(!val);
-    t_toolbar.toolbar_1_stop_interpretator_btn->setEnabled(val);
-    t_toolbar.toolbar_1_clear_interpretator_btn->setEnabled(val);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

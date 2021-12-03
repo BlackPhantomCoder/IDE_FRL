@@ -18,11 +18,7 @@ struct dos_data{
     std::string in_acc_name;
     std::string out_acc_name;
 
-    //const auto in_name = sinchro_path + "\\out.lsp";
-    //const auto out_name = sinchro_path + "\\in.lsp";
-
-    //const auto in_acc_name = sinchro_path + "\\oacc.lsp";
-    //const auto out_acc_name = sinchro_path + "\\inacc.lsp";
+    std::string dos_cpu_cycles = "max";
 
 };
 
@@ -55,9 +51,6 @@ private:
     dos_data t_data;
     QProcess* t_process;
     QFileSystemWatcher* t_watcher;
-    std::function<void(int)> t_fnc;
-    bool t_true_empty = false;
-    QTimer t_empty_check_timer;
 };
 
 

@@ -20,7 +20,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Интерпретататор</string>
+      <string>Интерпретатор</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

@@ -1,4 +1,12 @@
 (DEFUN DRIVER2 (**driver-buf**)
+    (defun read-char (**result**)
+        (**clear** |S:\inacc.lsp|)
+        (**wait** |S:\inacc.lsp| T)
+        (setq  **result** (**read_from_file** |S:\in.lsp| **read-char** nil))
+        ;(princ |>> |)
+        ;(**print** **result**)
+        **result**
+    )
     (defun read (**result**)
         (**clear** |S:\inacc.lsp|)
         (**wait** |S:\inacc.lsp| T)
@@ -14,11 +22,35 @@
         (**delay** 51)
         **result**
     )
+    (defun princ (**x** **result**)
+        (**wait** |S:\oacc.lsp| T)
+        (setq  **result** (**out_to_file** |S:\out.lsp| **princ** **x**))
+        (**clear** |S:\oacc.lsp|)
+        (**delay** 51)
+        **result**
+    )
+    (defun write-string (**x** **result**)
+        (**wait** |S:\oacc.lsp| T)
+        (setq  **result** (**out_to_file** |S:\out.lsp| **write-string** **x**))
+        (**clear** |S:\oacc.lsp|)
+        (**delay** 51)
+        **result**
+    )
+    (defun TERPRI (**x** **result**)
+        (**wait** |S:\oacc.lsp| T)
+        (setq  **result** (**out_to_file** |S:\out.lsp| **TERPRI** **x**))
+        (**clear** |S:\oacc.lsp|)
+        (**delay** 51)
+        **result**
+    )
     (CATCH 'RETURN 
         (LOOP 
             (CATCH nil
                 (CATCH 'DRIVER
                     ;(PRINC "> ")
+                    (setq + |+|)
+                    (setq ++ |++|)
+                    (setq +++ |+++|)
                     (setq **driver-buf** (EVAL (READ)))
                     (PRINT  **driver-buf**)
                 )
@@ -28,7 +60,11 @@
 )
 
 (movd print **print**)
+(movd princ **princ**)
+(movd write-string **write-string**)
+(movd TERPRI **TERPRI**)
 (movd read **read**)
+(movd read-char **read-char**)
 
 (defun **func_under_file** (**rds** **file** **func** **arg** **result** **buf**)
     (cond 
@@ -71,6 +107,27 @@
         ((and **buf** (not **for_delete**)) (rds))
         (if (eval **buf**) (rds))
         (**delay** 50)
+    )
+)
+
+(defun break (nlambda (**f** **msg** **buf**) 
+        (write-string "break ")
+        (princ (eval **msg**))
+        (princ " ")
+        (princ **f**)
+        (TERPRI 1)
+        ;...
+        ;(READ-CHAR)
+        (loop
+            (write-string |Continue, Break, Abort, Top-level, Restart, System? |)
+            (setq **buf** (READ-CHAR))
+            ((or (eq **buf** \C) (eq **buf** \c)) (return **f**))
+            ((or (eq **buf** \B) (eq **buf** \b)) (setq break **f**) (driver2))
+            ((or (eq **buf** \A) (eq **buf** \a)) (return **f**))
+            ((or (eq **buf** \T) (eq **buf** \t)) (throw |driver|))
+            ((or (eq **buf** \S) (eq **buf** \s)) (system))
+            ((or (eq **buf** \R) (eq **buf** \r)) (restart))
+        )
     )
 )
 

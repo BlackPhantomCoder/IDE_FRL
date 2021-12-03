@@ -2,7 +2,7 @@
 
 #include "LexerLisp.h"
 
-#include "SExprSeller.h"
+#include "Interpretator/SExprSeller.h"
 
 EditorWidget::EditorWidget(QWidget *parent) :
     QWidget(parent)

@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QScrollBar>
 
+size_t InterpretatorWidget::maximum_last_sends = 255;
+
 InterpretatorWidget::InterpretatorWidget(QWidget *parent):
     QMainWindow(parent),
     t_interpretator(nullptr),
@@ -12,9 +14,14 @@ InterpretatorWidget::InterpretatorWidget(QWidget *parent):
 {
     setupUi(this);
 
+    output->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
     connect(this, &InterpretatorWidget::started, this, &InterpretatorWidget::changed_state);
     connect(this, &InterpretatorWidget::stopped, this, &InterpretatorWidget::changed_state);
-    connect(input, &QLineEdit::returnPressed, this, &InterpretatorWidget::t_send);
+    connect(input, &ExtendedLineEdit::returnPressed, this, &InterpretatorWidget::t_send);
+    connect(input, &ExtendedLineEdit::KeyDownPressed, this, &InterpretatorWidget::t_set_last_send_up);
+    connect(input, &ExtendedLineEdit::KeyUpPressed, this, &InterpretatorWidget::t_set_last_send_down);
+
 
     QObject::connect(scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
                      [this](){scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximum());});
@@ -86,6 +93,11 @@ bool InterpretatorWidget::stop_interpretator_w_answear()
     return true;
 }
 
+bool InterpretatorWidget::clear_state() const
+{
+    return t_clear_state;
+}
+
 void InterpretatorWidget::set_project(Project *project)
 {
     t_project = project;
@@ -105,7 +117,9 @@ void InterpretatorWidget::stop_interpretator()
 void InterpretatorWidget::clear()
 {
     output->clear();
-    scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximumHeight());
+    //scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximumHeight());
+    t_clear_state = true;
+    emit clear_state_changed(clear_state());
 }
 
 void InterpretatorWidget::send(const QString &str, bool new_line)
@@ -114,6 +128,14 @@ void InterpretatorWidget::send(const QString &str, bool new_line)
         if(str.isEmpty()) return;
         output->setText(output->text() + str + ((new_line) ? "\n": ""));
         t_interpretator->send(str);
+        t_last_sends.push_back(str);
+        if(t_last_sends.size() > maximum_last_sends){
+            t_last_sends.pop_front();
+        }
+        if(t_clear_state){
+            t_clear_state = false;
+            emit clear_state_changed(clear_state());
+        }
     }
 }
 
@@ -132,12 +154,46 @@ void InterpretatorWidget::t_send()
 {
     send(input->text());
     input->clear();
+    t_last = false;
 }
 
 void InterpretatorWidget::on_response(const QString &input)
 {
     output->setText(output->text() + input);
+    if(t_clear_state){
+        t_clear_state = false;
+        emit clear_state_changed(clear_state());
+    }
 }
+
+void InterpretatorWidget::t_set_last_send_down()
+{
+    if(t_last_sends.empty()) return;
+    if(!t_last || t_last_index == 0){
+        input->setText(t_last_sends.back());
+        t_last_index = t_last_sends.size() - 1;
+        t_last = true;
+        return;
+    }
+
+    --t_last_index;
+    input->setText(t_last_sends[t_last_index]);
+}
+
+void InterpretatorWidget::t_set_last_send_up()
+{
+    if(t_last_sends.empty()) return;
+    if(!t_last || (t_last_index == t_last_sends.size() - 1)){
+        input->setText(t_last_sends.front());
+        t_last_index = 0;
+        t_last = true;
+        return;
+    }
+
+    ++t_last_index;
+    input->setText(t_last_sends[t_last_index]);
+}
+
 
 void InterpretatorWidget::t_change_state()
 {

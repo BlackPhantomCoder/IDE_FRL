@@ -7,8 +7,7 @@
 const auto areas = QSet{Qt::LeftDockWidgetArea, Qt::RightDockWidgetArea, Qt::BottomDockWidgetArea};
 
 DocksControl::DocksControl(MainWindow *window):
-    QObject(window),
-    t_main(window)
+    MainWindowPartInt(window)
 {
     t_main->setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
     t_main->setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
@@ -16,6 +15,11 @@ DocksControl::DocksControl(MainWindow *window):
     t_main->setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
 
     t_load_docks();
+}
+
+void DocksControl::init()
+{
+    //
 }
 
 void DocksControl::save()
@@ -123,6 +127,8 @@ void DocksControl::t_load_dock(dock_widget mode, Qt::DockWidgetArea side)
     if(t_w_to_dw.find(w) != t_w_to_dw.end()) return;
     auto hide = s.value("hide", false).toBool();
     auto* dock = new QDockWidget(t_title_by_mode(mode), t_main);
+
+
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea);
     dock->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable);
     dock->setWidget(w);
@@ -144,3 +150,4 @@ DocksControl::dock_widget DocksControl::t_default_m_by_side(Qt::DockWidgetArea s
     if(side == Qt::BottomDockWidgetArea) return  dock_widget::interpretator;
     return dock_widget::none;
 }
+

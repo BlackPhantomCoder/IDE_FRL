@@ -1,19 +1,21 @@
 #ifndef MAINWINDOWMENUCONTROL_H
 #define MAINWINDOWMENUCONTROL_H
 
-#include <QObject>
 #include <QtCore>
 #include <QtWidgets>
 
-class MainWindow;
+#include "MainWindowPartInt.h"
 
-class MainWindowMenuControl : public QObject
+class MainWindowMenuControl : public MainWindowPartInt
 {
     Q_OBJECT
 public:
     explicit MainWindowMenuControl(MainWindow *main);
 
-    void save();
+    // MainWindowPartInt interface
+public:
+    virtual void init() override;
+    virtual void save() override;
 
 private slots:
     void t_project_opened();
@@ -24,8 +26,9 @@ private:
     void t_add(const QString& path);
     void t_del(QAction* act);
 private:
-    MainWindow* t_main;
     bool t_full;
+
+
 };
 
 #endif // MAINWINDOWMENUCONTROL_H

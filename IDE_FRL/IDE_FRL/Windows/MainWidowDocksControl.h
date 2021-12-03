@@ -4,16 +4,22 @@
 #include <QtWidgets>
 #include <QtCore>
 
+#include "MainWindowPartInt.h"
 #include "Project/Project.h"
 
 class MainWindow;
 
-class DocksControl : public QObject{
+class DocksControl : public MainWindowPartInt{
     Q_OBJECT
     enum dock_widget : int {project, interpretator, none};
 public:
     DocksControl(MainWindow* window);
-    void save();
+
+    // MainWindowPartInt interface
+public:
+    virtual void init() override;
+    virtual void save() override;
+
 signals:
     void dock_state_changed(QDockWidget* w);
 public slots:
@@ -27,9 +33,7 @@ private:
     void t_load_dock(dock_widget mode, Qt::DockWidgetArea side);
     dock_widget t_default_m_by_side(Qt::DockWidgetArea side);
 private:
-    MainWindow* t_main;
     QHash<QWidget*, QDockWidget*> t_w_to_dw;
 };
-
 
 #endif // MAINWIDGET_H

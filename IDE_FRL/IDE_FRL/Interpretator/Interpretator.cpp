@@ -25,7 +25,7 @@ Interpretator::~Interpretator()
 bool Interpretator::run()
 {
     auto path = ((t_data.relative) ? QCoreApplication::applicationDirPath() + "/" : "") +t_data.path;
-    t_process->setWorkingDirectory(path.mid(0, t_data.path.lastIndexOf("/")));
+    t_process->setWorkingDirectory(path.mid(0, path.lastIndexOf("/")));
     t_process->setNativeArguments(t_data.params);
     t_process->start(path);
     if( !t_process->waitForStarted(5000)) {

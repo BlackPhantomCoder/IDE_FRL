@@ -11,6 +11,7 @@ CONFIG += qscintilla2
 
 SOURCES += \
     Editor/EditorWidget.cpp \
+    Interpretator/ExtendedLineEdit.cpp \
     Settings/IDESettingsEditor.cpp \
     Interpretator/Interpretator.cpp \
     Interpretator/InterpretatorEditorWidget.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
     Settings/MyQApp.cpp \
     Windows/MainWidowDocksControl.cpp \
     Windows/MainWindowMenuControl.cpp \
+    Windows/MainWindowPartInt.cpp \
     Windows/MainWindowToolbar.cpp \
     Project/ProjectCreatorWidget.cpp \
     Project/ProjectEditorWidget.cpp \
@@ -35,6 +37,7 @@ SOURCES += \
 
 HEADERS += \
     Editor/EditorWidget.h \
+    Interpretator/ExtendedLineEdit.h \
     Settings/IDESettingsEditor.h \
     Interpretator/Interpretator.h \
     Interpretator/InterpretatorEditorWidget.h \
@@ -44,6 +47,7 @@ HEADERS += \
     Settings/MyQApp.h \
     Windows/MainWidowDocksControl.h \
     Windows/MainWindowMenuControl.h \
+    Windows/MainWindowPartInt.h \
     Windows/MainWindowToolbar.h \
     Project/ProjectCreatorWidget.h \
     Project/ProjectEditorWidget.h \
@@ -84,3 +88,4 @@ release {
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+MAKE_CXXFLAGS += -MP

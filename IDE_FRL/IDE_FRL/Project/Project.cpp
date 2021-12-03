@@ -131,6 +131,7 @@ bool Project::rem_dir_w_answer(const QString &path)
 
 void Project::set_project_name(const QString &name)
 {
+    if(name == t_name) return;
     t_changed = true;
     t_name = name;
     t_root->set_name(name);
@@ -140,11 +141,10 @@ void Project::set_project_name(const QString &name)
 void Project::set_interpretator_name(const QString& name)
 {
     if(!is_loaded()) throw "project not loaded";
-    if(t_interpretator_name != name){
-        t_interpretator_name = name;
-        t_changed = true;
-        emit interpretator_name_changed();
-    }
+    if(t_interpretator_name == name) return;
+    t_interpretator_name = name;
+    t_changed = true;
+    emit interpretator_name_changed();
 }
 
 void Project::save()

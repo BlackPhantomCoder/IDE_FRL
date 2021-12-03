@@ -6,21 +6,23 @@
 
 #include <unordered_map>
 #include "Interpretator/SExprSeller.h"
+#include "MainWindowPartInt.h"
 
-class MainWindow;
-
-class SExprSellerController : public QObject
+class SExprSellerController : public MainWindowPartInt
 {
     Q_OBJECT
 public:
-    explicit SExprSellerController(MainWindow *main = nullptr);
+    explicit SExprSellerController(MainWindow *main);
 
-    void save();
+
+    // MainWindowPartInt interface
+public:
+    virtual void init() override;
+    virtual void save() override;
+
 private slots:
     void t_add_fnc(SExprAction* act);
 private:
-    MainWindow* t_main;
-
     SExprSeller t_data;
 };
 
