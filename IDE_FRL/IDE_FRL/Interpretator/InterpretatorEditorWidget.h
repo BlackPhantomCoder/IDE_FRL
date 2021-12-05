@@ -1,11 +1,14 @@
 #ifndef INTERPRETATOREDITORWIDGET_H
 #define INTERPRETATOREDITORWIDGET_H
 
-#include <QObject>
-#include "Interpretator/Interpretator.h"
 #include "ui_InterpretatorEditorWidget.h"
 
-class InterpretatorCreatorWidget: public QDialog, public Ui_Dialog
+#include <QtCore>
+#include <QtWidgets>
+#include "Interpretator/Interpretator.h"
+
+
+class InterpretatorCreatorWidget: public QDialog, Ui::InterpretatorEditorDialog
 {
     Q_OBJECT
 

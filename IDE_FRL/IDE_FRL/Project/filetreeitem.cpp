@@ -5,11 +5,12 @@
 using namespace std;
 
 
-FileTreeItem::FileTreeItem(const QString& name, bool file,  bool exists):
+FileTreeItem::FileTreeItem(const QString& name, bool file,  bool exists, size_t order):
     t_file(file),
     t_exists(exists),
     t_name(name),
-    m_parentItem(nullptr)
+    m_parentItem(nullptr),
+    t_order(order)
 {
 
 }
@@ -73,6 +74,11 @@ void FileTreeItem::set_name(const QString &name)
     t_name = name;
 }
 
+void FileTreeItem::set_order(size_t ord)
+{
+    t_order = ord;
+}
+
 bool FileTreeItem::is_file() const
 {
     return  t_file;
@@ -91,6 +97,11 @@ bool FileTreeItem::exists() const
 const QString &FileTreeItem::name() const
 {
     return t_name;
+}
+
+size_t FileTreeItem::order() const
+{
+    return t_order;
 }
 
 int FileTreeItem::row() const
@@ -147,7 +158,7 @@ pair<FileTreeItem*, QStringList::const_iterator> find_by_path(FileTreeItem *root
     return {found_child, b};
 }
 
-bool path_into_tree(FileTreeItem *root, const QString &path, bool file, const std::function<bool(const QString&)>& is_exist_f)
+bool path_into_tree(FileTreeItem *root, const QString &path, bool file, size_t order, const std::function<bool(const QString&)>& is_exist_f)
 {
     if(root == nullptr) throw "root is empty";
     if(path.isEmpty()) return false;
@@ -159,12 +170,12 @@ bool path_into_tree(FileTreeItem *root, const QString &path, bool file, const st
         found_child = root;
     }
     while(it != prev(end(data))){
-        auto* buf = new FileTreeItem(*it, false, is_exist_f(path_by_node(found_child) + "/" + *it));
+        auto* buf = new FileTreeItem(*it, false, is_exist_f(path_by_node(found_child) + "/" + *it), order);
         found_child->appendChild(buf);
         found_child = buf;
         ++it;
     }
-    found_child->appendChild( new FileTreeItem(*it, file, is_exist_f(path)));
+    found_child->appendChild( new FileTreeItem(*it, file, is_exist_f(path), order));
     return true;
 }
 
@@ -226,4 +237,23 @@ QString path_by_node(FileTreeItem *node)
         result += *it + "/";
     }
     return result + node->name();
+}
+
+
+
+
+QList<FileTreeItem *> to_list(FileTreeItem *node, bool root)
+{
+    QList<FileTreeItem *>  result;
+    if(!node) return {};
+
+    if(!root){
+        result.append(node);
+    }
+
+    for(const auto& child : node->children()){
+        result.append(to_list(child, false));
+    }
+
+    return result;
 }

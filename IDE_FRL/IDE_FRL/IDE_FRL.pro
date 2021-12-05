@@ -12,6 +12,7 @@ CONFIG += qscintilla2
 SOURCES += \
     Editor/EditorWidget.cpp \
     Interpretator/ExtendedLineEdit.cpp \
+    Project/OrderEditor.cpp \
     Settings/IDESettingsEditor.cpp \
     Interpretator/Interpretator.cpp \
     Interpretator/InterpretatorEditorWidget.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     Editor/LexerLisp.cpp \
     Interpretator/SExprSeller.cpp \
     Settings/MyQApp.cpp \
+    Windows/LoaderController.cpp \
     Windows/MainWidowDocksControl.cpp \
     Windows/MainWindowMenuControl.cpp \
     Windows/MainWindowPartInt.cpp \
@@ -38,6 +40,7 @@ SOURCES += \
 HEADERS += \
     Editor/EditorWidget.h \
     Interpretator/ExtendedLineEdit.h \
+    Project/OrderEditor.h \
     Settings/IDESettingsEditor.h \
     Interpretator/Interpretator.h \
     Interpretator/InterpretatorEditorWidget.h \
@@ -45,6 +48,7 @@ HEADERS += \
     Editor/LexerLisp.h \
     Interpretator/SExprSeller.h \
     Settings/MyQApp.h \
+    Windows/LoaderController.h \
     Windows/MainWidowDocksControl.h \
     Windows/MainWindowMenuControl.h \
     Windows/MainWindowPartInt.h \
@@ -62,10 +66,11 @@ HEADERS += \
 
 FORMS += \
     Editor/EditorWidget.ui \
+    Project/OrderEditor.ui \
+    Project/ProjectCreatorWidget.ui \
     Settings/IDESettingsEditor.ui \
     Interpretator/InterpretatorWidget.ui \
     Interpretator/InterpretatorEditorWidget.ui \
-    Project/ProjectCreatorWidget.ui \
     Project/ProjectEditorWidget.ui \
     Windows/MainWindowMenu.ui \
     Project/ProjectWidget.ui \

@@ -3,6 +3,10 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QFile>
+#include <QDebug>
+#include <algorithm>
+
+using namespace std;
 
 Project::Project(const QString &path, QObject *parent):
     QObject(parent),
@@ -52,7 +56,7 @@ void Project::add_dir(const QString &path)
 {
     if(!is_loaded()) throw "project not loaded";
     if(path.isEmpty()) throw "empty str";
-    if(path_into_tree(t_root, path, false, t_f_or_d_exist_f)){
+    if(path_into_tree(t_root, path, false, 0, t_f_or_d_exist_f)){
         t_changed = true;
         emit tree_added(path);
     }
@@ -62,7 +66,7 @@ void Project::add_file(const QString &path)
 {
     if(!is_loaded()) throw "project not loaded";
     if(path.isEmpty()) throw "empty str";
-    if(path_into_tree(t_root, path, true, t_f_or_d_exist_f)){
+    if(path_into_tree(t_root, path, true, ++t_last_order, t_f_or_d_exist_f)){
         t_changed = true;
         emit tree_added(path);
     }
@@ -147,6 +151,15 @@ void Project::set_interpretator_name(const QString& name)
     emit interpretator_name_changed();
 }
 
+void Project::set_order(FileTreeItem *node, size_t order)
+{
+    if(node->is_dir()) return;
+    if(node->order() == order)return;
+    node->set_order(order);
+    t_changed = true;
+    emit tree_changed();
+}
+
 void Project::save()
 {
     if(!is_loaded()) throw "project not loaded";
@@ -155,12 +168,18 @@ void Project::save()
         auto files_and_edirs = to_edirs_and_files(t_root);
         QStringList files;
         QStringList edirs;
-        for(const auto& node: files_and_edirs){
-            if(node->is_file())
+
+        auto elems = to_list(t_root);
+        sort(elems.begin(), elems.end(), [](FileTreeItem *lh, FileTreeItem *rh){ return lh->order() < rh->order();});
+
+        for(const auto& node: elems){
+            if(node->is_file()){
                 files.push_back(path_by_node(node));
+            }
             else
                 edirs.push_back(path_by_node(node));
         }
+
         t_data->setValue("files", files);
         t_data->setValue("empty_dirs", edirs);
         t_data->setValue("interpretator", t_interpretator_name);
@@ -177,16 +196,23 @@ void Project::t_init()
         return  bufd.exists() || buff.exists();
     };
 
-    t_name = t_data->value("name").toString();
-    t_root = new FileTreeItem(t_name, false, false);
-    t_interpretator_name = t_data->value("interpretator").toString();
-    auto files = t_data->value("files").toStringList();
-    auto empty_dirs = t_data->value("empty_dirs").toStringList();
+    t_name = t_data->value("name", QString{}).toString();
+    t_root = new FileTreeItem(t_name, false, false, 0);
+    t_interpretator_name = t_data->value("interpretator", QString{}).toString();
+    auto files = t_data->value("files", QStringList{}).toStringList();
+    auto empty_dirs = t_data->value("empty_dirs", QStringList{}).toStringList();
+    t_last_order = 0;
+
+    //qDebug() <<"max_found" <<endl;
+
+    //qDebug() <<"folders" <<endl;
     for(const auto& folder : empty_dirs){
-        path_into_tree(t_root, folder, false, t_f_or_d_exist_f);
+        path_into_tree(t_root, folder, false, 0, t_f_or_d_exist_f);
     }
 
+    //qDebug() <<"files" <<endl;
     for(const auto& file : files){
-        path_into_tree(t_root, file, true, t_f_or_d_exist_f);
+        path_into_tree(t_root, file, true, ++t_last_order, t_f_or_d_exist_f);
     }
+    //qDebug() <<"loaded" <<endl;
 }

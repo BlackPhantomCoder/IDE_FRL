@@ -6,8 +6,8 @@
 
 struct InterpretatorData{
     bool relative = false;
-    QString path;
-    QString params;
+    QString path = "";
+    QString params = "";
 };
 
 class Interpretator : public QObject
@@ -23,7 +23,7 @@ public:
 
     void kill();
 
-    void send(const QString& text);
+    void send(const QString& text, bool new_line);
 
 signals:
     void response(QString);

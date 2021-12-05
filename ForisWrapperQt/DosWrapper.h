@@ -11,12 +11,12 @@ struct dos_data{
     std::string dos_exe_path;
     std::string sinchro_path;
     std::string foris_path;
-    std::string disk_letter;
+    //std::vector<std::pair<QChar, std::string>> disks;
     std::string disk_path;
-    std::string in_name;
-    std::string out_name;
-    std::string in_acc_name;
-    std::string out_acc_name;
+
+    std::string sinc_file;
+    std::string sinc_print_file;
+    std::string sinc_read_file;
 
     std::string dos_cpu_cycles = "max";
 

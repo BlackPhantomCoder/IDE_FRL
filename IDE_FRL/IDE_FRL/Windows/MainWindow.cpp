@@ -17,34 +17,40 @@
 #include "Interpretator/InterpretatorEditorWidget.h"
 #include "Project/ProjectEditorWidget.h"
 #include "Settings/IDESettingsEditor.h"
+#include "LoaderController.h"
 
 MainWindow::MainWindow()
 {
     t_menu = new Ui::MainWindowMenu();
     t_menu->setupUi(this);
 
-    t_editor_w = new EditorWidget(this);
     t_project_w = new ProjectWidget(this);
+    t_editor_w = new EditorWidget(this);
     t_interpretator_w = new InterpretatorWidget(this);
+
+    setCentralWidget(t_editor_w);
+
 
 
     t_toolbar = new MainWindowToolbar(this);
     t_docks = new DocksControl(this);
     t_menu_c = new MainWindowMenuControl(this);
     t_sexpr_controller = new SExprSellerController(this);
+    t_loader = new LoaderController(this);
 
 
     t_toolbar->init();
     t_docks->init();
     t_menu_c->init();
     t_sexpr_controller->init();
+    t_loader->init();
 
 
     t_set_enabled_interpretator_action(false);
     t_set_enabled_project_action(false);
-    setCentralWidget(t_editor_w);
-
     t_connect_actions();
+    connect(this, &MainWindow::project_closed, &MainWindow::project_changed);
+    connect(this, &MainWindow::project_opened, &MainWindow::project_changed);
 }
 
 MainWindow::~MainWindow()
@@ -56,8 +62,11 @@ MainWindow::~MainWindow()
     t_docks->save();
     t_menu_c->save();
     t_sexpr_controller->save();
+    t_loader->save();
 
     //qDebug() << "MainWindow destroyed" << endl;
+    //delete t_menu;
+    //t_menu = nullptr;
 }
 
 void MainWindow::t_connect_actions()
@@ -69,7 +78,7 @@ void MainWindow::t_connect_actions()
     connect(t_menu->view_project_files_action, &QAction::triggered, this, &MainWindow::t_on_view_project_files_action_triggered);
 
 
-    connect(t_menu->interpretator_start_action, &QAction::triggered, this, &MainWindow::t_on_interpretator_start_action_triggered);
+    connect(t_menu->interpretator_start_action, &QAction::triggered, this, &MainWindow::t_start_interpretator);
     connect(t_menu->interpretator_stop_action, &QAction::triggered, t_interpretator_w, &InterpretatorWidget::stop_interpretator);
     connect(t_menu->interpretator_add_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_add_triggered);
     connect(t_menu->interpretator_edit_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_edit_triggered);
@@ -128,15 +137,6 @@ void MainWindow::t_on_dock_widget_state_changed(QDockWidget* w)
 }
 
 
-void MainWindow::t_on_interpretator_start_action_triggered()
-{
-    t_docks->show(t_interpretator_w);
-    if(!t_interpretator_w->start_interpretator_w_answear()){
-//        QMessageBox::warning(this, tr("Внимание"),
-//                                        tr("Интерпретатор не запустился"),
-//                                       QMessageBox::Ok);
-    }
-}
 
 void MainWindow::t_on_interpretator_state_changed()
 {
@@ -179,6 +179,16 @@ void MainWindow::t_on_preject_settings_triggered()
 {
     auto w = ProjectEditorWidget(t_project, this);
     w.exec();
+}
+
+void MainWindow::t_start_interpretator()
+{
+    t_docks->show(t_interpretator_w);
+    if(!t_interpretator_w->start_interpretator_w_answear()){
+//        QMessageBox::warning(this, tr("Внимание"),
+//                                        tr("Интерпретатор не запустился"),
+//                                       QMessageBox::Ok);
+    }
 }
 
 void MainWindow::t_close_project()

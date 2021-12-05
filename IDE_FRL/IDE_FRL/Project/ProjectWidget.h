@@ -41,8 +41,12 @@ signals:
 
     void clicked_dir(const QModelIndex& index);
     void double_clicked_dir(const QModelIndex& index);
+
+    void send_file_request(const QString& path);
 public slots:
     void onCustomContextMenu(const QPoint &point);
+
+    void send_file(const QModelIndex& ind);
 
     void create_and_add_file(const QModelIndex& ind);
     void create_and_add_dir(const QModelIndex& ind);

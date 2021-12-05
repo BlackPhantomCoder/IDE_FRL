@@ -4,7 +4,7 @@
 #include "ui_ProjectCreatorWidget.h"
 #include <QDialog>
 
-class ProjectCreatorWidget : public QDialog, private Ui::ProjectCreatorWidget
+class ProjectCreatorWidget : public QDialog,  Ui::ProjectCreatorDialog
 {
     Q_OBJECT
 

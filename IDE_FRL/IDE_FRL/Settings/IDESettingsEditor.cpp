@@ -49,19 +49,33 @@ void IDESettingsEditor::t_intpath_apply()
                 "Путь изменился. Скопировать старые настройки?",
                 QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Cancel
     ) == QMessageBox::StandardButton::Ok;
-    auto reload = QMessageBox::question(
+//    auto reload = QMessageBox::question(
+//                this,
+//                "Путь к настройками интерпретатора",
+//                "Путь изменился. Требуется перезагрузка. Выполнить?",
+//                QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Cancel
+//    ) == QMessageBox::StandardButton::Ok;
+
+
+    QMessageBox::warning(
                 this,
                 "Путь к настройками интерпретатора",
-                "Путь изменился. Требуется перезагрузка. Выполнить?",
-                QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Cancel
-    ) == QMessageBox::StandardButton::Ok;
-
-    MyQApp::set_new_int_settings_path(path, copy);
-
-    if(reload){
-        auto* obj = new restart_later();
-        obj->deleteLater();
+                "Путь изменился. Требуется перезагрузка.",
+                QMessageBox::StandardButton::Ok
+    );
+    if(!MyQApp::set_new_int_settings_path(path, copy)){
+        QMessageBox::warning(
+                    this,
+                    "Внимание",
+                    "Ошибка при изменении пути к настройкам интерпретатора",
+                    QMessageBox::StandardButton::Ok
+        );
     }
+
+//    if(reload){
+//        auto* obj = new restart_later();
+//        obj->deleteLater();
+//    }
 }
 
 bool IDESettingsEditor::t_intpath_accept()

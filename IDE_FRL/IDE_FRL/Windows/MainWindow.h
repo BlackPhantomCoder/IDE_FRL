@@ -17,6 +17,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    friend class LoaderController;
     friend class DocksControl;
     friend class MainWindowMenuControl;
     friend class SExprSellerController;
@@ -26,6 +27,7 @@ public:
     ~MainWindow();
 
 signals:
+    void project_changed();
     void project_opened();
     void project_closed();
     void closed();
@@ -39,8 +41,6 @@ private slots:
 
     void t_on_dock_widget_state_changed(QDockWidget* w);
 
-    void t_on_interpretator_start_action_triggered();
-
     void t_on_interpretator_state_changed();
 
     void t_on_file_open_project();
@@ -48,6 +48,9 @@ private slots:
     void t_on_interpretator_add_triggered();
     void t_on_interpretator_edit_triggered();
     void t_on_preject_settings_triggered();
+
+
+    void t_start_interpretator();
 
     void t_close_project();
 
@@ -76,6 +79,7 @@ private:
     DocksControl* t_docks = nullptr;
     MainWindowMenuControl* t_menu_c = nullptr;
     SExprSellerController* t_sexpr_controller = nullptr;
+    LoaderController* t_loader;
 };
 
 #endif // MAINWINDOW_H

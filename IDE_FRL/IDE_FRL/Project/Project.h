@@ -53,6 +53,9 @@ public slots:
 
     void set_interpretator_name(const QString& name);
 
+    //
+    void set_order(FileTreeItem* node, size_t order);
+
     void save();
 
 private:
@@ -68,6 +71,7 @@ private:
     QString t_filename;
     FileTreeItem* t_root;
     QString t_interpretator_name;
+    size_t t_last_order;
 };
 
 #endif // PROJECT_H

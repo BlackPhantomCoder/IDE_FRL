@@ -17,7 +17,7 @@ InterpretatorsSettings::InterpretatorsSettings(const QString &path, bool destruc
     t_data(path)
 
 {
-    t_loaded = t_data.status() == QSettings::NoError;
+    t_loaded = t_data.status() == QSettings::NoError && QFile::exists(path);
     if(t_loaded){
         t_data.beginGroup("interpretators");
 

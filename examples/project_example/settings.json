@@ -1,14 +1,21 @@
 {
     "empty_dirs": [
         "b",
+        "wtf",
         "wtf/b",
+        "a",
         "a/a",
         "a/a1",
         "a/wtf",
+        "hah",
         "hah/a",
+        "c",
+        "a/a3",
+        "hah/hah",
         "hah/hah/hah'"
     ],
     "files": [
+        "hah/hah/hah'/s",
         "a",
         "1",
         "wtf/a",

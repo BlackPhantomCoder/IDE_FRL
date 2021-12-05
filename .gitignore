@@ -353,3 +353,5 @@ builds/**
 !builds/debug/debug/fw_debug/debug/data/**
 
 builds/debug/debug/fw_debug/debug/data/for_dos/sinchro/**
+/builds/debug/debug/fw_debug/debug/data/for_dos/data
+/builds/debug/debug/fw_debug/debug/data/for_dos/c.lsp

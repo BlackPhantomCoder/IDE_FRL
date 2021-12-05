@@ -101,10 +101,11 @@ void ProjectCreatorWidget::t_check_accept()
         return;
     }
 
-    auto p = Project(file_path);
-    p.set_project_name(name);
-    p.set_interpretator_name(interpretator);
-    p.save();
+    auto p = new Project(file_path, this);
+    p->set_project_name(name);
+    p->set_interpretator_name(interpretator);
+    p->save();
+    delete p;
 
     accept();
 }

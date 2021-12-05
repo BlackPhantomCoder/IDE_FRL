@@ -90,10 +90,9 @@ void DosWrapper::run()
     connect(t_process, static_cast<void(QProcess::*)(int)>(&QProcess::finished), this, &DosWrapper::finished);
     //connect(t_process, &QProcess::errorOccurred, this, &DosWrapper::finished);
 
-    file_del(t_data.in_acc_name);
-    file_del(t_data.out_acc_name);
-    file_del(t_data.out_name);
-    file_del(t_data.in_name);
+    file_del(t_data.sinc_file);
+    file_del(t_data.sinc_print_file);
+    file_del(t_data.sinc_read_file);
 
     t_watcher = new QFileSystemWatcher(this);
     bool beingWatched = t_watcher->addPath(QString::fromStdString(t_data.sinchro_path + "/sinchro"));
@@ -124,7 +123,7 @@ void DosWrapper::run()
         t_watcher = nullptr;
         emit finished();
     }
-    cout << "ForisWrapper 0.19 (c)" << endl;
+    cout << "ForisWrapper 0.25 (c)" << endl;
 }
 
 void DosWrapper::finish()
@@ -142,14 +141,14 @@ void DosWrapper::dir_changed(const QString &path)
     if(path != (t_data.sinchro_path+"/sinchro").c_str()) return;
 
     {
-        auto file = QFile(t_data.in_acc_name.c_str());
+        auto file = QFile(t_data.sinc_print_file.c_str());
         if(file.exists()){
              step(state::output);
              return;
         }
     }
     {
-        auto file = QFile(t_data.out_acc_name.c_str());
+        auto file = QFile(t_data.sinc_read_file.c_str());
         if(file.exists()){
              step(state::input);
              return;
@@ -166,7 +165,6 @@ void DosWrapper::step(DosWrapper::state s)
     if (s == state::input) {
         while(true){
             if(!cin) break;
-            cout << "> " << std::flush;
             string s;
             getline(cin, s);
             if (empty(s)){
@@ -177,7 +175,7 @@ void DosWrapper::step(DosWrapper::state s)
                 }
                 continue;
             }
-            send(s + "\n\n", t_data.out_name, t_data.out_acc_name);
+            send(s + "\n\n", t_data.sinc_file, t_data.sinc_read_file);
             break;
         }
         if(!cin || !cout) {
@@ -185,7 +183,7 @@ void DosWrapper::step(DosWrapper::state s)
         }
     }
     else {
-        cout << get(t_data.in_name, t_data.in_acc_name) << std::flush;
+        cout << get(t_data.sinc_file, t_data.sinc_print_file) << std::flush;
     }
 }
 
@@ -202,19 +200,29 @@ void DosWrapper::t_create_conf()
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     QFile::copy((t_data.sinchro_path + "/template.conf").c_str(),(t_data.sinchro_path + "/sinchro/conf.conf").c_str());
+
+    {
+        auto config = ofstream(t_data.sinchro_path + "/c.lsp");
+        config << "(**add_translate_disk** '|" +t_data.disk_path +"| 'D:)" << endl;
+
+        config << "(**top-level**)" <<endl;
+    }
+
+
     auto conf = ofstream(t_data.sinchro_path + "/sinchro/conf.conf", std::ios::app);
 
     conf << "cycles=" << t_data.dos_cpu_cycles << endl;
     conf << endl;
     conf << "[autoexec]" << endl;
     conf << endl;
-    conf << "MOUNT " << t_data.disk_letter << ": " << t_data.disk_path << endl;
-    conf << t_data.disk_letter << ":" << endl;
+
+
+    conf << "MOUNT D: " << t_data.disk_path << endl;
     conf << "MOUNT F: " << t_data.sinchro_path << endl;
-    conf << "MOUNT S: " << t_data.sinchro_path +"/sinchro" << endl;
+    conf << "MOUNT S: " << t_data.sinchro_path << "\\sinchro" << endl;
     conf << "MOUNT X: " << t_data.foris_path << endl;
-    conf << "x:\\fsmem - > nul" << endl;
-    conf << "x:\\foris f:\\driver.lsp +Q" << endl;
+    conf << "X:\\fsmem - > nul" << endl;
+    conf << "X:\\foris F:driver.lsp F:c.lsp +Q" << endl;
     conf << "x:\\fsfree" << endl;
     conf << "exit" << endl;
 }

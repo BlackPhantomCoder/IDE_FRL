@@ -55,7 +55,11 @@ bool InterpretatorWidget::start_interpretator_w_answear()
         QMessageBox::warning(this, "Внимание","Неизвестный интерпретатор");
         return false;
     }
-    t_interpretator = new Interpretator(MyQApp::interpretator_settings().get_interpretator(t_project->interpretator_name()), this);
+    auto data = MyQApp::interpretator_settings().get_interpretator(t_project->interpretator_name());
+    data.params.replace("($project_path)", t_project->dir_path());
+    data.params.replace("($ide_path)", MyQApp::applicationDirPath());
+
+    t_interpretator = new Interpretator(data, this);
     connect(t_interpretator, &Interpretator::finished, this, &InterpretatorWidget::on_finished);
     auto result = t_interpretator->run();
     if(!result){
@@ -122,16 +126,21 @@ void InterpretatorWidget::clear()
     emit clear_state_changed(clear_state());
 }
 
-void InterpretatorWidget::send(const QString &str, bool new_line)
+void InterpretatorWidget::send(const QString &str,  bool silence_mode, bool new_line)
 {
     if(is_running()){
         if(str.isEmpty()) return;
-        output->setText(output->text() + str + ((new_line) ? "\n": ""));
-        t_interpretator->send(str);
-        t_last_sends.push_back(str);
-        if(t_last_sends.size() > maximum_last_sends){
-            t_last_sends.pop_front();
+        if(!silence_mode){
+            output->setText(output->text() + str + ((new_line) ? "\n": ""));
+            t_last_sends.push_back(str);
+            if(t_last_sends.size() > maximum_last_sends){
+                t_last_sends.pop_front();
+            }
         }
+        else{
+            if(new_line)output->setText(output->text() + "\n");
+        }
+        t_interpretator->send(str, new_line);
         if(t_clear_state){
             t_clear_state = false;
             emit clear_state_changed(clear_state());

@@ -104,6 +104,8 @@
      <string>Проект</string>
     </property>
     <addaction name="project_settings_action"/>
+    <addaction name="project_send_to_int_action"/>
+    <addaction name="project_order_settings_action"/>
    </widget>
    <widget class="QMenu" name="interpretator_menu">
     <property name="title">
@@ -294,6 +296,16 @@
   <action name="file_settings_action">
    <property name="text">
     <string>Настройки...</string>
+   </property>
+  </action>
+  <action name="project_send_to_int_action">
+   <property name="text">
+    <string>Отправить в итерпретатор</string>
+   </property>
+  </action>
+  <action name="project_order_settings_action">
+   <property name="text">
+    <string>Настройка порядка</string>
    </property>
   </action>
  </widget>

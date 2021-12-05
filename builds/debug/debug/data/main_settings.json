@@ -6,14 +6,14 @@
                     "0": {
                         "height": 684,
                         "hide": false,
-                        "width": 235
+                        "width": 227
                     }
                 },
                 "8": {
                     "1": {
-                        "height": 627,
+                        "height": 512,
                         "hide": false,
-                        "width": 990
+                        "width": 998
                     }
                 }
             }
@@ -21,10 +21,10 @@
         "MenuControl": {
             "last": [
                 "C:/Users/Dima/source/repos/IDE_FRL/examples/project_example/settings.json",
+                "C:/Users/Dima/source/repos/IDE_FRL/buildsa1.json",
+                "C:/Users/Dima/source/repos/IDE_FRL/buildsa2.json",
                 "C:/Users/Dima/source/repos/IDE_FRL/builds/debugA — копия.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/project_example/settings.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/builds/debugA — копия (3).json",
-                "C:/Users/Dima/source/repos/IDE_FRL/builds/debugA — копия (2).json"
+                "C:/Users/Dima/source/repos/IDE_FRL/project_example/settings.json"
             ]
         }
     },

@@ -4,8 +4,8 @@
 #include "Settings/SettringJson.h"
 #include "Interpretator/Interpretator.h"
 
-#include <QObject>
-#include <QMap>
+#include <QtCore>
+#include <QtWidgets>
 
 class InterpretatorsSettings: public QObject
 {

@@ -48,6 +48,21 @@ void ProjectWidget::onCustomContextMenu(const QPoint &point)
     menu->popup(treeView->viewport()->mapToGlobal(point));
 }
 
+void ProjectWidget::send_file(const QModelIndex &ind)
+{
+    auto path = t_project->dir_path() + "/" + path_at(ind);
+    QFile file(path);
+    if(!file.exists()){
+        auto ans = QMessageBox::warning(this, tr("Внимание"),
+                                        tr("Файла уже не существует.\nУдалить из проекта?"),
+                                       QMessageBox::Cancel|QMessageBox::Ok);
+        if(ans == QMessageBox::Ok)
+            exclude_file(ind);
+        return;
+    }
+    emit send_file_request(path);
+}
+
 void ProjectWidget::create_and_add_file(const QModelIndex &ind)
 {
     bool ok;
@@ -222,6 +237,7 @@ QMenu *ProjectWidget::t_context_by_index(const QModelIndex &index)
     auto* menu = new QMenu(this);
     if(is_file_at(index)){
         if(exists_at(index)){
+            t_add_btn(menu, "Отправить файл в интерпретатор", [this, index](){send_file(index);});
             t_add_btn(menu, "Удалить файл", [this, index](){remove_file(index);});
             t_add_btn(menu, "Исключить файл", [this, index](){exclude_file(index);});
         }

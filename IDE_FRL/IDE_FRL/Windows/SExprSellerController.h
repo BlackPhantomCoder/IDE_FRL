@@ -11,6 +11,7 @@
 class SExprSellerController : public MainWindowPartInt
 {
     Q_OBJECT
+    friend class LoaderController;
 public:
     explicit SExprSellerController(MainWindow *main);
 

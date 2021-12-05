@@ -1,7 +1,7 @@
 {
     "interpretators": {
         "Foris": {
-            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --disklet D --diskp data/for_dos/data --doscpucycles auto",
+            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --absp --diskmt ($project_path) --doscpucycles max",
             "path": "fw_debug/debug/ForisWrapperQt.exe",
             "relative": true
         },

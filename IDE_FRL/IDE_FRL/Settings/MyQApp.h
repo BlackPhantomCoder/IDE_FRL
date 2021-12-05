@@ -1,14 +1,15 @@
 #ifndef MYQAPP_H
 #define MYQAPP_H
 
-#include <QApplication>
-#include <QSettings>
+#include <QtCore>
+#include <QtWidgets>
 #include "InterpretatorsSettings.h"
 
 class MyQApp : public QApplication
 {
 public:
     MyQApp(int &argc, char **argv, int = ApplicationFlags);
+    ~MyQApp();
 
     static QString now_global_settings_path();
     static bool set_new_global_settings_path(const QString& path, bool copy);
@@ -24,6 +25,8 @@ public:
     static InterpretatorsSettings& interpretator_settings();
 
     static void restart();
+
+    static bool is_first_start();
 };
 
 

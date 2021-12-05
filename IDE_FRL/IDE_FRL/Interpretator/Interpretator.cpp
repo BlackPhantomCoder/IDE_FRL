@@ -11,6 +11,7 @@ Interpretator::Interpretator(const InterpretatorData& data,  QObject *parent) :
     t_process->setReadChannel(QProcess::ProcessChannel::StandardOutput);
     connect(t_process, &QProcess::readyRead, this, &Interpretator::t_on_read_ready);
     connect(t_process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &Interpretator::finished);
+
 }
 
 Interpretator::~Interpretator()
@@ -46,6 +47,14 @@ void Interpretator::kill()
         t_process->waitForFinished(5000);
     }
 }
+
+void Interpretator::send(const QString &text, bool new_line)
+{
+    if(is_runing()){
+        auto buf =  text.toStdString() + ((new_line) ?  "\n" : "");
+        t_process->write(buf.c_str(), buf.size());
+    }
+}
 //#include <windows.h>
 bool Interpretator::stop()
 {
@@ -63,13 +72,6 @@ bool Interpretator::stop()
     return true;
 }
 
-void Interpretator::send(const QString &text)
-{
-    if(is_runing()){
-        auto buf =  text.toStdString() + "\n";
-        t_process->write(buf.c_str(), buf.size());
-    }
-}
 
 void Interpretator::t_on_read_ready()
 {

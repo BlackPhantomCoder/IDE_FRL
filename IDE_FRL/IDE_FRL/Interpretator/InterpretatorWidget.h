@@ -42,7 +42,7 @@ public slots:
     void stop_interpretator();
     void clear();
 
-    void send(const QString& str, bool new_line = true);
+    void send(const QString& str, bool silence_mode = false, bool new_line = true);
 
 
 
