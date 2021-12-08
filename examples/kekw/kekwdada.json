@@ -1,0 +1,11 @@
+{
+    "empty_dirs": [
+    ],
+    "files": [
+        "kekw.lsp",
+        "kekw2.lsp",
+        "kekw3.lsp"
+    ],
+    "interpretator": "Foris",
+    "name": "Проект, кста!"
+}

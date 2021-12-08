@@ -20,13 +20,16 @@ const char * LexerLisp::keywords(int set) const
         "cond let l prog prog1 prog2 progn dolist dotimes cerror errset backtrace "
         "evalhook truncate rem min max abs sin cos tan expt exp sqrt random logand "
         "logior logxor lognot bignums logeqv lognand lognor logorc2 logtest logbitp "
-        "logcount length nil";
+        "logcount length nil T mod loop pack unpack rds wrs make-list print spaces terpri "
+        "pop push copy-list ascii read " //lisp
+        "$value $if-geted fput fassert fget fprint fremove $if-added fdelete"; //frl (возможно будет отдельный стиль)
 
   // Keys
   if (set == 2)
-    return "not defun + - * / = < > <= >= identity function defun defmacro "
+    return "not defun + - * / = < > <= >= identity function defmacro "
         "hash array list maplist atom null case and or if go return do "
-        "catch throw error break continue float integer nil symbol";
+        "catch throw error break continue float integer nil symbol " //lisp
+        "deframeq status: passertq parm: deframe passert"; //frl
 
   return 0;
 }
@@ -91,13 +94,16 @@ QColor LexerLisp::defaultColor(int style) const
     return Qt::magenta;
 
   case SCE_LISP_OPERATOR:
-    return Qt::darkYellow;
+    return Qt::darkBlue;
 
   case SCE_LISP_SPECIAL:
     return Qt::blue;
 
   case SCE_LISP_NUMBER:
     return Qt::blue;
+
+  case SCE_LISP_STRING:
+    return QColor(230,80,0);
   }
 
   return Qt::black;

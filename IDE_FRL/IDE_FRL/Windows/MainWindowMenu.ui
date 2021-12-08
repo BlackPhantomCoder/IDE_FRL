@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>1230</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -62,7 +62,7 @@
     <addaction name="file_last_projects_menu"/>
     <addaction name="separator"/>
     <addaction name="action_2"/>
-    <addaction name="action_7"/>
+    <addaction name="file_save"/>
     <addaction name="action_8"/>
     <addaction name="action_9"/>
     <addaction name="file_save_project_action"/>
@@ -77,12 +77,15 @@
     <property name="title">
      <string>Правка</string>
     </property>
-    <addaction name="action_14"/>
-    <addaction name="action_17"/>
+    <addaction name="edit_undo"/>
+    <addaction name="edit_redo"/>
     <addaction name="separator"/>
-    <addaction name="action_19"/>
-    <addaction name="action_20"/>
-    <addaction name="action_21"/>
+    <addaction name="edit_cut"/>
+    <addaction name="edit_copy"/>
+    <addaction name="edit_put"/>
+    <addaction name="edit_delete"/>
+    <addaction name="separator"/>
+    <addaction name="edit_ctrl_all"/>
     <addaction name="separator"/>
     <addaction name="action_23"/>
     <addaction name="action_24"/>
@@ -146,7 +149,7 @@
     <string>какие-то</string>
    </property>
   </action>
-  <action name="action_7">
+  <action name="file_save">
    <property name="text">
     <string>Сохранить</string>
    </property>
@@ -176,27 +179,27 @@
     <string>Выход</string>
    </property>
   </action>
-  <action name="action_14">
+  <action name="edit_undo">
    <property name="text">
     <string>Отменить</string>
    </property>
   </action>
-  <action name="action_17">
+  <action name="edit_redo">
    <property name="text">
     <string>Повторить</string>
    </property>
   </action>
-  <action name="action_19">
+  <action name="edit_cut">
    <property name="text">
     <string>Вырезать </string>
    </property>
   </action>
-  <action name="action_20">
+  <action name="edit_copy">
    <property name="text">
     <string>Копировать</string>
    </property>
   </action>
-  <action name="action_21">
+  <action name="edit_put">
    <property name="text">
     <string>Вставить</string>
    </property>
@@ -294,6 +297,16 @@
   <action name="file_settings_action">
    <property name="text">
     <string>Настройки...</string>
+   </property>
+  </action>
+  <action name="edit_delete">
+   <property name="text">
+    <string>Удалить</string>
+   </property>
+  </action>
+  <action name="edit_ctrl_all">
+   <property name="text">
+    <string>Выделить всё</string>
    </property>
   </action>
  </widget>
