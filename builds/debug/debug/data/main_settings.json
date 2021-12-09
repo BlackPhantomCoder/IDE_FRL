@@ -4,29 +4,32 @@
             "Docks": {
                 "1": {
                     "0": {
-                        "height": 684,
+                        "height": 943,
                         "hide": false,
-                        "width": 227
+                        "width": 204
                     }
                 },
                 "8": {
                     "1": {
-                        "height": 512,
+                        "height": 207,
                         "hide": false,
-                        "width": 998
+                        "width": 1711
                     }
                 }
             }
         },
+        "MainWindow": {
+            "height": 1001,
+            "maximized": true,
+            "width": 1920,
+            "x": 0,
+            "y": 29
+        },
         "MenuControl": {
             "last": [
-                "C:/Users/Dima/source/repos/IDE_FRL/examples/project_example/settings.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/buildsa1.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/buildsa2.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/builds/debugA — копия.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/project_example/settings.json"
+                "C:/Users/Dima/source/repos/IDE_FRL/examples/kekw/kekwdada.json",
+                "C:/Users/Dima/source/repos/IDE_FRL/builds/buildsTest.json"
             ]
         }
-    },
-    "intpath": "C:/Users/Dima/source/repos/IDE_FRL/builds/debug/debug/data/interpretator.json"
+    }
 }

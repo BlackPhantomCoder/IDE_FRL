@@ -55,16 +55,19 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="cancel_btn">
+        <widget class="QPushButton" name="save_btn">
          <property name="text">
-          <string>Отменить</string>
+          <string>Save</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="save_btn">
+        <widget class="QPushButton" name="cancel_btn">
          <property name="text">
-          <string>Сохранить</string>
+          <string>Cancel</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

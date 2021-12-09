@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Настройки проекта</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,10">
    <item>
@@ -94,7 +94,7 @@
       <widget class="QComboBox" name="interpretator_chose"/>
      </item>
      <item row="4" column="3">
-      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,2,2">
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,2">
        <item>
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
@@ -109,19 +109,6 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="cancel_btn">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Отмена</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="create_btn">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -130,7 +117,23 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Создать</string>
+          <string>Create</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cancel_btn">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

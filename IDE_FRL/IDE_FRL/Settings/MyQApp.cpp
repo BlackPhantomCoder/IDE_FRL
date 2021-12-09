@@ -79,7 +79,9 @@ bool MyQApp::set_new_int_settings_path(const QString &path, bool copy)
         auto result = QFile::copy( now_int_settings_path(), path);
         if(!result) return false;
     }
-    global_settings().setValue("intpath", path);
+    global_settings().remove("intpath");
+    if(path != default_int_settings_path())
+        global_settings().setValue("intpath", path);
     return true;
 }
 

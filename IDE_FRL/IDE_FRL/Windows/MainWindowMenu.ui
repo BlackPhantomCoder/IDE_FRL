@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ForRorfloLisp</string>
+   <string>ForRofloLisp</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -62,9 +62,8 @@
     <addaction name="file_last_projects_menu"/>
     <addaction name="separator"/>
     <addaction name="action_2"/>
-    <addaction name="action_7"/>
+    <addaction name="file_save_action"/>
     <addaction name="action_8"/>
-    <addaction name="action_9"/>
     <addaction name="file_save_project_action"/>
     <addaction name="separator"/>
     <addaction name="action_11"/>
@@ -77,12 +76,15 @@
     <property name="title">
      <string>Правка</string>
     </property>
-    <addaction name="action_14"/>
-    <addaction name="action_17"/>
+    <addaction name="edit_undo_action"/>
+    <addaction name="edit_redo_action"/>
     <addaction name="separator"/>
-    <addaction name="action_19"/>
-    <addaction name="action_20"/>
-    <addaction name="action_21"/>
+    <addaction name="edit_cut_action"/>
+    <addaction name="edit_copy_action"/>
+    <addaction name="edit_put_action"/>
+    <addaction name="edit_delete_action"/>
+    <addaction name="separator"/>
+    <addaction name="edit_ctrl_all_action"/>
     <addaction name="separator"/>
     <addaction name="action_23"/>
     <addaction name="action_24"/>
@@ -130,6 +132,7 @@
     <property name="title">
      <string>Справка</string>
     </property>
+    <addaction name="help_about_action"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -139,6 +142,9 @@
    <addaction name="menu_6"/>
   </widget>
   <action name="action_2">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Новое окно</string>
    </property>
@@ -148,12 +154,18 @@
     <string>какие-то</string>
    </property>
   </action>
-  <action name="action_7">
+  <action name="file_save_action">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Сохранить</string>
    </property>
   </action>
   <action name="action_8">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Сохранить как...</string>
    </property>
@@ -164,6 +176,9 @@
    </property>
   </action>
   <action name="action_11">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Автосохранение</string>
    </property>
@@ -178,27 +193,27 @@
     <string>Выход</string>
    </property>
   </action>
-  <action name="action_14">
+  <action name="edit_undo_action">
    <property name="text">
     <string>Отменить</string>
    </property>
   </action>
-  <action name="action_17">
+  <action name="edit_redo_action">
    <property name="text">
     <string>Повторить</string>
    </property>
   </action>
-  <action name="action_19">
+  <action name="edit_cut_action">
    <property name="text">
     <string>Вырезать </string>
    </property>
   </action>
-  <action name="action_20">
+  <action name="edit_copy_action">
    <property name="text">
     <string>Копировать</string>
    </property>
   </action>
-  <action name="action_21">
+  <action name="edit_put_action">
    <property name="text">
     <string>Вставить</string>
    </property>
@@ -239,6 +254,9 @@
    </property>
   </action>
   <action name="action_6">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Настройка пользовательских команд</string>
    </property>
@@ -298,6 +316,16 @@
     <string>Настройки...</string>
    </property>
   </action>
+  <action name="edit_delete_action">
+   <property name="text">
+    <string>Удалить</string>
+   </property>
+  </action>
+  <action name="edit_ctrl_all_action">
+   <property name="text">
+    <string>Выделить всё</string>
+   </property>
+  </action>
   <action name="project_send_to_int_action">
    <property name="text">
     <string>Отправить в итерпретатор</string>
@@ -306,6 +334,11 @@
   <action name="project_order_settings_action">
    <property name="text">
     <string>Настройка порядка</string>
+   </property>
+  </action>
+  <action name="help_about_action">
+   <property name="text">
+    <string>О программе</string>
    </property>
   </action>
  </widget>

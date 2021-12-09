@@ -69,7 +69,7 @@ void InterpretatorCreatorWidget::t_check_accept()
 void InterpretatorCreatorWidget::t_get_file_path()
 {
     auto file_name = QFileDialog::getOpenFileName(this,
-        tr("Выберете файл"), ((path_relative->isChecked()) ? QCoreApplication::applicationDirPath() : ""));
+        tr("Выберите файл"), ((path_relative->isChecked()) ? QCoreApplication::applicationDirPath() : ""));
     if(file_name.isEmpty()) return;
     if(path_relative->isChecked()){
         file_name.remove(QCoreApplication::applicationDirPath() + "/");

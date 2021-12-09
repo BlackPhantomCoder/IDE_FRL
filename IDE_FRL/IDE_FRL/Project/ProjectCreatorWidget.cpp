@@ -113,7 +113,7 @@ void ProjectCreatorWidget::t_check_accept()
 void ProjectCreatorWidget::t_get_file_path()
 {
     auto file_name = QFileDialog::getExistingDirectory(this,
-        tr("Выберете папку"));
+        tr("Выберите папку"));
     if(file_name.isEmpty()) return;
     project_dir->setText(file_name);
 }

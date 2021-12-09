@@ -34,8 +34,12 @@ signals:
 
 private:
     void t_connect_actions();
+    void init_edit_menu();
 
 private slots:
+    void edit_menu(int);
+    void control_edit_menu();
+    QString set_proj_path_for_editor();
     void t_on_view_interpretator_action_triggered();
     void t_on_view_project_files_action_triggered();
 
@@ -58,6 +62,11 @@ private slots:
     void t_project_save();
 
     void t_open_project(const QString& path);
+    void on_file_save_action_triggered();
+
+    void call_close_files(); //закрыть все файлы
+    void on_help_about_action_triggered();
+
 private:
     // true если отмена
     bool t_close_project_check();
@@ -67,6 +76,9 @@ private:
     void t_set_enabled_project_action(bool val);
     void t_set_enabled_interpretator_action(bool val);
 
+
+    void t_save();
+    void t_load();
 protected:
     void closeEvent(QCloseEvent *event) override;
 private:

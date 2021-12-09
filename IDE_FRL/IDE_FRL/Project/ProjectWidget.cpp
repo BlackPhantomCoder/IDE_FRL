@@ -120,7 +120,7 @@ void ProjectWidget::create_and_add_dir(const QModelIndex &ind)
 void ProjectWidget::add_exist_file(const QModelIndex &ind)
 {
     auto file_name = QFileDialog::getOpenFileName(this,
-        tr("Выберете файл"), t_project->dir_path());
+        tr("Выберите файл"), t_project->dir_path());
     if(file_name.isEmpty()) return;
     auto ppath = t_project->dir_path();
     if(ppath.size() > file_name.size() || ppath != file_name.midRef(0, ppath.size())){
@@ -138,7 +138,7 @@ void ProjectWidget::add_exist_file(const QModelIndex &ind)
 void ProjectWidget::add_exist_dir(const QModelIndex &ind)
 {
     auto dir_name = QFileDialog::getExistingDirectory(this,
-        tr("Выберете папку"), t_project->dir_path());
+        tr("Выберите папку"), t_project->dir_path());
     if(dir_name.isEmpty()) return;
     auto ppath = t_project->dir_path();
     if(ppath.size() > dir_name.size() || ppath != dir_name.midRef(0, ppath.size())){

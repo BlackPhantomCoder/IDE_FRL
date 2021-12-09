@@ -30,6 +30,7 @@ MainWindow::MainWindow()
 
     setCentralWidget(t_editor_w);
 
+    t_load();
 
 
     t_toolbar = new MainWindowToolbar(this);
@@ -49,8 +50,14 @@ MainWindow::MainWindow()
     t_set_enabled_interpretator_action(false);
     t_set_enabled_project_action(false);
     t_connect_actions();
-    connect(this, &MainWindow::project_closed, &MainWindow::project_changed);
-    connect(this, &MainWindow::project_opened, &MainWindow::project_changed);
+
+    edit_menu(-1);
+    init_edit_menu();
+
+    t_menu->file_save_action->setShortcut(Qt::CTRL + Qt::Key_S);
+    t_menu->interpretator_clear_action->setEnabled(!t_interpretator_w->clear_state());
+    t_menu->view_interpretator_action->setEnabled(t_docks->dock_by_w(t_interpretator_w)->isHidden());
+    t_menu->view_project_files_action->setEnabled(t_docks->dock_by_w(t_project_w)->isHidden());
 }
 
 MainWindow::~MainWindow()
@@ -67,11 +74,19 @@ MainWindow::~MainWindow()
     //qDebug() << "MainWindow destroyed" << endl;
     //delete t_menu;
     //t_menu = nullptr;
+
+    t_save();
 }
 
 void MainWindow::t_connect_actions()
 {
-    t_menu->interpretator_clear_action->setEnabled(!t_interpretator_w->clear_state());
+    connect(this, &MainWindow::project_closed, &MainWindow::project_changed);
+    connect(this, &MainWindow::project_opened, &MainWindow::project_changed);
+    connect(this, &MainWindow::closed, this, &MainWindow::call_close_files);
+
+
+    connect(t_editor_w->get_tab_widget(), &QTabWidget::currentChanged, this, &MainWindow::edit_menu); //меню правка
+    connect(t_editor_w, &EditorWidget::need_proj_path, this, &MainWindow::set_proj_path_for_editor);
 
 
     connect(t_menu->view_interpretator_action, &QAction::triggered, this, &MainWindow::t_on_view_interpretator_action_triggered);
@@ -84,6 +99,8 @@ void MainWindow::t_connect_actions()
     connect(t_menu->interpretator_edit_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_edit_triggered);
     connect(t_menu->interpretator_clear_action,  &QAction::triggered, t_interpretator_w, &InterpretatorWidget::clear);
 
+    connect(t_menu->file_save_action, &QAction::triggered, t_editor_w, &EditorWidget::update_bufer);
+    connect(t_menu->file_save_action, &QAction::triggered, t_editor_w, &EditorWidget::control_saved_state);
     connect(t_menu->file_open_project_action, &QAction::triggered, this, &MainWindow::t_on_file_open_project);
     connect(t_menu->file_exit_action, &QAction::triggered, this, &MainWindow::close);
     connect(t_menu->file_create_project_action,  &QAction::triggered, this, &MainWindow::t_create_project);
@@ -111,7 +128,129 @@ void MainWindow::t_connect_actions()
             [this](const QModelIndex& index){
                 if(t_project_w->exists_at(index))
                     t_editor_w->open_new_tab(t_project_w->path_at(index), EditorWidget::tab_pos::back);
-            });
+    });
+}
+
+//инициализация без едитора
+void MainWindow::init_edit_menu()
+{
+    t_menu->edit_undo_action->setShortcut(QKeySequence("Ctrl+Z"));
+    t_menu->edit_undo_action->setEnabled(false);
+
+    t_menu->edit_redo_action->setShortcut(QKeySequence("Ctrl+Y"));
+    t_menu->edit_redo_action->setEnabled(false);
+
+    t_menu->edit_copy_action->setShortcut(QKeySequence("Ctrl+C"));
+    t_menu->edit_copy_action->setEnabled(false);
+
+    t_menu->edit_cut_action->setShortcut(QKeySequence("Ctrl+X"));
+    t_menu->edit_cut_action->setEnabled(false);
+
+    t_menu->edit_put_action->setShortcut(QKeySequence("Ctrl+V"));
+    t_menu->edit_put_action->setEnabled(false);
+
+    t_menu->edit_delete_action->setEnabled(false);
+
+    t_menu->edit_ctrl_all_action->setShortcut(QKeySequence("Ctrl+A"));
+    t_menu->edit_ctrl_all_action->setEnabled(false);
+}
+
+//меню правка при изменении вкладки
+void MainWindow::edit_menu(int n)
+{
+    if(n >= 0){
+        t_editor_w->set_margin_width(); //костыль для маргинов при открытии файлов
+
+        auto cur_edit = static_cast<QsciScintilla*>(t_editor_w->get_tab_widget()->widget(n));
+        auto context = cur_edit->createStandardContextMenu();
+
+        auto acts = context->actions();
+
+        acts.at(0)->setText(tr("Отменить"));
+        acts.at(1)->setText(tr("Повторить"));
+        acts.at(3)->setText(tr("Вырезать"));
+        acts.at(4)->setText(tr("Копировать"));
+        acts.at(5)->setText(tr("Вставить"));
+        acts.at(6)->setText(tr("Удалить"));
+        acts.at(8)->setText(tr("Выделить всё"));
+
+        t_menu->menu_2->clear();
+        t_menu->menu_2->addActions(context->actions());
+
+        //коннект на контроль
+        connect(cur_edit, SIGNAL(textChanged()),
+                    this, SLOT(control_edit_menu()));
+        connect(cur_edit, SIGNAL(selectionChanged()),
+                    this, SLOT(control_edit_menu()));
+
+        if(cur_edit->isUndoAvailable()){
+            t_menu->menu_2->actions().at(0)->setEnabled(true);
+        }
+        else{
+            t_menu->menu_2->actions().at(0)->setEnabled(false);
+        }
+        if(cur_edit->isRedoAvailable()){
+            t_menu->menu_2->actions().at(1)->setEnabled(true);
+        }
+        else{
+            t_menu->menu_2->actions().at(1)->setEnabled(false);
+        }
+    }
+    else{
+        t_menu->menu_2->clear();
+
+        t_menu->menu_2->addAction(t_menu->edit_undo_action);
+        t_menu->menu_2->addAction(t_menu->edit_redo_action);
+        t_menu->menu_2->addSeparator();
+        t_menu->menu_2->addAction(t_menu->edit_copy_action);
+        t_menu->menu_2->addAction(t_menu->edit_cut_action);
+        t_menu->menu_2->addAction(t_menu->edit_put_action);
+        t_menu->menu_2->addAction(t_menu->edit_delete_action);
+        t_menu->menu_2->addSeparator();
+        t_menu->menu_2->addAction(t_menu->edit_ctrl_all_action);
+    }
+}
+
+//контроль меню правки
+void MainWindow::control_edit_menu()
+{
+    auto cur_edit = static_cast<QsciScintilla*>(t_editor_w->get_tab_widget()->currentWidget());
+    auto acts = t_menu->menu_2->actions();
+    if(cur_edit->isUndoAvailable()){
+        acts.at(0)->setEnabled(true);
+    }
+    else{
+        acts.at(0)->setEnabled(false);
+    }
+    if(cur_edit->isRedoAvailable()){
+        acts.at(1)->setEnabled(true);
+    }
+    else{
+        acts.at(1)->setEnabled(false);
+    }
+    if(cur_edit->hasSelectedText()){
+        acts.at(3)->setEnabled(true);
+        acts.at(4)->setEnabled(true);
+
+        acts.at(6)->setEnabled(true);
+    }
+    else{
+        acts.at(3)->setEnabled(false);
+        acts.at(4)->setEnabled(false);
+
+        acts.at(6)->setEnabled(false);
+    }
+    if(cur_edit->text() == tr("")){
+        acts.at(8)->setEnabled(false);
+    }
+    else{
+        acts.at(8)->setEnabled(true);
+    }
+}
+
+QString MainWindow::set_proj_path_for_editor()
+{
+    return t_project->dir_path();
 }
 
 void MainWindow::t_on_view_interpretator_action_triggered()
@@ -146,7 +285,7 @@ void MainWindow::t_on_interpretator_state_changed()
 void MainWindow::t_on_file_open_project()
 {
     auto file_name = QFileDialog::getOpenFileName(this,
-        tr("Выберете файл проекта"), QString(), "*.json");
+        tr("Выберите файл проекта"), QString(), "*.json");
     if(file_name.isEmpty()) return;
     t_open_project(file_name);
 }
@@ -167,7 +306,7 @@ void MainWindow::t_on_interpretator_edit_triggered()
     }
     bool ok;
     QString item = QInputDialog::getItem(this, tr("Выбор интерпретатора"),
-                                        tr("Интерперетатор:"), MyQApp::interpretator_settings().all_names(), 0, false, &ok);
+                                        tr("Интерпретатор:"), MyQApp::interpretator_settings().all_names(), 0, false, &ok);
     if (ok && !item.isEmpty()){
 
        auto w = InterpretatorCreatorWidget(item,  MyQApp::interpretator_settings().get_interpretator(item), false);
@@ -185,9 +324,6 @@ void MainWindow::t_start_interpretator()
 {
     t_docks->show(t_interpretator_w);
     if(!t_interpretator_w->start_interpretator_w_answear()){
-//        QMessageBox::warning(this, tr("Внимание"),
-//                                        tr("Интерпретатор не запустился"),
-//                                       QMessageBox::Ok);
     }
 }
 
@@ -236,7 +372,7 @@ bool MainWindow::t_close_project_check()
     if(t_project){
         if(t_project_need_save_check())
             return true;
-
+        call_close_files();
         if(t_project_w) t_project_w->set_project(nullptr);
         if(t_interpretator_w) t_interpretator_w->set_project(nullptr);
 
@@ -263,6 +399,13 @@ bool MainWindow::t_project_need_save_check()
     return false;
 }
 
+void MainWindow::call_close_files()
+{
+    for(int i = t_editor_w->tabs_count()-1; i >= 0; --i){
+        emit t_editor_w->get_tab_widget()->tabCloseRequested(i);
+    }
+}
+
 void MainWindow::t_set_enabled_project_action(bool val)
 {
     t_menu->file_close_project_action->setEnabled(val);
@@ -277,6 +420,39 @@ void MainWindow::t_set_enabled_interpretator_action(bool val)
     t_menu->interpretator_stop_action->setEnabled(val);
 }
 
+void MainWindow::t_save()
+{
+    auto& s = MyQApp::global_settings();
+    AT_GROUP(s, "MainWindow/MainWindow");
+    {
+        s.setValue("maximized", isMaximized());
+        s.setValue("width", width());
+        s.setValue("height", height());
+        s.setValue("x", x());
+        s.setValue("y", y());
+    }
+}
+
+void MainWindow::t_load()
+{
+    auto& s = MyQApp::global_settings();
+    AT_GROUP(s, "MainWindow/MainWindow");
+    {
+        if(s.value("maximized", true).toBool()){
+            showMaximized();
+        }
+        else{
+            setGeometry(
+                            s.value("x", 0).toInt(),
+                            s.value("y", 0).toInt(),
+                            s.value("width", 800).toInt(),
+                            s.value("height", 700).toInt()
+                        );
+            showNormal();
+        }
+    }
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(t_project_need_save_check())
@@ -285,4 +461,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
         emit closed();
         QWidget::closeEvent(event);
     }
+}
+
+void MainWindow::on_file_save_action_triggered()
+{
+    auto cur_edit = static_cast<QsciScintilla*>(t_editor_w->get_tab_widget()->currentWidget());
+    if(cur_edit){
+        QString txt = cur_edit->text();
+        QString path = t_project->dir_path();
+        path += "/" + t_editor_w->get_tab_widget()->tabText(t_editor_w->get_tab_widget()->currentIndex());
+        //qDebug() << path;
+        QFile file(path);
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        file.write(txt.toUtf8());
+        file.close();
+    }
+}
+
+void MainWindow::on_help_about_action_triggered()
+{
+    QMessageBox::about(this, tr("О программе"), tr("FRL Ide v0.25"));
 }

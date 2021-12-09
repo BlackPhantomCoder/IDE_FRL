@@ -15,6 +15,8 @@ class DocksControl : public MainWindowPartInt{
 public:
     DocksControl(MainWindow* window);
 
+    QDockWidget* dock_by_w(QWidget* w);
+
     // MainWindowPartInt interface
 public:
     virtual void init() override;

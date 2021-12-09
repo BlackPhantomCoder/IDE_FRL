@@ -13,13 +13,16 @@ DocksControl::DocksControl(MainWindow *window):
     t_main->setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
     t_main->setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
     t_main->setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
+}
 
-    t_load_docks();
+QDockWidget *DocksControl::dock_by_w(QWidget *w)
+{
+    return t_w_to_dw[w];
 }
 
 void DocksControl::init()
 {
-    //
+    t_load_docks();
 }
 
 void DocksControl::save()
