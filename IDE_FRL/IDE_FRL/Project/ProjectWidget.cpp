@@ -2,7 +2,7 @@
 #include <QTreeView>
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
-#include <QDebug>
+//#include <QDebug>
 #include <QMenu>
 #include <QFile>
 #include <QInputDialog>

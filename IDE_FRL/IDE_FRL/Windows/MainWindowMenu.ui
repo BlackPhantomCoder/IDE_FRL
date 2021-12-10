@@ -124,6 +124,7 @@
     <addaction name="action_6"/>
     <addaction name="separator"/>
     <addaction name="interpretator_add_action"/>
+    <addaction name="interpretator_delete_action"/>
     <addaction name="interpretator_edit_action"/>
     <addaction name="separator"/>
     <addaction name="interpretator_clear_action"/>
@@ -328,7 +329,7 @@
   </action>
   <action name="project_send_to_int_action">
    <property name="text">
-    <string>Отправить в итерпретатор</string>
+    <string>Отправить в интерпретатор</string>
    </property>
   </action>
   <action name="project_order_settings_action">
@@ -339,6 +340,11 @@
   <action name="help_about_action">
    <property name="text">
     <string>О программе</string>
+   </property>
+  </action>
+  <action name="interpretator_delete_action">
+   <property name="text">
+    <string>Удалить интерпретатор</string>
    </property>
   </action>
  </widget>

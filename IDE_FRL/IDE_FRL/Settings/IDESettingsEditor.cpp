@@ -82,7 +82,7 @@ bool IDESettingsEditor::t_intpath_accept()
 {
     if(intpath_custom->checkState() != Qt::CheckState::Checked) return true;
     auto path = intpath->text();
-    qDebug() << path.mid(0, path.lastIndexOf("/")) <<endl;
+    //qDebug() << path.mid(0, path.lastIndexOf("/")) <<endl;
     if(!QDir(path.mid(0, path.lastIndexOf("/"))).exists()){
         QMessageBox::information(
                     this,

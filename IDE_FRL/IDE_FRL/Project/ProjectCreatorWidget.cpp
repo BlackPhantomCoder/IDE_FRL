@@ -24,7 +24,7 @@ ProjectCreatorWidget::ProjectCreatorWidget(QWidget *parent) :
 
 QString ProjectCreatorWidget::path()
 {
-    return t_get_dir() + t_get_name() + ".json";
+    return t_get_dir() + "/" + t_get_name() + ".json";
 }
 
 QString ProjectCreatorWidget::t_get_name()

@@ -3,12 +3,12 @@
 
 #include <QtCore>
 #include <QtWidgets>
-#include <QStyle>
 
 #include "ui_EditorWidget.h"
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexercpp.h"
 #include "Qsci/qsciapis.h"
+#include <optional>
 #include <set>
 class SExprAction;
 
@@ -21,7 +21,7 @@ public:
 public:
     explicit EditorWidget(QWidget *parent = nullptr);
 
-    QString get_sexpr();
+    std::optional<QString> get_sexpr();
     int tabs_count();
     QTabWidget* get_tab_widget();
 

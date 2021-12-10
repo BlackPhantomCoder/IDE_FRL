@@ -11,7 +11,7 @@
                 },
                 "8": {
                     "1": {
-                        "height": 207,
+                        "height": 279,
                         "hide": false,
                         "width": 1711
                     }
@@ -27,8 +27,9 @@
         },
         "MenuControl": {
             "last": [
-                "C:/Users/Dima/source/repos/IDE_FRL/examples/kekw/kekwdada.json",
-                "C:/Users/Dima/source/repos/IDE_FRL/builds/buildsTest.json"
+                "C:/Users/Dima/source/repos/IDE_FRL/builds/buildsTest.json",
+                "C:/Users/Dima/source/repos/IDE_FRL/examples/project_example/settings.json",
+                "C:/Users/Dima/source/repos/IDE_FRL/examples/kekw/kekwdada.json"
             ]
         }
     }

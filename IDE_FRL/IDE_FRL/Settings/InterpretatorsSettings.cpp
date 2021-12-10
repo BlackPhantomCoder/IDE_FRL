@@ -5,9 +5,13 @@ using namespace std;
 
 bool InterpretatorsSettings::create_setting(const QString &path)
 {
-    SettringJson t_data;
-    t_data.setPath(SettringJson::json_format, QSettings::UserScope, path);
-    return t_data.status() == SettringJson::NoError;
+    auto f = QFile(path);
+    f.open(QFile::WriteOnly);
+    f.close();
+
+//    SettringJson t_data;
+//    t_data.setPath(SettringJson::json_format, QSettings::UserScope, path);
+    return true;
 }
 
 InterpretatorsSettings::InterpretatorsSettings(const QString &path, bool destruct_saved, QObject *parent):
@@ -65,6 +69,18 @@ bool InterpretatorsSettings::change_interpretator(const QString &name, const Int
      else{
          t_saved = false;
          *it = data;
+         emit interpretators_changed();
+     }
+     return true;
+}
+
+bool InterpretatorsSettings::delete_interpretator(const QString &name)
+{
+     if(!is_loaded()) return false;
+     if(auto it = t_all.find(name); it == end(t_all)) return false;
+     else{
+         t_saved = false;
+         t_all.erase(it);
          emit interpretators_changed();
      }
      return true;

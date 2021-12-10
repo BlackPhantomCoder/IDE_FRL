@@ -3,7 +3,7 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QFile>
-#include <QDebug>
+//#include <QDebug>
 #include <algorithm>
 
 using namespace std;
@@ -176,8 +176,10 @@ void Project::save()
             if(node->is_file()){
                 files.push_back(path_by_node(node));
             }
-            else
-                edirs.push_back(path_by_node(node));
+            else{
+                if(node->children().isEmpty())
+                    edirs.push_back(path_by_node(node));
+            }
         }
 
         t_data->setValue("files", files);

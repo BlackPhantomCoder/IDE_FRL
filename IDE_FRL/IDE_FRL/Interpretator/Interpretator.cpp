@@ -1,6 +1,6 @@
 #include "Interpretator.h"
 
-#include <QDebug>
+//#include <QDebug>
 #include <QtCore>
 
 Interpretator::Interpretator(const InterpretatorData& data,  QObject *parent) :

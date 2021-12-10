@@ -18,6 +18,7 @@ public:
 
     bool add_interpretator(const QString& name, const InterpretatorData& data);
     bool change_interpretator(const QString& name, const InterpretatorData& data);
+    bool delete_interpretator(const QString& name);
 
     bool contains_interpretator(const QString& name) const;
     const InterpretatorData& get_interpretator(const QString& name);

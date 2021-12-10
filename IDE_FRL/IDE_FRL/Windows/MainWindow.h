@@ -51,6 +51,7 @@ private slots:
 
     void t_on_interpretator_add_triggered();
     void t_on_interpretator_edit_triggered();
+    void t_on_interpretator_delete_triggered();
     void t_on_preject_settings_triggered();
 
 

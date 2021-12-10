@@ -21,22 +21,25 @@ EditorWidget::EditorWidget(QWidget *parent) :
 
 }
 
-QString EditorWidget::get_sexpr()
+std::optional<QString> EditorWidget::get_sexpr()
 {
     auto cur_edit = static_cast<QsciScintilla*>(tabWidget->currentWidget());
-    int line, index;
+    if(cur_edit){
+        int line, index;
 
-    cur_edit->getCursorPosition(&line, &index);
-    cur_edit->selectToMatchingBrace();
-    QString str = cur_edit->selectedText();
-    str = str.simplified();
-    cur_edit->setSelection(line, index,line, index);
+        cur_edit->getCursorPosition(&line, &index);
+        cur_edit->selectToMatchingBrace();
+        QString str = cur_edit->selectedText();
+        str = str.simplified();
+        cur_edit->setSelection(line, index,line, index);
 
-    if(str[0] != '('){
-        str.push_front('(');
-        str.push_back(')');
+        if(str[0] != '('){
+            str.push_front('(');
+            str.push_back(')');
+        }
+        return str;
     }
-    return str;
+    return std::nullopt;
 }
 
 int EditorWidget::tabs_count()
@@ -110,7 +113,15 @@ void EditorWidget::set_sexpr_menu(QMenu *menu)
 {
     t_s_expr_actions = menu;
     //заготовка для отправки с-выражений
-    connect(t_s_expr_actions, &QMenu::triggered, [this](QAction* act){ t_sexpr_apply(act, get_sexpr());});
+    connect(
+                t_s_expr_actions,
+                &QMenu::triggered,
+                [this](QAction* act){
+                        auto buf = get_sexpr();
+                        if(buf)
+                            t_sexpr_apply(act, *buf);
+                    }
+           );
 }
 
 

@@ -2,7 +2,7 @@
 
 #include "Settings/MyQApp.h"
 #include <QMessageBox>
-#include <QDebug>
+//#include <QDebug>
 #include <QScrollBar>
 
 size_t InterpretatorWidget::maximum_last_sends = 255;

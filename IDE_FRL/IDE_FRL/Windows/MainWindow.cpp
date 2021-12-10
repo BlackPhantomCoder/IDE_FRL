@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QString>
 
-#include <QDebug>
+//#include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -97,6 +97,7 @@ void MainWindow::t_connect_actions()
     connect(t_menu->interpretator_stop_action, &QAction::triggered, t_interpretator_w, &InterpretatorWidget::stop_interpretator);
     connect(t_menu->interpretator_add_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_add_triggered);
     connect(t_menu->interpretator_edit_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_edit_triggered);
+    connect(t_menu->interpretator_delete_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_delete_triggered);
     connect(t_menu->interpretator_clear_action,  &QAction::triggered, t_interpretator_w, &InterpretatorWidget::clear);
 
     connect(t_menu->file_save_action, &QAction::triggered, t_editor_w, &EditorWidget::update_bufer);
@@ -311,6 +312,32 @@ void MainWindow::t_on_interpretator_edit_triggered()
 
        auto w = InterpretatorCreatorWidget(item,  MyQApp::interpretator_settings().get_interpretator(item), false);
        w.exec();
+    }
+}
+
+void MainWindow::t_on_interpretator_delete_triggered()
+{
+    if(MyQApp::interpretator_settings().count() == 0){
+        QMessageBox::warning(this, tr("Внимание"),
+                                        tr("Нет доступных для редактирования интерпретаторов"),
+                                       QMessageBox::Ok);
+        return;
+    }
+    bool ok;
+    QString item = QInputDialog::getItem(this, tr("Выбор интерпретатора"),
+                                        tr("Интерпретатор:"), MyQApp::interpretator_settings().all_names(), 0, false, &ok);
+    if (ok && !item.isEmpty()){
+
+        auto ans =  QMessageBox::warning(this, tr("Внимание"),
+                                        "Удалить " + item + " из списка интерпретаторов?",
+                                        QMessageBox::Ok|QMessageBox::Cancel);
+        if(ans == QMessageBox::Ok){
+            if(!MyQApp::interpretator_settings().delete_interpretator(item)){
+                QMessageBox::warning(this, tr("Внимание"),
+                                                tr("Ошибка удаления"),
+                                               QMessageBox::Ok);
+            }
+        }
     }
 }
 
