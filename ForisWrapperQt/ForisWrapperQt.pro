@@ -11,6 +11,15 @@ SOURCES += \
         DosWrapper.cpp \
         main.cpp
 
+
+DESTDIR = $$PWD/../run/fw/
+# output
+CONFIG += file_copies
+COPIES += translations
+translations.files = $$files($$PATH_SRC_ROOT/*.exe)
+translations.path = $$DESTDIR
+
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

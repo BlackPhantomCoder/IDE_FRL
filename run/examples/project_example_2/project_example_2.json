@@ -1,0 +1,12 @@
+{
+    "empty_dirs": [
+    ],
+    "files": [
+        "file.lsp",
+        "file3.lsp",
+        "file2.lsp",
+        "a.lsp"
+    ],
+    "interpretator": "Foris",
+    "name": "Проект, кста!"
+}

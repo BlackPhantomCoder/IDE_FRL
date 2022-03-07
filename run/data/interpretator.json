@@ -1,0 +1,14 @@
+{
+    "interpretators": {
+        "Foris": {
+            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --absp --diskmt ($project_path) --doscpucycles max",
+            "path": "fw/ForisWrapperQt.exe",
+            "relative": true
+        },
+        "RofloLisp": {
+            "params": "",
+            "path": "data/roflolisp/LispTester.exe",
+            "relative": true
+        }
+    }
+}

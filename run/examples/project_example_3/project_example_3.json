@@ -1,0 +1,15 @@
+{
+    "empty_dirs": [
+    ],
+    "files": [
+        "Labs/1.lsp",
+        "Labs/2.lsp",
+        "Labs/3.lsp",
+        "Labs/4.lsp",
+        "Labs/5.lsp",
+        "Labs/6.lsp",
+        "Tests/test1.lsp"
+    ],
+    "interpretator": "Foris",
+    "name": "Test"
+}
