@@ -12,12 +12,17 @@ SOURCES += \
         main.cpp
 
 
+CONFIG += debug_and_release
+
+CONFIG(debug, debug|release)  {
+    TARGET = $${TARGET}_debug
+}
+else {
+    TARGET = $${TARGET}_release
+}
+
+
 DESTDIR = $$PWD/../run/fw/
-# output
-CONFIG += file_copies
-COPIES += translations
-translations.files = $$files($$PATH_SRC_ROOT/*.exe)
-translations.path = $$DESTDIR
 
 
 # Default rules for deployment.

@@ -80,21 +80,17 @@ TRANSLATIONS += \
 
 INCLUDEPATH += "libs\\qscintilla"
 
-debug {
+CONFIG += debug_and_release
+CONFIG(debug, debug|release)  {
     LIBS += $${_PRO_FILE_PWD_}/libs/qscintilla/lib/qscintilla2_qt5d.lib
+    TARGET = $${TARGET}_debug
 }
-
-release {
+else {
     LIBS += $${_PRO_FILE_PWD_}/libs/qscintilla/lib/qscintilla2_qt5.lib
+    TARGET = $${TARGET}_release
 }
 
 DESTDIR = $$PWD/../run/
-# output
-CONFIG += file_copies
-COPIES += translations
-translations.files = $$files($$PATH_SRC_ROOT/*.exe)
-translations.path = $$DESTDIR
-
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
