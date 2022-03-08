@@ -507,5 +507,5 @@ void MainWindow::on_file_save_action_triggered()
 
 void MainWindow::on_help_about_action_triggered()
 {
-    QMessageBox::about(this, tr("О программе"), tr("FRL Ide v0.25"));
+    QMessageBox::about(this, tr("О программе"), tr("FRL Ide v0.30"));
 }

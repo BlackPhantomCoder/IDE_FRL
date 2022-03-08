@@ -7,6 +7,7 @@
 #include <QtCore>
 #include <QtWidgets>
 
+//Настройки интерпретаторов
 class InterpretatorsSettings: public QObject
 {
     Q_OBJECT

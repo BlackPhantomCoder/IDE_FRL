@@ -13,6 +13,7 @@
 #include "MainWindowMenuControl.h"
 #include "SExprSellerController.h"
 
+//класс главного окна
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

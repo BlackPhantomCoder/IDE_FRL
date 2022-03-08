@@ -16,6 +16,6 @@
         "wtf/c",
         "c/wtf"
     ],
-    "interpretator": "Foris",
+    "interpretator": "RofloLisp",
     "name": "Проект, кста!"
 }

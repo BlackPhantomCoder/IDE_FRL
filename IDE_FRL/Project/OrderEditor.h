@@ -6,6 +6,7 @@
 
 #include "Project/Project.h"
 
+//Окно-редактор порядка отправки файлов в интерпретатор
 class OrderEditor : public QDialog, Ui::OrderDialog
 {
     Q_OBJECT

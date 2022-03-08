@@ -8,6 +8,7 @@
 #include "ui_ProjectWidget.h"
 #include "Project.h"
 
+//Реализация отмены выделения
 class DeselectableTreeView : public QTreeView
 {
 public:
@@ -18,6 +19,7 @@ private:
     virtual void mousePressEvent(QMouseEvent *event);
 };
 
+//Виджет управления файлами в проекте
 class ProjectWidget : public QWidget, private Ui::ProjectWidgetUI
 {
     Q_OBJECT

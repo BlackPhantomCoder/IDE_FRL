@@ -8,7 +8,7 @@
 
 #include <deque>
 
-
+//Окно общения с интерпретатором
 class InterpretatorWidget : public QMainWindow, private Ui::InterpretatorWidget
 {
     Q_OBJECT

@@ -10,6 +10,7 @@ struct InterpretatorData{
     QString params = "";
 };
 
+//Класс, управляющий запуском и общением с интерпретатором
 class Interpretator : public QObject
 {
     Q_OBJECT

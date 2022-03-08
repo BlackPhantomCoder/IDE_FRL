@@ -12,7 +12,7 @@ run/stdout.txt
 run/fw/stderr.txt
 run/fw/stdout.txt
 run/fw/data/for_dos/c.lsp
-run/fw/data/for_dos/sinchro/
+run/fw/data/for_dos/sinchro/*
 run/data/main_settings.json
 
 ForisWrapperQt/msvc_make.bat
@@ -20,4 +20,4 @@ ForisWrapperQt/ForisWrapperQt.pro.user
 IDE_FRL/msvc_make.bat
 IDE_FRL/IDE_FRL.pro.user
 
-
+run/my_build_all.bat

@@ -4,6 +4,7 @@
 #include "ui_ProjectCreatorWidget.h"
 #include <QDialog>
 
+//Окно создания проекта
 class ProjectCreatorWidget : public QDialog,  Ui::ProjectCreatorDialog
 {
     Q_OBJECT

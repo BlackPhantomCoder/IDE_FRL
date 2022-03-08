@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include "InterpretatorsSettings.h"
 
+//Класс приложения с полезными функциями
 class MyQApp : public QApplication
 {
 public:

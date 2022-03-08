@@ -10,6 +10,7 @@
 
 #include "filetreeitem.h"
 
+//Класс, управлющий проектом (загрузка, изменение и проч)
 class Project: public QObject
 {
     Q_OBJECT

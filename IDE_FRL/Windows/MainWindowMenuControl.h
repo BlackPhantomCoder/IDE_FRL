@@ -6,6 +6,7 @@
 
 #include "MainWindowPartInt.h"
 
+//часть, контролирующая меню
 class MainWindowMenuControl : public MainWindowPartInt
 {
     Q_OBJECT

@@ -11,7 +11,7 @@ struct seller_func{
     QString func;
 };
 
-
+//Для механики отправки в интерпретатор выражений
 class SExprAction :  public QAction{
     Q_OBJECT
     friend class SExprSeller;
@@ -29,6 +29,7 @@ private:
      seller_func t_func;
 };
 
+//класс, управляющий действиями SExprAction
 class SExprSeller : public QObject
 {
     Q_OBJECT

@@ -7,6 +7,7 @@
 #include "Project/Project.h"
 #include "MainWindowPartInt.h"
 
+//Часть, контролирующая загрузку проекта в интерпретатор
 class LoaderController : public MainWindowPartInt
 {
     Q_OBJECT

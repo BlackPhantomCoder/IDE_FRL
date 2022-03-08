@@ -7,7 +7,7 @@
 #include <QtWidgets>
 #include "Interpretator/Interpretator.h"
 
-
+//Окно создания интерпретатора
 class InterpretatorCreatorWidget: public QDialog, Ui::InterpretatorEditorDialog
 {
     Q_OBJECT

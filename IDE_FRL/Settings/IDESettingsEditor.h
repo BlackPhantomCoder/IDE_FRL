@@ -6,6 +6,7 @@
 #include <QtCore>
 #include <QtWidgets>
 
+//Окно-Редактор настроек приложения
 class IDESettingsEditor : public QDialog, private Ui::IDESettingsEditor
 {
     Q_OBJECT

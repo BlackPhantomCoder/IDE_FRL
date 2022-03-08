@@ -4,6 +4,7 @@
 #include <QList>
 #include <QVariant>
 
+//Дерево файлов и папок для проекта
 class FileTreeItem
 {
 public:

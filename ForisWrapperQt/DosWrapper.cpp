@@ -123,7 +123,7 @@ void DosWrapper::run()
         t_watcher = nullptr;
         emit finished();
     }
-    cout << "ForisWrapper 0.25 (c)" << endl;
+    cout << "ForisWrapper 0.27 (c)" << endl;
 }
 
 void DosWrapper::finish()

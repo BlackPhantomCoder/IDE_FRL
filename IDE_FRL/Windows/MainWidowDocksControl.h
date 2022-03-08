@@ -9,6 +9,7 @@
 
 class MainWindow;
 
+//Часть, контролирубщая док-виджеты
 class DocksControl : public MainWindowPartInt{
     Q_OBJECT
     enum dock_widget : int {project, interpretator, none};

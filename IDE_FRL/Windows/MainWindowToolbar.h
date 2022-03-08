@@ -7,6 +7,7 @@
 
 #include "MainWindowPartInt.h"
 
+//Часть, контролирующая toolbar
 class MainWindowToolbar : public MainWindowPartInt
 {
     Q_OBJECT

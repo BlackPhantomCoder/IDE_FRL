@@ -8,6 +8,7 @@
 #include "Interpretator/SExprSeller.h"
 #include "MainWindowPartInt.h"
 
+//Часть, контролирующая механику отправки sexpr в интерпретатор
 class SExprSellerController : public MainWindowPartInt
 {
     Q_OBJECT

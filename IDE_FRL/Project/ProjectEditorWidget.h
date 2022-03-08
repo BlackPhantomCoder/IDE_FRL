@@ -5,6 +5,7 @@
 #include "ui_ProjectEditorWidget.h"
 #include "Project/Project.h"
 
+//Окно редактор проекта
 class ProjectEditorWidget : public QDialog, private Ui::ProjectEditorWidget
 {
     Q_OBJECT

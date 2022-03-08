@@ -4,6 +4,7 @@
 #include <QString>
 #include <QSettings>
 
+//реализация QSettings c хранением в JSON
 class SettringJson: public QSettings
 {
     Q_OBJECT

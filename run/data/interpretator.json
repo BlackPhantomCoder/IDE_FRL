@@ -5,9 +5,14 @@
             "path": "fw/ForisWrapperQt_release.exe",
             "relative": true
         },
+        "Foris Debug": {
+            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --absp --diskmt ($project_path) --doscpucycles max --debug",
+            "path": "fw/ForisWrapperQt_release.exe",
+            "relative": true
+        },
         "RofloLisp": {
             "params": "",
-            "path": "data/roflolisp/LispTester.exe",
+            "path": "roflolisp/LispTester.exe",
             "relative": true
         }
     }
