@@ -11,6 +11,8 @@ run/stderr.txt
 run/stdout.txt
 run/fw/stderr.txt
 run/fw/stdout.txt
+run/fw/data/DOSBox/stderr.txt
+run/fw/data/DOSBox/stdout.txt
 run/fw/data/for_dos/c.lsp
 run/fw/data/for_dos/sinchro/*
 run/data/main_settings.json

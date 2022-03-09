@@ -1,14 +1,15 @@
-;переменные для замены путей при чтении
+
+|;?????????? ??? ?????? ????? ??? ??????|
 (if (equal **translate_disks** '**translate_disks**)       (setq **translate_disks** nil))
 (if (equal **translate_disks_to** '**translate_disks_to**) (setq **translate_disks_to** nil))
 
-;добавление путей для замены при чтении
+|;?????????? ????? ??? ?????? ??? ??????|
 (DEFUN **add_translate_disk** (**x** **y**) 
     (setq **translate_disks** (append **translate_disks**  (list **x**)))
     (setq **translate_disks_to** (append **translate_disks_to**  (list **y**)))
 )
 
-;функции для замены путей при чтении
+|;??????? ??? ?????? ????? ??? ??????|
 (defun **compare** (**a** **b** **a1** **b1** **len1** **len2**)
     (setq **a1**  (unpack **a** ))
     (setq **b1** (unpack  **b**))
@@ -40,7 +41,7 @@
     )
 )
 
-;файлы синхронизации
+|;????? ?????????????|
 (SETQ **sinc_file**         |S:SINC.LSP|)
 (SETQ **buf_file**          |S:BUF.LSP|)
 
@@ -48,7 +49,7 @@
 (SETQ **sinc_print_file**   |S:SP.LSP|)
 
 
-;отслеживаем входной/выходной файлы
+|;??????????? ???????/???????? ?????|
 (setq **cof** wrs)
 (if (equal **cof** 'wrs) (setq **cof** nil))
 (movd 'wrs '**wrs2**)
@@ -62,7 +63,7 @@
 (defun rds (**x**)  (setq **cif** (**rds2** **x**)))
 
 
-;функция для исполнения под **_s_** = nil
+|;??????? ??? ?????????? ??? **_s_** = nil|
 (DEFUN **under-nil-s** (**_s_** **_x_** **_m_**)
     (setq **_m_** (eval **_s_**))
     (set **_s_** nil)
@@ -73,21 +74,21 @@
     **_x_**
 )
 
-;функция для исполнения под wrs = nil
+|;??????? ??? ?????????? ??? wrs = nil|
 (defun **under-nil-wrs** 
     (nlambda **x**
        (**under-nil-s** 'wrs **x**)
     )
 )
 
-;функция для исполнения под rds = nil
+|;??????? ??? ?????????? ??? rds = nil|
 (defun **under-nil-rds** 
     (nlambda **x**
        (**under-nil-s** 'rds **x**)
     )
 )
 
-;копируем встроенные функции (даём им имена с **name**)
+|;???????? ?????????? ??????? (???? ?? ????? ? **name**)|
 (DEFUN **bi_func_name** (**fnc**)
     (PACK (APPEND (LIST '* '*) (UNPACK **fnc**) (LIST '* '*)))
 )
@@ -108,9 +109,9 @@
 
 
 
-;функци для синхронизации
+|;?????? ??? ?????????????|
 (DEFUN **func_under_file** (**rds_mode** **file** **func** **arglist** **result** **buf** **s**)
-    ;((null nil) (apply **func** **arglist**))
+    |;((null nil) (apply **func** **arglist**))|
     
     (if **rds_mode** 
         (progn (setq **s** **cif**) (setq **rds_mode** 'rds))
@@ -205,7 +206,7 @@
 )
 
 
-;прототип загрузчика
+|;???????? ??????????|
 (defun **load** **x**
     (movd break !!break!!)
 
@@ -250,7 +251,7 @@
 )
 
 
-;заменяем break
+|;???????? break|
 (DEFUN BREAK 
     (nlambda (**f** **msg** **buf** **result**) 
         (**under-nil-wrs** 
@@ -259,8 +260,8 @@
             (princ " ")
             (princ **f**)
             (TERPRI 1)
-            ;...
-            ;(READ-CHAR)
+            |;...|
+            |;(READ-CHAR)|
             (loop
                 (write-string |Continue, Break, Abort, Top-level? |)
                 (SETQ **buf** (**under-nil-rds** (READ-CHAR)))
@@ -269,8 +270,8 @@
                 ((or (eq **buf** \B) (eq **buf** \b)) (setq **result** '(progn (SETQ BREAK **f**) (DRIVER))))
                 ((or (eq **buf** \A) (eq **buf** \a)) (setq **result** '(return **f**)))
                 ((or (eq **buf** \T) (eq **buf** \t)) (setq **result** '(throw 'TOP-LEVEL)))
-                ;((or (eq **buf** \S) (eq **buf** \s)) (system))
-                ;((or (eq **buf** \R) (eq **buf** \r)) (restart))
+                |;((or (eq **buf** \S) (eq **buf** \s)) (system))|
+                |;((or (eq **buf** \R) (eq **buf** \r)) (restart))|
             )
         )
         (eval **result**)
@@ -278,7 +279,7 @@
 )
 (movd break **break**)
 
-;специальный break с исключением
+|;??????????? break ? ???????????|
 (DEFUN **BREAK-THROW** 
     (nlambda (**f** **msg**)
         (THROW 'BREAK-THROW)
@@ -286,12 +287,12 @@
 )
 
 
-;убираем неподерживаемые функиции
+|;??????? ??????????????? ????????|
 (defun RESTART () ((WRITE-STRING "ForisWrapper do not support restart") (TERPRI 1)))
 (defun SYSTEM () ((WRITE-STRING "ForisWrapper do not support system") (TERPRI 1)))
 
 
-;драйвер
+|;???????|
 (DEFUN DRIVER (**driver-buf** **result**)
     (setq **result**
         (CATCH 'RETURN
@@ -310,7 +311,7 @@
     **result**
 )
 
-;функция верхнего уровня
+|;??????? ???????? ??????|
 (defun **top-level** (**catched** **tcatched**) 
     (DEFUN print        (**arg**) (**apply_write_under_file_w_1_arg** 'print **arg**))
     (DEFUN write-string (**arg**) (**apply_write_under_file_w_1_arg** 'write-string **arg**))
@@ -328,7 +329,7 @@
         (SETQ RDS NIL)
         (SETQ WRS NIL)
 
-        ;(SETQ READ-CHAR 'READ-CHAR)
+        |;(SETQ READ-CHAR 'READ-CHAR)|
         (SETQ **exception_object** (CATCH 'NIL  (CATCH 'TOP-LEVEL (FUNCALL DRIVER) (setq **tcatched** nil)) (setq **catched** nil)))
         (cond 
             ((and (NULL **catched**) **tcatched**) nil)
