@@ -57,15 +57,7 @@ void LoaderController::send_file(const QString &path)
 
 void LoaderController::t_send(const QStringList& files)
 {
-    if(!t_main->t_interpretator_w->is_running()){
-        auto ans = QMessageBox::warning(t_main, tr("Внимание"),
-                                        tr("Интерпретатор не запущен, запустить?"),
-                                        QMessageBox::Cancel|QMessageBox::Yes);
-        if(ans == QMessageBox::Yes){
-            t_main->t_start_interpretator();
-        }
-        else return;
-    }
+    if(!t_main->t_start_interpretator_ask()) return;
     auto str = QString( "(eval ((lambda !!x!!"
                         "(movd break !!break!!)"
                         "(DEFUN BREAK"

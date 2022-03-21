@@ -1,15 +1,15 @@
 
-|;?????????? ??? ?????? ????? ??? ??????|
+|;переменные для замены путей при чтении|
 (if (equal **translate_disks** '**translate_disks**)       (setq **translate_disks** nil))
 (if (equal **translate_disks_to** '**translate_disks_to**) (setq **translate_disks_to** nil))
 
-|;?????????? ????? ??? ?????? ??? ??????|
+|;добавление путей для замены при чтении|
 (DEFUN **add_translate_disk** (**x** **y**) 
     (setq **translate_disks** (append **translate_disks**  (list **x**)))
     (setq **translate_disks_to** (append **translate_disks_to**  (list **y**)))
 )
 
-|;??????? ??? ?????? ????? ??? ??????|
+|;функции для замены путей при чтении|
 (defun **compare** (**a** **b** **a1** **b1** **len1** **len2**)
     (setq **a1**  (unpack **a** ))
     (setq **b1** (unpack  **b**))
@@ -41,15 +41,15 @@
     )
 )
 
-|;????? ?????????????|
-(SETQ **sinc_file**         |S:SINC.LSP|)
-(SETQ **buf_file**          |S:BUF.LSP|)
+|;файлы синхронизации|
+(SETQ **sinc_file**         |S:SINC|)
+(SETQ **buf_file**          |S:BUF|)
 
-(SETQ **sinc_read_file**    |S:SR.LSP|)
-(SETQ **sinc_print_file**   |S:SP.LSP|)
+(SETQ **sinc_read_file**    |S:SR|)
+(SETQ **sinc_print_file**   |S:SP|)
 
 
-|;??????????? ???????/???????? ?????|
+|;отслеживаем входной/выходной файлы|
 (setq **cof** wrs)
 (if (equal **cof** 'wrs) (setq **cof** nil))
 (movd 'wrs '**wrs2**)
@@ -63,7 +63,7 @@
 (defun rds (**x**)  (setq **cif** (**rds2** **x**)))
 
 
-|;??????? ??? ?????????? ??? **_s_** = nil|
+|;функция для исполнения под **_s_** = nil|
 (DEFUN **under-nil-s** (**_s_** **_x_** **_m_**)
     (setq **_m_** (eval **_s_**))
     (set **_s_** nil)
@@ -74,21 +74,21 @@
     **_x_**
 )
 
-|;??????? ??? ?????????? ??? wrs = nil|
+|;функция для исполнения под wrs = nil|
 (defun **under-nil-wrs** 
     (nlambda **x**
        (**under-nil-s** 'wrs **x**)
     )
 )
 
-|;??????? ??? ?????????? ??? rds = nil|
+|;функция для исполнения под rds = nil|
 (defun **under-nil-rds** 
     (nlambda **x**
        (**under-nil-s** 'rds **x**)
     )
 )
 
-|;???????? ?????????? ??????? (???? ?? ????? ? **name**)|
+|;копируем встроенные функции (даём им имена с **name**)|
 (DEFUN **bi_func_name** (**fnc**)
     (PACK (APPEND (LIST '* '*) (UNPACK **fnc**) (LIST '* '*)))
 )
@@ -103,13 +103,13 @@
     )
 )
 
-(**save_bi_funcs** (list 'print 'princ 'write-string 'TERPRI 'READ 'read-char 'driver))
+(**save_bi_funcs** (list 'print 'princ 'write-string 'TERPRI 'READ 'read-char 'driver 'LISTEN 'PRIN1 'FRESH-LINE 'SPACES 'WRITE-LINE 'WRITE-BYTE 'RATOM 'READ-LINE 'PEEK-CHAR 'UNREAD-CHAR))
 
 (REMD **save_bi_funcs**)
 
 
 
-|;?????? ??? ?????????????|
+|;функци для синхронизации|
 (DEFUN **func_under_file** (**rds_mode** **file** **func** **arglist** **result** **buf** **s**)
     |;((null nil) (apply **func** **arglist**))|
     
@@ -166,7 +166,7 @@
         )
         ((and (not **buf**) **for_delete**) nil)
         ((and **buf** (not **for_delete**)) )
-        (**delay** 50)
+        (**delay** 20)
     )
 )
 
@@ -190,7 +190,7 @@
                     (**wait**  **sinc_read_file** T)
                     (setq  **catched** T)
                     (CATCH 'BREAK-THROW 
-                        (setq  **result** (**read_from_file**  **sinc_file** (**bi_func_name** **fnc**) **arglist**))
+                        (setq **result** (**read_from_file**  **sinc_file** (**bi_func_name** **fnc**) **arglist**))
                         (setq **catched** nil)
                     )
                     ((NULL  **catched**) 'BREAK-THROW)
@@ -206,8 +206,8 @@
 )
 
 
-|;???????? ??????????|
-(defun **load** **x**
+|;прототип загрузчика|
+'(lambda **x**
     (movd break !!break!!)
 
     (DEFUN BREAK
@@ -251,7 +251,7 @@
 )
 
 
-|;???????? break|
+|;заменяем break|
 (DEFUN BREAK 
     (nlambda (**f** **msg** **buf** **result**) 
         (**under-nil-wrs** 
@@ -279,7 +279,7 @@
 )
 (movd break **break**)
 
-|;??????????? break ? ???????????|
+|;специальный break с исключением|
 (DEFUN **BREAK-THROW** 
     (nlambda (**f** **msg**)
         (THROW 'BREAK-THROW)
@@ -287,18 +287,18 @@
 )
 
 
-|;??????? ??????????????? ????????|
+|;убираем неподерживаемые функиции|
 (defun RESTART () ((WRITE-STRING "ForisWrapper do not support restart") (TERPRI 1)))
 (defun SYSTEM () ((WRITE-STRING "ForisWrapper do not support system") (TERPRI 1)))
 
 
-|;???????|
+|;драйвер|
 (DEFUN DRIVER (**driver-buf** **result**)
     (setq **result**
         (CATCH 'RETURN
             (CATCH 'DRIVER
                 (loop
-                    (**under-nil-wrs** (PRINC ">>> "))
+                    (**under-nil-wrs** (PRINC "$> "))
                     (SETQ + '+)
                     (SETQ ++ '++)
                     (SETQ +++ '+++)
@@ -311,18 +311,37 @@
     **result**
 )
 
-|;??????? ???????? ??????|
+|;функция верхнего уровня|
 (defun **top-level** (**catched** **tcatched**) 
-    (DEFUN print        (**arg**) (**apply_write_under_file_w_1_arg** 'print **arg**))
-    (DEFUN write-string (**arg**) (**apply_write_under_file_w_1_arg** 'write-string **arg**))
+    (DEFUN PRINT        (**arg**) (**apply_write_under_file_w_1_arg** 'PRINT **arg**))
+    (DEFUN WRITE-STRING (**arg**) (**apply_write_under_file_w_1_arg** 'WRITE-STRING **arg**))
     (DEFUN TERPRI       (**arg**) (**apply_write_under_file_w_1_arg** 'TERPRI **arg**))
 
 
-    (DEFUN princ        (**arg**) (**apply_write_under_file_w_1_arg** 'princ **arg**))
+    (DEFUN PRINC        (**arg**) (**apply_write_under_file_w_1_arg** 'PRINC **arg**))
 
 
     (DEFUN READ  () (**apply_read_under_file_w_arglist** 'READ nil))
-    (DEFUN read-char **arg_lst** (**apply_read_under_file_w_arglist** 'read-char **arg_lst**))
+    (DEFUN READ-CHAR **arg_lst** (**apply_read_under_file_w_arglist** 'READ-CHAR **arg_lst**))
+
+
+
+    (DEFUN PRIN1 (**arg**) (**apply_write_under_file_w_1_arg** 'PRIN1 **arg**))
+    (DEFUN FRESH-LINE () (**apply_write_under_file_w_arglist** 'FRESH-LINE nil))
+    (DEFUN SPACES     (**arg**) (**apply_write_under_file_w_1_arg** 'SPACES **arg**))
+    (DEFUN WRITE-LINE (**arg**) (**apply_write_under_file_w_1_arg** 'WRITE-LINE **arg**))
+    (DEFUN WRITE-BYTE (**arg**) (**apply_write_under_file_w_1_arg** 'WRITE-BYTE **arg**))
+    (DEFUN LISTEN  () (if (NULL **cif**)  T (**LISTEN**)))
+    (defun CLEAR-INPUT () ((WRITE-STRING "ForisWrapper do not support CLEAR-INPUT") (TERPRI 1)))
+    (DEFUN READ-LINE  () (**apply_read_under_file_w_arglist** 'READ-LINE nil))
+
+
+    |;TODO|
+    (DEFUN UNREAD-CHAR  () (if (NULL **cif**) (PROGN (WRITE-STRING "implementation not found") (TERPRI 1)) (**apply_read_under_file_w_arglist** 'UNREAD-CHAR nil)))
+    (DEFUN PEEK-CHAR  () (if (NULL **cif**) (PROGN (WRITE-STRING "implementation not found") (TERPRI 1)) (**apply_read_under_file_w_arglist** 'PEEK-CHAR nil)))
+    (DEFUN RATOM  () (if (NULL **cif**) (PROGN (WRITE-STRING "implementation not found") (TERPRI 1)) (**apply_read_under_file_w_arglist** 'RATOM nil)))
+
+
 
     (LOOP
         (SETQ **catched** T)
@@ -341,3 +360,12 @@
         )
     )
 )
+
+|;читает c.lsp (файл настройки с запуском **top-level**)|
+(defun **sub-top-level** ()
+    (**rds1** |F:c.lsp|)
+    |; (**print** heh)|
+    (loop (eval (read)))
+    (**print** heh!)
+)
+(**sub-top-level**) 

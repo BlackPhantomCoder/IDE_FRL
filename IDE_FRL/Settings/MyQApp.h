@@ -28,6 +28,7 @@ public:
     static void restart();
 
     static bool is_first_start();
+
 };
 
 

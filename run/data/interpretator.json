@@ -1,12 +1,48 @@
 {
+    "MainWindow": {
+        "DocksControl": {
+            "Docks": {
+                "1": {
+                    "0": {
+                        "height": 754,
+                        "hide": false,
+                        "width": 204
+                    }
+                },
+                "8": {
+                    "1": {
+                        "height": 344,
+                        "hide": false,
+                        "width": 1340
+                    }
+                }
+            }
+        },
+        "MainWindow": {
+            "height": 812,
+            "maximized": false,
+            "width": 1549,
+            "x": 168,
+            "y": 200
+        },
+        "MenuControl": {
+            "last": [
+                "D:/repos/IDE_FRL/run/examples/project_example_3/project_example_3.json",
+                "D:/repos/IDE_FRL/run/examples/project_example_1/project_example_1.json",
+                "D:/repos/IDE_FRL/run/examples/project_example_2/project_example_2.json",
+                "D:/repos/IDE_FRL/run/examples/kekw/kekwdada.json",
+                "D:/repos/IDE_FRL/run/examples/labs/buildsTest.json"
+            ]
+        }
+    },
     "interpretators": {
         "Foris": {
-            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --absp --diskmt ($project_path) --doscpucycles max",
+            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --file foris --absp --diskmt ($project_path) --doscpucycles max",
             "path": "fw/ForisWrapperQt_release.exe",
             "relative": true
         },
         "Foris Debug": {
-            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --absp --diskmt ($project_path) --doscpucycles max --debug",
+            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --forisp data/foris --file foris --absp --diskmt ($project_path) --doscpucycles max --debug --display_dos --dos_noexit",
             "path": "fw/ForisWrapperQt_release.exe",
             "relative": true
         },
@@ -14,6 +50,12 @@
             "params": "",
             "path": "roflolisp/LispTester.exe",
             "relative": true
+        },
+        "muLisp": {
+            "params": "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos --mulispp data/mulisp --file MULISP85 --absp --diskmt ($project_path) --doscpucycles max --display_dos --debug",
+            "path": "fw/ForisWrapperQt_release.exe",
+            "relative": true
         }
-    }
+    },
+    "intpath": "D:/repos/IDE_FRL/run/data/main_settings.json"
 }

@@ -28,6 +28,7 @@ void IDESettingsEditor::t_accept()
     //
 
     t_intpath_apply();
+    t_interpretator_font_size_apply();
     accept();
 }
 
@@ -35,6 +36,11 @@ void IDESettingsEditor::t_accept()
 void IDESettingsEditor::t_intpath_state_changed(int arg1)
 {
     t_intpath_change_state(arg1 == Qt::CheckState::Checked);
+}
+
+void IDESettingsEditor::t_interpretator_font_size_apply()
+{
+
 }
 
 void IDESettingsEditor::t_intpath_apply()

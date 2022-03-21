@@ -25,6 +25,13 @@ InterpretatorWidget::InterpretatorWidget(QWidget *parent):
 
     QObject::connect(scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
                      [this](){scrollArea->verticalScrollBar()->setSliderPosition(scrollArea->verticalScrollBar()->maximum());});
+
+    auto& s = MyQApp::global_settings();
+    AT_GROUP(s, "InterpretatorWidget");
+    {
+        auto font_size = s.value("font_size", 13).toUInt();
+        set_font_size(font_size);
+    }
 }
 
 InterpretatorWidget::~InterpretatorWidget()
@@ -35,6 +42,13 @@ InterpretatorWidget::~InterpretatorWidget()
         if(!result)t_interpretator->kill();
         delete t_interpretator;
         t_interpretator = nullptr;
+    }
+
+    auto& s = MyQApp::global_settings();
+    AT_GROUP(s, "InterpretatorWidget");
+    {
+        auto font = input->font();
+        s.setValue("font_size", font.pointSize());
     }
 }
 
@@ -102,6 +116,13 @@ bool InterpretatorWidget::clear_state() const
     return t_clear_state;
 }
 
+unsigned InterpretatorWidget::get_font_size() const
+{
+    auto font = output->font();
+    return font.pointSize();
+}
+
+
 void InterpretatorWidget::set_project(Project *project)
 {
     t_project = project;
@@ -136,6 +157,8 @@ void InterpretatorWidget::send(const QString &str,  bool silence_mode, bool new_
             if(t_last_sends.size() > maximum_last_sends){
                 t_last_sends.pop_front();
             }
+            if(t_last_sends.size() == 1)
+                emit command_buf_clear_state_changed(true);
         }
         else{
             if(new_line)output->setText(output->text() + "\n");
@@ -146,6 +169,28 @@ void InterpretatorWidget::send(const QString &str,  bool silence_mode, bool new_
             emit clear_state_changed(clear_state());
         }
     }
+}
+
+void InterpretatorWidget::command_buf_clear()
+{
+    t_last_sends.clear();
+    t_last_index = 0;
+    emit command_buf_clear_state_changed(false);
+}
+
+void InterpretatorWidget::set_font_size(unsigned val)
+{
+    {
+        auto font = output->font();
+        font.setPointSize(val);
+        output->setFont(font);
+    }
+    {
+        auto font = input->font();
+        font.setPointSize(val);
+        input->setFont(font);
+    }
+    emit font_size_change();
 }
 
 void InterpretatorWidget::on_finished()
@@ -168,7 +213,7 @@ void InterpretatorWidget::t_send()
 
 void InterpretatorWidget::on_response(const QString &input)
 {
-    output->setText(output->text() + input);
+    output->setText(output->text() + input.toUtf8());
     if(t_clear_state){
         t_clear_state = false;
         emit clear_state_changed(clear_state());

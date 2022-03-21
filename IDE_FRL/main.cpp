@@ -5,10 +5,11 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    MyQApp a(argc, argv);
+
+    auto app = MyQApp(argc, argv);
 
     auto w = MainWindow();
     w.show();
 
-    return a.exec();
+    return app.exec();
 }

@@ -13,12 +13,15 @@ class IDESettingsEditor : public QDialog, private Ui::IDESettingsEditor
 
 public:
     explicit IDESettingsEditor(QWidget *parent = nullptr);
+
 private slots:
     void t_accept();
 
     void t_intpath_state_changed(int arg1);
 
 private:
+
+    void t_interpretator_font_size_apply();
 
     void t_intpath_apply();
     bool t_intpath_accept();

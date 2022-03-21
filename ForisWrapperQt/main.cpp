@@ -10,19 +10,21 @@
 #include <vector>
 #include <functional>
 #include <set>
+#include "StaticData.h"
 using namespace std;
+using StaticData::qout;
 
 
 void exists_file_info_or_exit(const QString& file, const QString& name){
     if(!is_exist_file(file)){
-        cout << name.toStdString() << ": " << file.toStdString() << " not exist" << endl;
+        (*qout)  << name << ": " << file << " not exist" << endl;
         exit(0);
     }
 }
 
 void exists_dir_info_or_exit(const QString& dir, const QString& name){
     if(!is_exist_file(dir)){
-        cout << name.toStdString() << ": " << dir.toStdString() << " not exist" << endl;
+        (*qout) << name << ": " << dir << " not exist" << endl;
         exit(0);
     }
 }
@@ -73,31 +75,45 @@ set<command> commands = {
     },
     {"--dosexe", 1,
         [](dos_data& d, const QStringList& params) {
-            d.dos_exe_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/").toStdString(): "") + params[0].toStdString();
+            d.dos_exe_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/"): "") + params[0];
         },
         "задаёт путь к DosBOX"
     },
     {"--forisp", 1,
         [](dos_data& d, const QStringList& params) {
-            d.foris_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/").toStdString(): "") +params[0].toStdString();
+            d.wrap_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/"): "") +params[0];
+            d.mulisp = false;
         },
-        "задаёт путь к данным FORIS"
+        "задаёт путь к папке с FORIS"
+    },
+    {"--mulispp", 1,
+        [](dos_data& d, const QStringList& params) {
+            d.wrap_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/"): "") +params[0];
+            d.mulisp = true;
+        },
+        "задаёт путь к папке с  MULISP"
+    },
+    {"--file", 1,
+        [](dos_data& d, const QStringList& params) {
+            d.wrap_name = params[0];
+        },
+        "задаёт имя файла FORIS/MULISP"
     },
     {"--diskmt", 1,
         [](dos_data& d, const QStringList& params) {
-            d.disk_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/").toStdString(): "") +params[0].toStdString();
+            d.disk_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/"): "") +params[0];
         },
         "задаёт диск, который будет добавлен в ретрансляцию путей в FORIS (под именем D)"
     },
     {"--sincp", 1,
         [](dos_data& d, const QStringList& params) {
-            d.sinchro_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/").toStdString(): "") +params[0].toStdString();
+            d.sinchro_path = ((d.relative) ? (QCoreApplication::applicationDirPath() + "/"): "") +params[0];
         },
         "задаёт путь к папке синхронизации с драйвером и конфигурацией"
     },
     {"--doscpucycles", 1,
         [](dos_data& d, const QStringList& params) {
-             d.dos_cpu_cycles =((d.relative) ? (QCoreApplication::applicationDirPath() + "/").toStdString(): "") + params[0].toStdString();
+             d.dos_cpu_cycles =((d.relative) ? (QCoreApplication::applicationDirPath() + "/"): "") + params[0];
         },
         "настройка использования процессора досом (доступные варианты число (500-10000) или max или auto) подробнее см в конфигурации DosBOX"
     },
@@ -112,23 +128,35 @@ set<command> commands = {
             d.help = true;
         },
         "просмотр доступных команд с выводом их описания"
+    },
+    {"--display_dos", 0,
+        [](dos_data& d, const QStringList& params) {
+            d.display_dos = true;
+        },
+        "режим отображения окна доса"
+    },
+    {"--dos_noexit", 0,
+        [](dos_data& d, const QStringList& params) {
+            d.dos_exit = false;
+        },
+        "не выходить из доса после окончания работы"
     }
 };
 
 QStringList::iterator apply_or_exe(dos_data& d, QStringList::iterator it, QStringList::iterator end){
     auto i = find_if(begin(commands), std::end(commands), [it](const auto& cmd){return cmd.name == *it;});
     if(i == std::end(commands)){
-        cout << (*it).toStdString() << " не команда" <<endl;
-        cout << "доступные команды:" << endl;
+        (*qout) << *it << QString()+" не команда" <<endl;
+        (*qout) << QString()+"доступные команды:" << endl;
         for(const auto& command: commands){
-            cout << command.name.toStdString() << endl;
+            (*qout) << command.name<< endl;
         }
-        cout << "подробнее --help" << endl;
+        (*qout) << QString()+"подробнее --help" << endl;
         exit(0);
     }
     if(distance(it + 1, end) < i->params_count) {
-        cout << (*it).toStdString() << " недостаточно параметров" <<endl;
-        cout << "для " << it->toStdString() << " требуется "<< i->params_count<< " параметров" <<endl;
+        (*qout) << *it << QString()+" недостаточно параметров" <<endl;
+        (*qout) << QString()+"для " << *it << QString()+" требуется "<< i->params_count<< QString()+" параметров" <<endl;
         exit(0);
     }
     auto result = QStringList{};
@@ -152,18 +180,20 @@ dos_data parse_or_exit(QStringList commands){
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-//    auto lst = QString(
-//                " --relp"
-//                " --dosexe data/DOSBox/DOSBox.exe"
-//                " --sincp data/for_dos"
-//                " --forisp data/foris"
-//                " --diskmt data/for_dos/data"
-//                " --doscpucycles 4500"
-//               ).split(" ");
+
 
 //    auto lst = QString(
 //                "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos "
-//                "--forisp data/foris --absp --diskmt D:/repos/IDE_FRL/run/examples/project_example_1 --doscpucycles max --debug"
+//                "--mulispp data/mulisp --file mulisp85 --absp --diskmt D:/repos/IDE_FRL/run/examples/project_example_1 "
+//                "--doscpucycles max --debug --display_dos"
+//    ).split(" ");
+
+
+
+//    auto lst = QString(
+//                "--relp --dosexe data/DOSBox/DOSBox.exe --sincp data/for_dos "
+//                "--forisp data/foris --file foris --absp --diskmt D:/repos/IDE_FRL/run/examples/project_example_1"
+//                " --doscpucycles max --debug --display_dos --dos_noexit"
 //    ).split(" ");
 
     auto lst = QStringList{};
@@ -173,30 +203,37 @@ int main(int argc, char *argv[])
     auto d = parse_or_exit(lst);
 
     if(d.help){
-        cout << "доступные команды:" << endl;
+        (*qout) << QString()+"доступные команды:" << endl;
         for(const auto& command: commands){
-            cout << "команда: " << command.name.toStdString() << endl;
-            cout << "описание: " << command.desctiption.toStdString() << endl;
+            (*qout) << QString()+"команда: " << command.name << endl;
+            (*qout) << QString()+"описание: " << command.desctiption << endl;
         }
         return 0;
     }
 
 
-    d.sinc_file = d.sinchro_path + "/sinchro/SINC.LSP";
-    d.sinc_print_file = d.sinchro_path + "/sinchro/SP.LSP";
-    d.sinc_read_file = d.sinchro_path + "/sinchro/SR.LSP";
+    {
+
+        auto extencion = "LSP";
+        if(d.mulisp)
+            extencion = "$SP";
+        d.sinc_file = d.sinchro_path + "/sinchro/SINC." + extencion;
+        d.sinc_print_file = d.sinchro_path + "/sinchro/SP." + extencion;
+        d.sinc_read_file = d.sinchro_path + "/sinchro/SR."+ extencion;
+    }
 
 
-    exists_dir_info_or_exit(d.disk_path.c_str(), "disk path");
-    exists_file_info_or_exit(d.dos_exe_path.c_str(), "dos file");
-    exists_dir_info_or_exit(d.sinchro_path.c_str(), "sinchro path");
-    exists_dir_info_or_exit(d.foris_path.c_str(), "foris path");
-    exists_file_info_or_exit((d.sinchro_path + "/template.conf").c_str(), "template conf");
-    exists_file_info_or_exit((d.sinchro_path + "/driver.lsp").c_str(), "driver file");
+
+    exists_dir_info_or_exit(d.disk_path, "disk path");
+    exists_file_info_or_exit(d.dos_exe_path, "dos file");
+    exists_dir_info_or_exit(d.sinchro_path, "sinchro path");
+    exists_dir_info_or_exit(d.wrap_path, "wrap path");
+    exists_file_info_or_exit((d.sinchro_path + "/template.conf"), "template conf");
+    exists_file_info_or_exit((d.sinchro_path + "/driver.lsp"), "driver file");
 
     int cpu = -1;
     {
-        auto s = istringstream(d.dos_cpu_cycles);
+        auto s = istringstream(d.dos_cpu_cycles.toStdString());
         s >> cpu;
         if(!(s && cpu >= 500 && cpu <= 10000)) cpu = -1;
         else{
@@ -205,21 +242,25 @@ int main(int argc, char *argv[])
     }
 
     if(cpu == -1 && !(d.dos_cpu_cycles == "max" || d.dos_cpu_cycles == "auto")){
-        cout << "--doscpucycles error: " << d.dos_cpu_cycles << endl;
-        cout << "доступны: *number (500-10000) или max или auto" << d.dos_cpu_cycles << endl;
+        (*qout) << "--doscpucycles error: " << d.dos_cpu_cycles << endl;
+        (*qout) << QString()+"доступны: *number (500-10000) или max или auto" << d.dos_cpu_cycles << endl;
         exit(0);
     }
 
     if(d.debug){
-        cout << "relative:" << d.relative << endl;
-        cout << "dos_exe_path:" << d.dos_exe_path << endl;
-        cout << "sinchro_path:" << d.sinchro_path << endl;
-        cout << "foris_path:" << d.foris_path << endl;
-        cout << "disk_path:" << d.disk_path << endl;
-        cout << "sinc_file:" << d.sinc_file << endl;
-        cout << "sinc_print_file:" << d.sinc_print_file << endl;
-        cout << "sinc_read_file:" << d.sinc_read_file << endl;
-        cout << "dos_cpu_cycles:" << d.dos_cpu_cycles << endl;
+        (*qout) << "relative:" << d.relative << endl;
+        (*qout) << "dos_exe_path:" << d.dos_exe_path << endl;
+        (*qout) << "sinchro_path:" << d.sinchro_path << endl;
+        (*qout) << "wrap_path:" << d.wrap_path << endl;
+        (*qout) << "wrap_name:" << d.wrap_name << endl;
+        (*qout) << "disk_path:" << d.disk_path << endl;
+        (*qout) << "sinc_file:" << d.sinc_file << endl;
+        (*qout) << "sinc_print_file:" << d.sinc_print_file << endl;
+        (*qout) << "sinc_read_file:" << d.sinc_read_file << endl;
+        (*qout) << "dos_cpu_cycles:" << d.dos_cpu_cycles << endl;
+        (*qout) << "mulisp:" << d.mulisp << endl;
+        (*qout) << "display_dos:" << d.display_dos << endl;
+        (*qout) << "dos_exit:" << d.dos_exit << endl;
     }
 
 
@@ -236,20 +277,20 @@ int main(int argc, char *argv[])
 
     try{
         auto result = a.exec();
-        cout <<endl;
-        cout << "----stopped----" <<endl;
+        (*qout) <<endl;
+        (*qout) << "----stopped----" <<endl;
         return result;
     }
     catch(std::exception& e){
-        cout << "внутренняя ошибка" <<endl;
-        cout << e.what() <<endl;
+        (*qout) << QString()+"внутренняя ошибка" <<endl;
+        (*qout) << e.what() <<endl;
     }
     catch(const char* e){
-        cout << "внутренняя ошибка" <<endl;
-        cout << e <<endl;
+        (*qout) << QString()+"внутренняя ошибка" <<endl;
+        (*qout) << e <<endl;
     }
     catch(std::string& e){
-        cout << "внутренняя ошибка" <<endl;
-        cout << e <<endl;
+        (*qout) << QString()+"внутренняя ошибка" <<endl;
+        (*qout) << e.c_str() <<endl;
     }
 }

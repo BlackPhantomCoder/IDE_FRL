@@ -26,6 +26,8 @@ public:
     bool stop_interpretator_w_answear();
 
     bool clear_state() const;
+    unsigned get_font_size() const;
+
 
 signals:
     void project_changed();
@@ -36,6 +38,9 @@ signals:
 
     void clear_state_changed(bool new_state);
 
+    void command_buf_clear_state_changed(bool not_cleared);
+    void font_size_change();
+
 public slots:
     void set_project(Project* project);
     void start_interpretator();
@@ -43,6 +48,9 @@ public slots:
     void clear();
 
     void send(const QString& str, bool silence_mode = false, bool new_line = true);
+
+    void command_buf_clear();
+    void set_font_size(unsigned val);
 
 
 
@@ -67,6 +75,8 @@ private:
     std::deque<QString> t_last_sends;
     bool t_last = false;
     size_t t_last_index = 0;
+
+
 };
 
 #endif // INTERPRETATORWIDGET2_H

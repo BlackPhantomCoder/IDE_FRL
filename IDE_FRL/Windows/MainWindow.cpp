@@ -56,6 +56,7 @@ MainWindow::MainWindow()
 
     t_menu->file_save_action->setShortcut(Qt::CTRL + Qt::Key_S);
     t_menu->interpretator_clear_action->setEnabled(!t_interpretator_w->clear_state());
+    t_menu->interpretator_command_buf_clear->setEnabled(false);
     t_menu->view_interpretator_action->setEnabled(t_docks->dock_by_w(t_interpretator_w)->isHidden());
     t_menu->view_project_files_action->setEnabled(t_docks->dock_by_w(t_project_w)->isHidden());
 }
@@ -99,6 +100,10 @@ void MainWindow::t_connect_actions()
     connect(t_menu->interpretator_edit_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_edit_triggered);
     connect(t_menu->interpretator_delete_action,  &QAction::triggered, this, &MainWindow::t_on_interpretator_delete_triggered);
     connect(t_menu->interpretator_clear_action,  &QAction::triggered, t_interpretator_w, &InterpretatorWidget::clear);
+    connect(t_menu->interpretator_command_buf_clear,  &QAction::triggered, t_interpretator_w,  &InterpretatorWidget::command_buf_clear);
+    connect(t_menu->interpretator_font_size,  &QAction::triggered, this,  &MainWindow::t_on_interpretator_set_font_triggered);
+
+
 
     connect(t_menu->file_save_action, &QAction::triggered, t_editor_w, &EditorWidget::update_bufer);
     connect(t_menu->file_save_action, &QAction::triggered, t_editor_w, &EditorWidget::control_saved_state);
@@ -115,7 +120,7 @@ void MainWindow::t_connect_actions()
     });
 
 
-    connect(t_menu->project_settings_action,  &QAction::triggered, this, &MainWindow::t_on_preject_settings_triggered);
+    connect(t_menu->project_settings_action,  &QAction::triggered, this, &MainWindow::t_on_project_settings_triggered);
 
 
     connect(t_docks, &DocksControl::dock_state_changed, this, &MainWindow::t_on_dock_widget_state_changed);
@@ -124,6 +129,8 @@ void MainWindow::t_connect_actions()
     connect(t_interpretator_w, &InterpretatorWidget::changed_state, this, &MainWindow::t_on_interpretator_state_changed);
     connect(t_interpretator_w, &InterpretatorWidget::clear_state_changed,
             [this](bool state){t_menu->interpretator_clear_action->setEnabled(!state);});
+    connect(t_interpretator_w,  &InterpretatorWidget::command_buf_clear_state_changed,
+            t_menu->interpretator_command_buf_clear, &QAction::setEnabled);
 
     connect(t_project_w, &ProjectWidget::double_clicked_file,
             [this](const QModelIndex& index){
@@ -341,7 +348,17 @@ void MainWindow::t_on_interpretator_delete_triggered()
     }
 }
 
-void MainWindow::t_on_preject_settings_triggered()
+void MainWindow::t_on_interpretator_set_font_triggered()
+{
+    auto ok = false;
+    auto size = QInputDialog::getInt(this, tr("Размер шрифта"),
+                                        tr("Размер:"), t_interpretator_w->get_font_size(), 2, 100, 1, &ok);
+    if (ok && size > 1){
+        t_interpretator_w->set_font_size(size);
+    }
+}
+
+void MainWindow::t_on_project_settings_triggered()
 {
     auto w = ProjectEditorWidget(t_project, this);
     w.exec();
@@ -350,7 +367,7 @@ void MainWindow::t_on_preject_settings_triggered()
 void MainWindow::t_start_interpretator()
 {
     t_docks->show(t_interpretator_w);
-    if(!t_interpretator_w->start_interpretator_w_answear()){
+        if(!t_interpretator_w->start_interpretator_w_answear()){
     }
 }
 
@@ -400,8 +417,10 @@ bool MainWindow::t_close_project_check()
         if(t_project_need_save_check())
             return true;
         call_close_files();
-        if(t_project_w) t_project_w->set_project(nullptr);
-        if(t_interpretator_w) t_interpretator_w->set_project(nullptr);
+        if(t_project_w)
+            t_project_w->set_project(nullptr);
+        if(t_interpretator_w)
+            t_interpretator_w->set_project(nullptr);
 
         delete t_project;
         t_project = nullptr;
@@ -438,13 +457,28 @@ void MainWindow::t_set_enabled_project_action(bool val)
     t_menu->file_close_project_action->setEnabled(val);
     t_menu->file_save_project_action->setEnabled(val);
     t_menu->project_menu->setEnabled(val);
-    t_menu->interpretator_start_action->setEnabled(val);
+    t_menu->interpretator_start_action->setEnabled((t_interpretator_w->is_running()) ? false: val);
 }
 
 void MainWindow::t_set_enabled_interpretator_action(bool val)
 {
-    t_menu->interpretator_start_action->setEnabled(!val);
+    t_menu->interpretator_start_action->setEnabled((t_project) ? !val : false);
     t_menu->interpretator_stop_action->setEnabled(val);
+}
+
+bool MainWindow::t_start_interpretator_ask()
+{
+    if(!t_interpretator_w->is_running()){
+        auto ans = QMessageBox::warning(this, tr("Внимание"),
+                                        tr("Интерпретатор не запущен, запустить?"),
+                                        QMessageBox::Cancel|QMessageBox::Yes);
+        if(ans == QMessageBox::Yes){
+            t_start_interpretator();
+            return true;
+        }
+        return false;
+    }
+    return true;
 }
 
 void MainWindow::t_save()
@@ -507,5 +541,5 @@ void MainWindow::on_file_save_action_triggered()
 
 void MainWindow::on_help_about_action_triggered()
 {
-    QMessageBox::about(this, tr("О программе"), tr("FRL Ide v0.30"));
+    QMessageBox::about(this, tr("О программе"), tr("FRL IDE v0.3.1"));
 }

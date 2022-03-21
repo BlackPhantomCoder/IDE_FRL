@@ -3,7 +3,10 @@
 
 
 #include <QtCore>
+#include <QThread>
 #include <functional>
+#include "ConsoleReader.h"
+#include "LineReader.h"
 
 //данные
 struct dos_data{
@@ -14,23 +17,30 @@ struct dos_data{
     //флаг для --help
     bool help = false;
     //путь к досу
-    std::string dos_exe_path;
+    QString dos_exe_path;
     //путь к папки синхронизации
-    std::string sinchro_path;
-    //путь к форису
-    std::string foris_path;
+    QString sinchro_path;
+    //путь к интерпретатору
+    QString wrap_path;
+    //имя файла интерпретатора
+    QString wrap_name;
     //std::vector<std::pair<QChar, std::string>> disks;
     //транслируемый путь
-    std::string disk_path;
+    QString disk_path;
     //путь к файлу синхронизации общий
-    std::string sinc_file;
+    QString sinc_file;
     //путь к файлу синхронизации (печать)
-    std::string sinc_print_file;
+    QString sinc_print_file;
     //путь к файлу синхронизации (чтение)
-    std::string sinc_read_file;
+    QString sinc_read_file;
     //режим процессора для DosBOX (см DosBOX config)
-    std::string dos_cpu_cycles = "max";
-
+    QString dos_cpu_cycles = "max";
+    //режим интерпретатора (foris/mulisp)
+    bool mulisp = false;
+    //режим отображения окна доса
+    bool display_dos = false;
+    //режим выхода из доса после окончания работы
+    bool dos_exit = true;
 };
 
 bool is_exist_file(const QString& path);
@@ -56,6 +66,8 @@ private slots:
     void dir_changed(const QString& path);
     void step(state s);
 
+    void send_to_dos();
+
 private:
     void t_create_conf();
 
@@ -63,6 +75,8 @@ private:
     dos_data t_data;
     QProcess* t_process;
     QFileSystemWatcher* t_watcher;
+    ConsoleReader t_io;
+    LineReader t_reader;
 };
 
 

@@ -35,7 +35,6 @@ public:
 
     bool is_destruct_saved()const;
 
-
 signals:
     void changed();
     void interpretators_changed();

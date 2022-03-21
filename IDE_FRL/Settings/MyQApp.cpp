@@ -7,7 +7,7 @@
 using namespace std;
 
 bool restart_flag = false;
-static auto settings = QSettings();
+static auto settings = QSettings("RTeam", "IDE FRL");
 
 MyQApp::MyQApp(int &argc, char **argv, int f):QApplication(argc, argv, f)
 {

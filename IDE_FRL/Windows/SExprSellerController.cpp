@@ -26,6 +26,9 @@ void SExprSellerController::t_add_fnc(SExprAction* act)
     act->setEnabled(t_main->t_interpretator_w->is_running());
     connect(t_main->t_interpretator_w, &InterpretatorWidget::changed_state,
             [this, act](){act->setEnabled(t_main->t_interpretator_w->is_running());});
-    connect(act, &SExprAction::applyed, [this](const QString& str){t_main->t_interpretator_w->send(str);});
+    connect(act, &SExprAction::applyed, [this](const QString& str){
+        if(!t_main->t_start_interpretator_ask()) return;
+        t_main->t_interpretator_w->send(str, true);}
+    );
     t_main->t_menu->interpretator_sexpr_menu->addAction(act);
 }

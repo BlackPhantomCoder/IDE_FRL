@@ -1,0 +1,57 @@
+; File: MULISP86.LSP (C)	12/26/86	Soft Warehouse, Inc.
+
+
+;			muLISP-86 Compatibility File
+
+; After loading this file, it should be necessary to make only minor
+; changes to muLISP-86 programs so they will run under muLISP-87.  See
+; Appendix G of the muLISP-87 Reference Manual for details.
+
+(DEFUN READ-CHAR ()
+  (SETQ RATOM (ASCII (READ-BYTE))) )
+
+(DEFUN RATOM ()
+  (SETQ RATOM (READ-ATOM)) )
+
+(MOVD 'WRITE 'PRIN1)
+
+(DEFUN PRINT (OBJ)
+  (PRIN1 OBJ)
+  (TERPRI)
+  OBJ )
+
+
+(DEFUN RDS (FILE-NAME)
+  ((NULL FILE-NAME)
+    (CLOSE-INPUT-FILE) )
+  ((INPUT-FILE-P FILE-NAME)
+    (INPUT-FILE FILE-NAME) )
+  (OPEN-INPUT-FILE FILE-NAME) )
+
+(DEFUN WRS (FILE-NAME OVERWRITE)
+  ((NULL FILE-NAME)
+    (CLOSE-OUTPUT-FILE) )
+  ((OUTPUT-FILE-P FILE-NAME)
+    (OUTPUT-FILE FILE-NAME) )
+  (OPEN-OUTPUT-FILE FILE-NAME OVERWRITE) )
+
+(DEFUN OPENFILES ()
+  (APPEND (INPUT-FILES) (OUTPUT-FILES)) )
+
+(DEFUN INPUTFILE (FILE-NAME)
+  ((NULL FILE-NAME)
+    (INPUT-FILE) )
+  (INPUT-FILE-P FILE-NAME) )
+
+(DEFUN OUTPUTFILE (FILE-NAME)
+  ((NULL FILE-NAME)
+    (OUTPUT-FILE) )
+  (OUTPUT-FILE-P FILE-NAME) )
+
+(MOVD 'FILE-READ-POSITION 'READPTR)
+(MOVD 'FILE-WRITE-POSITION 'WRITEPTR)
+
+(DEFUN LINELENGTH (N)
+  ((FILE-LINE-LENGTH N))
+  79 )
+

@@ -53,7 +53,10 @@ private slots:
     void t_on_interpretator_add_triggered();
     void t_on_interpretator_edit_triggered();
     void t_on_interpretator_delete_triggered();
-    void t_on_preject_settings_triggered();
+    void t_on_interpretator_set_font_triggered();
+
+
+    void t_on_project_settings_triggered();
 
 
     void t_start_interpretator();
@@ -77,6 +80,10 @@ private:
 
     void t_set_enabled_project_action(bool val);
     void t_set_enabled_interpretator_action(bool val);
+
+    //проверяет запуск интерпретатора и спрашивает нужно ли запустить
+    //true - запущен
+    bool t_start_interpretator_ask();
 
 
     void t_save();

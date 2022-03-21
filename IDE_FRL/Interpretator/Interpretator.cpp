@@ -51,8 +51,8 @@ void Interpretator::kill()
 void Interpretator::send(const QString &text, bool new_line)
 {
     if(is_runing()){
-        auto buf =  text.toStdString() + ((new_line) ?  "\n" : "");
-        t_process->write(buf.c_str(), buf.size());
+        auto buf =  text + ((new_line) ?  "\r\n" : "");
+        t_process->write(buf.toLocal8Bit(), buf.size());
     }
 }
 //#include <windows.h>
@@ -72,10 +72,16 @@ bool Interpretator::stop()
     return true;
 }
 
+#include <QTextDecoder>
 
 void Interpretator::t_on_read_ready()
 {
-    QString result = t_process->readAllStandardOutput();
+    auto data =  t_process->readAllStandardOutput();
+
+    auto *codec = QTextCodec::codecForName("cp866");
+
+    auto result = codec->toUnicode(data);
+
 
     emit response(result);
 }
